@@ -1,0 +1,24 @@
+# LICENSE candidate — decision note (NOT the license file itself)
+
+> The shipped `LICENSE` file is the **verbatim AGPL-3.0-or-later text** (fetch from
+> https://www.gnu.org/licenses/agpl-3.0.txt at build time — see `BUILD_RUNSHEET.md` step 4). This note records the
+> decision + the open question for Peter + counsel; it does NOT ship.
+
+## Current state (consistent)
+- `node-template/package.json` declares `"license": "AGPL-3.0-or-later"`.
+- All 34 kernel-allowlist source files carry `SPDX-License-Identifier: AGPL-3.0-or-later`.
+- So the **kernel** inherits AGPL-3.0-or-later by construction. The kernel artifact ships AGPL.
+
+## Open decision (Peter + counsel — does NOT block the prep, blocks the publish)
+The broader **OS license is deferred** (the repo's own release doctrine). Before a public refresh, decide:
+1. **Kernel license = AGPL-3.0-or-later** (recommended; already the inherited SPDX) — strong copyleft, network-use
+   clause (§13) covers SaaS reuse. Confirm this is the intended posture for a kernel meant to be cloned/run.
+2. **Dual-license?** If a permissive or commercial track is wanted later (the operating plan mentions a commercial
+   path), an AGPL public kernel + a separate commercial grant is the usual shape — a counsel decision, NOT something to
+   encode now. Do not add a permissive license to the public artifact without that decision.
+3. **Copyright holder line** in NOTICE/headers — confirm "Peter Viviani / Aumara" is the intended public attribution
+   (the source headers say "Peter Viviani"; reconcile with the entity Peter wants named publicly).
+
+**Recommendation:** ship the kernel as AGPL-3.0-or-later (matches everything already in the tree); treat any
+dual/commercial licensing as a separate, later, counsel-led decision. Patent/IP filing (Guard) precedes publish
+regardless.

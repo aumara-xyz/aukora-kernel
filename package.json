@@ -1,0 +1,25 @@
+{
+  "name": "aukora-kernel",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "convex dev",
+    "deploy": "convex deploy",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@noble/ciphers": "2.2.0",
+    "@noble/hashes": "^1.8.0",
+    "@noble/post-quantum": "0.6.1",
+    "convex": "^1.29.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.7",
+    "convex-test": "^0.0.53",
+    "@edge-runtime/vm": "^5.0.0",
+    "@noble/ed25519": "^2.3.0"
+  }
+}
