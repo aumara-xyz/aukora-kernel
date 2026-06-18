@@ -36,6 +36,25 @@ research/engineering artifact, **not a production system**. Honest fences:
 
 See [`CLAIMS.md`](CLAIMS.md) for the exact claim → evidence → tier table.
 
+## Authority vs. containment — what this layer does and doesn't do
+
+A common first reaction: "but what if the agent just bypasses the kernel?" Correct — and intentional. This is the
+**authority layer**, not the containment layer. They are different problems:
+
+- **Authority** (this kernel): cryptographically proves *what was authorized, by whom, under what scope, and whether it
+  was spent*. Makes every governed effect independently verifiable and tamper-evident. This is the hard part to get
+  right — single-path consumption, append-only receipts, post-quantum signatures, cross-node witness verification.
+- **Containment** (deployment infrastructure): forces all agent I/O through the authority layer. Sandboxes
+  (Firecracker, gVisor), network policies (iptables, security groups), runtime monitors (seccomp, eBPF) — these are
+  well-understood, off-the-shelf tools.
+
+Without the kernel, containment is just a sandbox with no accountability — you can trap the agent but you can't
+prove what it did or whether it was authorized. Without containment, the kernel is an audit trail — complete and
+cryptographically sound, but only over effects routed through it. Together they form the full system.
+
+The kernel is what's hard to *build correctly*. Containment is what's hard to *deploy correctly*. This repo is the
+first half.
+
 ## Build & test
 
 ```bash
