@@ -13,8 +13,7 @@ Third-party components (their own licenses apply; not covered by the AGPL grant 
 - @noble/hashes        — SHA-256 / HKDF (MIT)
 - Convex               — runtime / data platform (see Convex's own license terms)
 
-[VERIFY at build time: pin exact dependency versions from package-lock.json and
-reconcile each dependency's current license before publishing.]
+Dependency versions are pinned in package-lock.json; see each package's own license file.
 
 --------------------------------------------------------------------------------
 Cryptographic standards referenced and corroborated:

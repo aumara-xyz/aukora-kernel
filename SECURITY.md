@@ -1,8 +1,7 @@
 # Security Policy — Aukora Kernel
 
-> **Candidate draft — pending Peter ratification + a real disclosure contact before publish.** This describes the
-> **PROVEN-LAB** kernel, not a production deployment. It is deliberately specific about what the kernel does **not**
-> defend against — read "Honest residuals" before relying on anything here.
+> This describes the **PROVEN-LAB** kernel, not a production deployment. It is deliberately specific about what the
+> kernel does **not** defend against — read "Honest residuals" before relying on anything here.
 
 ## Scope
 This policy covers the Aukora authorization-and-receipt kernel as shipped in this repository: the signing spine,
@@ -48,6 +47,7 @@ Anonymity, unlinkability, metadata- or traffic-analysis resistance; consensus, g
 public-transparency network; trusted global time; health-data / PHI handling. See [`LIMITATIONS.md`](LIMITATIONS.md).
 
 ## Reporting a vulnerability
-Please do **not** open public issues for security vulnerabilities. Report privately to **[SECURITY CONTACT — Peter to
-set a disclosure channel before publish]**. Defensive review of your own deployment is encouraged; this is a
-research/engineering artifact and is offered without warranty.
+Please do **not** open public issues for security vulnerabilities. Report privately via
+[GitHub Security Advisories](../../security/advisories/new) (Security tab → "Report a vulnerability"), or email
+**security@aumara.xyz**. We will acknowledge within 72 hours. Defensive review of your own deployment is encouraged;
+this is a research/engineering artifact and is offered without warranty.

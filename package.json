@@ -1,6 +1,8 @@
 {
   "name": "aukora-kernel",
   "private": true,
+  "description": "Cryptographic authority layer for AI agents — the model proposes, the kernel authorizes + receipts every effect, a second node verifies.",
+  "author": "Peter Viviani / Aumara",
   "license": "AGPL-3.0-or-later",
   "version": "0.0.1",
   "type": "module",

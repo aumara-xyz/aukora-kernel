@@ -1,8 +1,7 @@
 # Aukora Kernel — CLAIMS
 
-> **🔒 HELD — DO NOT PUBLISH until Guard confirms the patent filing covers R1–R11 (especially the cross-node claims
-> R5–R8, and the AUMLOK identity-root claim R11), AND Peter gives the explicit publish go.** Every row is **PROVEN-LAB** (exercised by the in-repo suite /
-> evidence) — a lab claim, never a production claim. Dates are the evidence-record dates.
+> Every row is **PROVEN-LAB** (exercised by the in-repo test suite) — a lab claim, never a production claim.
+> Dates are the evidence-record dates.
 
 | # | Claim | Tier | Evidence | Date |
 |---|---|---|---|---|

@@ -29,13 +29,11 @@ npx vitest run        # the full kernel suite must stay green
 
 ## Sign-off
 
-Contributions require a developer sign-off (see `CLA.md`). By submitting a PR you certify you have the right to
+Contributions require a `Signed-off-by` line (DCO 1.1). By submitting a PR you certify you have the right to
 contribute the code under AGPL-3.0-or-later.
 
 ## Security
 
-Do **not** open public issues for security vulnerabilities. [SECURITY CONTACT — Peter to set a disclosure channel
-before publish; placeholder.] Defensive review of your own deployment is encouraged.
-
----
-*[DRAFT CANDIDATE — pending Peter ratification; the security-contact line must be filled before publish.]*
+Do **not** open public issues for security vulnerabilities. Report privately via
+[GitHub Security Advisories](../../security/advisories/new) or email **security@aumara.xyz**.
+See [`SECURITY.md`](SECURITY.md) for the full policy.
