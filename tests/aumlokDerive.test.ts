@@ -178,6 +178,7 @@ describe("B2.0b — GUARD: Argon2id / the derive path is unreachable from any Co
     const offenders: string[] = [];
     for (const [path, src] of Object.entries(sources)) {
       if (CLIENT_SIDE_ONLY.some((m) => path.endsWith(m))) continue; // client-side-only modules, separately guarded
+      if (path.includes("_generated/")) continue; // codegen type stubs, not runtime Convex functions
       if (src.includes("@noble/hashes/argon2")) offenders.push(`${path}: imports Argon2id`);
       if (src.includes("aukoraAumlokDerive")) offenders.push(`${path}: imports the derive module`);
     }

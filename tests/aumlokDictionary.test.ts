@@ -142,6 +142,7 @@ describe("B2.3c — structural absence: the dictionary/generator is client-side 
     const offenders: string[] = [];
     for (const [path, src] of Object.entries(sources)) {
       if (path.endsWith("aukoraAumlokDictionary.ts")) continue; // the module itself
+      if (path.includes("_generated/")) continue; // codegen type stubs, not runtime Convex functions
       if (src.includes("aukoraAumlokDictionary")) offenders.push(path);
     }
     expect(Object.keys(sources).length).toBeGreaterThan(5);
