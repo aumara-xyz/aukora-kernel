@@ -53,7 +53,7 @@ prove what it did or whether it was authorized. Without containment, the kernel 
 cryptographically sound, but only over effects routed through it. Together they form the full system.
 
 The kernel is what's hard to *build correctly*. Containment is what's hard to *deploy correctly*. This repo is the
-first half.
+authority layer.
 
 ## Build & test
 
@@ -61,6 +61,8 @@ first half.
 npm ci
 npx vitest run
 ```
+
+> CI is not yet configured. The suite must be run locally before any commit.
 
 ## License
 

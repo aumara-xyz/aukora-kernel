@@ -29,8 +29,8 @@ npx vitest run        # the full kernel suite must stay green
 
 ## Sign-off
 
-Contributions require a `Signed-off-by` line (DCO 1.1). By submitting a PR you certify you have the right to
-contribute the code under AGPL-3.0-or-later.
+Contributions require a `Signed-off-by` line ([DCO 1.1](https://developercertificate.org)). By submitting a PR you
+certify you have the right to contribute the code under AGPL-3.0-or-later.
 
 ## Security
 

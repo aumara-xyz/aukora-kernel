@@ -7,7 +7,7 @@
 |---|---|---|---|---|
 | R1 | Every signature the kernel mints or verifies is **ML-DSA-65 (FIPS 204)** under the versioned signed-head format, with a required purpose-domain per signature and the algorithm bound into the signed bytes (downgrade-resistant), no fallback mode; corroborated against **NIST ACVP** pure-mode vectors. | PROVEN-LAB | `AUKORA_PQC_SPINE_EVIDENCE` | 2026-06-10 |
 | R2 | Each receipt commits to an **RFC 6962 append-only Merkle history root** bound inside its post-quantum signed head, which the audit path recomputes from the actual receipts and re-verifies; corroborated against Certificate Transparency reference vectors. | PROVEN-LAB | `AUKORA_RECEIPT_TRANSPARENCY_EVIDENCE` | 2026-06-10 |
-| R3 | A live effect is authorized **only** through `manifest → grant → token → receipt`, flowing through the single `consumeManifestUseCore` chokepoint — no second authority path. | PROVEN-LAB | `AUKORA_MEMORY_BOUNDARY_EVIDENCE` | 2026-06-10 |
+| R3 | A live effect is authorized **only** through `manifest → grant → token → receipt`, flowing through the single `consumeManifestUseCore` chokepoint — no second authority path (within the kernel API surface; bypassed by direct DB writes — see Authority vs. containment in README). | PROVEN-LAB | `AUKORA_MEMORY_BOUNDARY_EVIDENCE` | 2026-06-10 |
 | R4 | The manifest consume is atomic / OCC-safe within one transaction — two concurrent same-`useSeq` writes conflict, so exactly one commits (no double-spend). | PROVEN-LAB | `AUKORA_MEMORY_BOUNDARY_EVIDENCE` | 2026-06-10 |
 | R5 | A witness verifies a peer head as an append-only `(size, root)` consistency extension and records a signed equivocation finding on a same-size / different-root fork or a failed consistency proof — detection is after-the-fact (record/refuse-only); **live-exercised** across two cloud-LAB nodes. | PROVEN-LAB | `AUKORA_B3_3_WITNESS_FLIP_EVIDENCE` | 2026-06-11 |
 | R6 | **ML-KEM-768 (FIPS 203)** key-establishment + XChaCha20-Poly1305 AEAD provides **confidentiality only** on the witness-response leg — strip-neutral (remove it → the verdict is byte-identical), gates/mints nothing; a channel-capable peer presenting plaintext is refused. | PROVEN-LAB | `AUKORA_B3_4_ML_KEM_CHANNEL_EVIDENCE` | 2026-06-12 |
@@ -24,6 +24,8 @@
 - "Corroborated against vectors" means reproduces published NIST/CT test vectors — **not** an independent cryptographic
   audit. No independent audit of the post-quantum dependency is claimed.
 - "cloud-LAB" ≠ production ≠ airgapped.
+- **HKDF usage is drift-pinned, not externally corroborated.** The channel's HKDF-SHA256 key derivation pins output
+  hashes but lacks RFC 5869 reference vectors; adding them is a named gap.
 
 ## NOT claimed (must never appear in public copy)
 

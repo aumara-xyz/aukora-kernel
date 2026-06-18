@@ -10,6 +10,8 @@
 import { query } from "./_generated/server";
 import { v } from "convex/values";
 import { buildExportEnvelope } from "./aukoraWireFormat";
+import { sha256 } from "@noble/hashes/sha2.js";
+import { bytesToHex, utf8ToBytes } from "@noble/hashes/utils.js";
 
 const NODE_ID = (): string => process.env.AUMA_NODE_ID ?? "aukora-node-a-demo";
 const HEAD_KEY_ID = (): string => process.env.AUMA_HEAD_KEY_ID ?? "demo-key-1";
@@ -35,5 +37,19 @@ export const exportReceiptHeadEnvelope = query({
       prevHash: r.prevHash, chainHash: r.chainHash, threadId: r.threadId, notes: r.notes,
     };
     return buildExportEnvelope({ surface: "receipt-head", headVersion: "v4", head, payload }); // env-v1, bodies ABSENT
+  },
+});
+
+/** `/export-harvest` — a harvest-run summary as a B3.1 env-v1 envelope: trace count + a digest commitment over
+ *  the trace IDs; raw trace content (resource, action bodies) stays local — bodies ABSENT. */
+export const exportHarvestEnvelope = query({
+  args: { runId: v.string() },
+  handler: async (ctx, a): Promise<any> => {
+    const traces = await ctx.db.query("aukora_traces").withIndex("by_run", (q) => q.eq("runId", a.runId)).collect();
+    if (!traces.length) return null;
+    const head = { sourceNodeId: NODE_ID(), headKeyId: HEAD_KEY_ID(), runId: a.runId, count: traces.length };
+    const tracesDigest = bytesToHex(sha256(utf8ToBytes(JSON.stringify(traces.map(t => t.traceId).sort()))));
+    const payload: Record<string, unknown> = { tracesDigest };
+    return buildExportEnvelope({ surface: "export-envelope", headVersion: "env-v1", head, payload });
   },
 });

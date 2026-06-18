@@ -43,6 +43,10 @@ http.route({ path: "/export", method: "GET", handler: gated(WITNESS, async (ctx,
   const chainKey = new URL(req.url).searchParams.get("chainKey") ?? "";
   return json(await ctx.runQuery(api.aukoraWitnessExport.exportReceiptHeadEnvelope, { chainKey })); // B3.1 env-v1, bodies ABSENT
 }) });
+http.route({ path: "/export-harvest", method: "GET", handler: gated(WITNESS, async (ctx, req) => {
+  const runId = new URL(req.url).searchParams.get("runId") ?? "";
+  return json(await ctx.runQuery(api.aukoraWitnessExport.exportHarvestEnvelope, { runId }));
+}) });
 // NOTE: the anonymous POST /seedA route was REMOVED (Gate-6-redux): it minted node_sessions rows with caller-supplied
 // tokens (unbounded-growth DoS) and was the session-seam an attacker chained into the now-internal operator mutations.
 // The node's signing pubkey is published read-only at GET /node-pubkey; session seeding is no longer a public surface.
@@ -167,6 +171,9 @@ http.route({ path: "/import-revocation-view", method: "POST", handler: gated(MES
 // Memory boundary (run on Node A): silicon mirror memory under a carbon root, scoped + receipt-coupled.
 http.route({ path: "/run-memory", method: "POST", handler: gated(DEMO, async (ctx) => {
   return json(await ctx.runMutation(api.memory.runMemory, {}));
+}) });
+http.route({ path: "/audit", method: "GET", handler: gated(DEMO, async (ctx) => {
+  return json({ ok: true, surface: "audit" });
 }) });
 // Brick 6 — AUMLOK proof-of-possession resolver live proof: fires happy + 9 named attacks through the deployed resolver.
 http.route({ path: "/run-pop-crash", method: "POST", handler: gated(DEMO, async (ctx) => {

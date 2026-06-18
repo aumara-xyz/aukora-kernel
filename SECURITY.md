@@ -41,6 +41,13 @@ channel, and the HTTP route surface. It does **not** cover any deployment you bu
 - **Single-key custody.** Authority concentrates in one operator key; there is no built-in N-of-M / threshold custody.
 - **No side-channel / constant-time guarantee**, and **no independent cryptographic audit** of the post-quantum
   dependency. "Corroborated against NIST/CT vectors" means it reproduces published test vectors — not an audit.
+- **Demo-only operator seed.** The PoP resolver defaults to a hardcoded seed (`"77"x32`) when `AUMA_OPERATOR_SEED` is
+  unset; a production deployment MUST set this env var — the default is insecure by design (demo-only).
+- **Demo session resolver.** Operator mutations (issueGrant, revokeGrant, setKillSwitch) route through a plaintext
+  session-token lookup (`sessionResolver.ts`) — the PoP resolver covers the emit path only; the session seam is a
+  demo artifact, not a production auth boundary.
+- **Test-seam env guard.** The channel's `saltOverride` gate uses a runtime `NODE_ENV`/`VITEST` check; a compromised
+  operator who controls env vars could enable it — production should use a build-time dead-code flag.
 
 ## Out of scope (never claimed)
 Anonymity, unlinkability, metadata- or traffic-analysis resistance; consensus, global finality, or a
@@ -49,5 +56,6 @@ public-transparency network; trusted global time; health-data / PHI handling. Se
 ## Reporting a vulnerability
 Please do **not** open public issues for security vulnerabilities. Report privately via
 [GitHub Security Advisories](../../security/advisories/new) (Security tab → "Report a vulnerability"), or email
-**auma@aumara.xyz**. We will acknowledge within 72 hours. Defensive review of your own deployment is encouraged;
-this is a research/engineering artifact and is offered without warranty.
+**auma@aumara.xyz**. We will acknowledge within 72 hours and target a 90-day coordinated disclosure window from
+acknowledgment to public advisory. Defensive review of your own deployment is encouraged; this is a
+research/engineering artifact and is offered without warranty.
