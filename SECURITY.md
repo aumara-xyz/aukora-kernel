@@ -49,5 +49,5 @@ public-transparency network; trusted global time; health-data / PHI handling. Se
 ## Reporting a vulnerability
 Please do **not** open public issues for security vulnerabilities. Report privately via
 [GitHub Security Advisories](../../security/advisories/new) (Security tab → "Report a vulnerability"), or email
-**security@aumara.xyz**. We will acknowledge within 72 hours. Defensive review of your own deployment is encouraged;
+**auma@aumara.xyz**. We will acknowledge within 72 hours. Defensive review of your own deployment is encouraged;
 this is a research/engineering artifact and is offered without warranty.

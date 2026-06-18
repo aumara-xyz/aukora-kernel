@@ -35,5 +35,5 @@ contribute the code under AGPL-3.0-or-later.
 ## Security
 
 Do **not** open public issues for security vulnerabilities. Report privately via
-[GitHub Security Advisories](../../security/advisories/new) or email **security@aumara.xyz**.
+[GitHub Security Advisories](../../security/advisories/new) or email **auma@aumara.xyz**.
 See [`SECURITY.md`](SECURITY.md) for the full policy.
