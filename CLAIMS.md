@@ -16,6 +16,7 @@
 | R9 | `initNode` stamps a **deterministic, byte-identical** node-identity stamp over canonical config (re-derivable, idempotent, immutable), persisting only the public-key fingerprint (the signing seed is never persisted) and refusing the production tier. | PROVEN-LAB | `AUKORA_NODE_FACTORY_EVIDENCE` | 2026-06-11 |
 | R10 | A clean deploy publishes **no live HTTP surface** — every route is wrapped in a flag gate returning `404` before any handler work, with cross-node and demo routes default-off; a disabled route mutates no state. | PROVEN-LAB | `AUKORA_ROUTE_GUARD_EVIDENCE` | 2026-06-11 |
 | R11 | **AUMLOK identity root** — a user-owned root proves possession of its own key in a **self-sovereign ceremony** (no operator gate; **no phrase/seed/private key stored server-side**; `noRecovery=true`, `phraseTransitsServer=false`), is tracked in a **root-key registry** (genesis/rotate/revoke, receipted on the `id:{rootId}` chain), and issues **doubly-signed delegation manifests** (root sig + subject PoP) binding ring/action/resource/window/uses through a **memory-boundary seam**; **identity justifies authority but grants no effect directly** — every identity-authorized effect still flows through the single `manifest→grant→token→receipt` chokepoint (R3), and a foreign root is honored only via an explicit immutable pin (**no TOFU**). | PROVEN-LAB | `AUMLOK_MINIMAL_SPEC` / `AUKORA_BRICK6_AUMLOK_POP_RESOLVER` | 2026-06-11 |
+| R12 | **Artifact custody receipts** — arbitrary payload bytes can be hashed into a domain-separated `AUKORA-ARTIFACT/1` receipt, chained in order, committed through the same RFC 6962 history root, and signed with the V4 ML-DSA-65 chain head; verification fails closed on one-byte content tamper, metadata rewrite, row reorder, truncation, wrong signer, or action/artifact type confusion. Artifact custody is evidence-only and grants zero effect authority. | PROVEN-LAB | `tests/artifactCustody.test.ts` / `convex/aukoraArtifactCustody.ts` | 2026-06-24 |
 
 ## Precision notes (load-bearing)
 
@@ -36,4 +37,5 @@ or decentralization**; **trusted-global-time / temporal-oracle**; production or 
 "self-sovereign"; global finality, consensus, public transparency, or a witness *network*; recovery or duress-safety;
 privacy / anonymity / unlinkability / metadata- or traffic-analysis resistance; forward secrecy (static-key channel); an
 unguessable phrase; constant-time / side-channel resistance; any independent audit status for the post-quantum
-dependency; nor any anthropomorphic / "living-system" framing.
+dependency; token, coin, financial finality, or commodity/asset status for artifact receipts; nor any anthropomorphic /
+"living-system" framing.

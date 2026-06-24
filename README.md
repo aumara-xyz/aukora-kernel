@@ -22,6 +22,23 @@ The big idea is that AI agents are moving from chat boxes into real systems. Auk
 gives agents hands, but keeps law, identity, proof, and rollback outside the model. That means organizations can use
 stronger AI without blindly trusting it.
 
+## Verifiable artifacts: documents, media, exports, and code
+
+Aukora is not only for agent actions. The same kernel spine can receipt **any digital artifact**: a PDF, contract,
+dataset export, source file, model output, research note, media file, or database snapshot. The kernel hashes the
+artifact bytes, binds the hash to typed metadata, chains the receipt into an append-only history, and signs the head
+with ML-DSA-65. Change one byte of the artifact, rewrite its metadata, swap receipt order, truncate history, or verify
+with the wrong key — the verifier fails closed.
+
+That turns the kernel into a local-first trust layer for the post-AI web: not a cryptocurrency, not a token, and not a
+claim that the content is "true," but proof that a specific artifact existed in a specific state under a specific
+custody chain. Agents can write, humans can approve, organizations can audit, and peers can re-check the evidence
+without trusting model prose.
+
+The first headless implementation is [`convex/aukoraArtifactCustody.ts`](convex/aukoraArtifactCustody.ts), covered by
+[`tests/artifactCustody.test.ts`](tests/artifactCustody.test.ts). See
+[`docs/AUKORA_ARTIFACT_CUSTODY.md`](docs/AUKORA_ARTIFACT_CUSTODY.md) for the exact flow and threat model.
+
 ## Who benefits
 
 1. **Finance, trading, and banking** — agents can help with code, research, reports, and infrastructure without being
@@ -51,6 +68,8 @@ stronger AI without blindly trusting it.
   format — the algorithm is bound into the signed bytes (downgrade-resistant), with no fallback mode.
 - **Receipts every effect** into an **RFC 6962 append-only Merkle history root** committed inside the signed head, which
   the audit path recomputes from the actual receipts and re-verifies.
+- **Receipts arbitrary artifacts** into the same evidence spine: hash the bytes, bind typed metadata, sign the chain
+  head, and fail closed on one-byte content tamper, metadata rewrite, row reorder, truncation, or wrong signer.
 - **Conserves authority**: a live effect is authorized only through `manifest → grant → token → receipt`, flowing through
   one shared consume chokepoint with an OCC use-counter — no second authority path, no double-spend.
 - **Verifies peers**: a witness checks a peer's history head as an append-only `(size, root)` consistency extension and

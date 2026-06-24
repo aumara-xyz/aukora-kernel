@@ -21,6 +21,9 @@
 ## Trust & identity
 - **Tamper-evident, not tamper-proof.** The system *detects* tampering after the fact via receipts; it does not
   prevent an effect a compromised operator already authorized.
+- **Artifact custody proves byte identity, not truth.** A verified artifact receipt proves the presented bytes and
+  metadata match a signed custody chain. It does not prove the document is accurate, lawful, original, globally
+  accepted, or the only copy in existence.
 - **No execution proof.** Nothing here proves the running process is the audited code (see `SECURITY.md`).
 - **No recovery, single-key custody.** Identity is operator-custodied with no built-in recovery and no N-of-M /
   threshold custody. Loss of the seed is final.
