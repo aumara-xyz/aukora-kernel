@@ -12,6 +12,8 @@ workflows only through a human- or organization-bound authority path. Every mean
 post-quantum receipt proving who authorized it, what was attempted, what state it touched, and whether the evidence still
 verifies later.
 
+![How Aukora Kernel Works](docs/assets/aukora-kernel-overview.png)
+
 ## Why it matters
 
 Aukora is a governance layer for AI agents. It lets an AI agent do useful work — write code, edit files, search memory,
