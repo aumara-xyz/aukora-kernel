@@ -2,10 +2,15 @@
 
 > **A model proposes. The kernel gates and receipts every effect before it becomes real. Other nodes verify.**
 
-The Aukora kernel is the authorization-and-receipt core of a personal node: every effect an agent realizes is
-gated by a signed capability, mediated through a single consume chokepoint, and cryptographically receipted into an
-append-only history that any peer can re-verify. The one law it enforces — *authority is minted only by signature and
-spent at most once* — holds across nodes, partitions, and format versions.
+The Aukora kernel is the authorization-and-receipt core of a personal node: every effect an agent realizes is gated by a
+signed capability, mediated through a single consume chokepoint, and cryptographically receipted into an append-only
+history that any peer can re-verify. The one law it enforces — *authority is minted only by signature and spent at most
+once* — holds across nodes, partitions, and format versions.
+
+In plain English: Aukora is a trust layer for the AI era. It lets an AI agent touch software, documents, data, tools, or
+workflows only through a human- or organization-bound authority path. Every meaningful effect can leave a signed,
+post-quantum receipt proving who authorized it, what was attempted, what state it touched, and whether the evidence still
+verifies later.
 
 ## Why it matters
 
@@ -21,6 +26,26 @@ system remember what happened and explain why something was allowed, blocked, or
 The big idea is that AI agents are moving from chat boxes into real systems. Aukora is the control plane above them: it
 gives agents hands, but keeps law, identity, proof, and rollback outside the model. That means organizations can use
 stronger AI without blindly trusting it.
+
+## Post-chain authority, not another blockchain
+
+Blockchain proves that transactions were signed, ordered, and finalized by a network. Aukora is aimed at a different
+problem: **authorized effects**. In an AI-native world, the key question is not only "did this key sign a transaction?"
+It is: *who authorized this intelligence to act, what was it allowed to touch, what state changed, what evidence proves
+that chain of custody, and can another node verify it without trusting the model?*
+
+Aukora's primitive is a signed receipt graph for governed state change. A database can index the current view; the
+receipts are the portable evidence. Convex, filesystems, IDEs, cloud services, and future node networks can all be
+implementation surfaces, but the trust object is the content-addressed, signed, independently verifiable receipt chain.
+
+This is why Aukora is **post-chain** infrastructure: cryptographic trust for AI-mediated state change without forcing
+every meaningful effect onto a global blockchain. Blockchains may still be useful as optional witnesses or anchors.
+Aukora does not require a token, coin, fee market, global consensus ledger, or public chain to prove that a governed
+effect or artifact verifies.
+
+See [`docs/AUKORA_POST_CHAIN_AUTHORITY_GRAPH.md`](docs/AUKORA_POST_CHAIN_AUTHORITY_GRAPH.md) for the larger architecture:
+causal authority graphs, policy-bound execution, portable proof bundles, witness meshes, state commitments, rights and
+capabilities, and why this can generalize beyond agents into documents, media, workflows, and machine-to-machine trust.
 
 ## Verifiable artifacts: documents, media, exports, and code
 

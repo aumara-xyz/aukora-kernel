@@ -43,6 +43,13 @@ not a network); no trusted global time / temporal oracle; no anonymity, unlinkab
 recovery or duress-safety; **no health-data / PHI handling** and no HIPAA posture of any kind; no agent intelligence,
 competence, or autonomy claim; no decentralization or autonomous-swarm claim.
 
+## Post-chain framing
+The repo uses "post-chain" to describe an architecture direction: signed authority and custody receipts can verify
+AI-mediated effects and artifacts without requiring a global blockchain. This does **not** mean Aukora is a
+cryptocurrency, token, asset, commodity, payment rail, consensus network, global settlement layer, public finality
+system, or replacement for every blockchain use case. Optional public-chain anchoring may be useful later, but it is not
+required by the kernel and is not implemented here.
+
 ## Verification posture
 Detection over prevention is a design choice, not an oversight: the kernel's job is to make every authorized effect
 **accountable and re-verifiable by an independent peer**, not to be unbreakable. If you need prevention guarantees
