@@ -7,6 +7,44 @@ gated by a signed capability, mediated through a single consume chokepoint, and 
 append-only history that any peer can re-verify. The one law it enforces — *authority is minted only by signature and
 spent at most once* — holds across nodes, partitions, and format versions.
 
+## Why it matters
+
+Aukora is a governance layer for AI agents. It lets an AI agent do useful work — write code, edit files, search memory,
+propose actions, or operate through an adapter — without letting the model own authority. The agent can propose or
+attempt an effect; Aukora decides whether that effect is allowed, blocked, recorded, or reversible.
+
+The broader stack combines identity, permissions, receipts, memory, and adapters. A human or node binds authority through
+an identity ceremony, agent engines connect through adapters, risky effects pause, safe effects can proceed, and every
+important move can be recorded with cryptographic receipts. Memory, graph, glyph, and topology layers can then help the
+system remember what happened and explain why something was allowed, blocked, or related to prior events.
+
+The big idea is that AI agents are moving from chat boxes into real systems. Aukora is the control plane above them: it
+gives agents hands, but keeps law, identity, proof, and rollback outside the model. That means organizations can use
+stronger AI without blindly trusting it.
+
+## Who benefits
+
+1. **Finance, trading, and banking** — agents can help with code, research, reports, and infrastructure without being
+   allowed to leak keys, alter trading systems, or bypass approvals.
+2. **Healthcare and biotech** — AI can assist with records, research, workflows, and diagnostics support while keeping
+   patient data, approvals, and audit trails governed.
+3. **Defense and government** — agents can operate around sensitive systems with strict identity, permission, memory, and
+   receipt controls instead of uncontrolled automation.
+4. **Software and cloud infrastructure** — coding agents can modify systems, while risky edits, secrets, deletes,
+   deploys, and production changes can be blocked or separately approved.
+5. **Legal and compliance** — AI can draft, review, and organize sensitive material while preserving evidence trails,
+   permissions, source memory, and reversibility.
+6. **Insurance and risk management** — agents can analyze claims, contracts, and risk data while every action remains
+   auditable and policy-bound.
+7. **Energy and critical infrastructure** — AI can help manage complex systems without being able to silently alter
+   dangerous controls or operational configs.
+8. **Manufacturing, robotics, and supply chain** — agentic systems can coordinate machines, workflows, and maintenance
+   while Aukora governs what they are allowed to change.
+9. **Telecommunications and network operations** — AI can help monitor and repair networks while protecting credentials,
+   routing configs, and critical infrastructure changes.
+10. **Research, education, and enterprise knowledge systems** — AI can build knowledge systems, labs, tutors, and
+    research agents with durable memory, source-backed reasoning, and transparent provenance.
+
 ## What it does
 
 - **Signs every effect** with post-quantum **ML-DSA-65** (FIPS 204) under a versioned, purpose-domain-bound signed-head
