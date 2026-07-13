@@ -12,7 +12,7 @@ import { describe, it, expect } from "vitest";
 import schema from "../convex/schema";
 import { api, internal } from "../convex/_generated/api";
 import { mlDsa65PublicKeyFromSeed } from "../convex/aukoraPqcSigner";
-import { buildPoPEnvelope, POP_FRESHNESS_MS } from "../convex/popResolver";
+import { buildPoPEnvelope, POP_FRESHNESS_MS, requireDemoOperatorSeed } from "../convex/popResolver";
 
 const modules = import.meta.glob("../convex/**/*.*s");
 const FOUNDER_SEED = "dd".repeat(32);
@@ -33,6 +33,19 @@ const mkEnv = (seed: string, cav: any, over: any = {}) =>
   buildPoPEnvelope(seed, cav, { methodId: "popIssueGrant", actualArgs: { grant: "echo" }, timestamp: Date.now(), nonce: `n-${cav.capId}`, ...over });
 
 describe("Brick 6 — AUMLOK proof-of-possession resolver (demo runnable suite)", () => {
+  it("operator seed resolution fails closed when unset or malformed", () => {
+    const previous = process.env.AUMA_OPERATOR_SEED;
+    try {
+      delete process.env.AUMA_OPERATOR_SEED;
+      expect(() => requireDemoOperatorSeed()).toThrow("pop_operator_seed_unconfigured");
+      process.env.AUMA_OPERATOR_SEED = "not-a-seed";
+      expect(() => requireDemoOperatorSeed()).toThrow("pop_operator_seed_invalid");
+    } finally {
+      if (previous === undefined) delete process.env.AUMA_OPERATOR_SEED;
+      else process.env.AUMA_OPERATOR_SEED = previous;
+    }
+  });
+
   it("HAPPY: valid capSig + reqSig -> resolves; gated effect runs", async () => {
     const s = await setup("h");
     const r: any = await call(s.t, await mkEnv(FOUNDER_SEED, s.cav("cap-h")));

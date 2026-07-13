@@ -1,0 +1,186 @@
+{
+  "schema": "aukora-convex-public-surface-v1",
+  "note": "Inventory only; inclusion is not a security approval.",
+  "publicFunctions": [
+    {
+      "file": "aukoraNodeFactory.ts",
+      "export": "initNode",
+      "kind": "mutation"
+    },
+    {
+      "file": "aukoraNodeFactory.ts",
+      "export": "nodeIdentity",
+      "kind": "query"
+    },
+    {
+      "file": "aukoraReceipts.ts",
+      "export": "verifyReceiptChain",
+      "kind": "query"
+    },
+    {
+      "file": "aukoraReceipts.ts",
+      "export": "verifyReceiptChainPage",
+      "kind": "query"
+    },
+    {
+      "file": "aukoraRuntime.ts",
+      "export": "getRuntimeState",
+      "kind": "query"
+    },
+    {
+      "file": "aukoraWitness.ts",
+      "export": "channelLiveness",
+      "kind": "query"
+    },
+    {
+      "file": "aukoraWitness.ts",
+      "export": "channelPin",
+      "kind": "query"
+    },
+    {
+      "file": "aukoraWitness.ts",
+      "export": "channelSelfEpoch",
+      "kind": "query"
+    },
+    {
+      "file": "aukoraWitness.ts",
+      "export": "peerConsequences",
+      "kind": "query"
+    },
+    {
+      "file": "aukoraWitness.ts",
+      "export": "witnessFindings",
+      "kind": "query"
+    },
+    {
+      "file": "aukoraWitness.ts",
+      "export": "witnessHwm",
+      "kind": "query"
+    },
+    {
+      "file": "aukoraWitness.ts",
+      "export": "witnessLiveness",
+      "kind": "query"
+    },
+    {
+      "file": "aukoraWitnessExport.ts",
+      "export": "exportHarvestEnvelope",
+      "kind": "query"
+    },
+    {
+      "file": "aukoraWitnessExport.ts",
+      "export": "exportReceiptHeadEnvelope",
+      "kind": "query"
+    },
+    {
+      "file": "aumlokCeremony.ts",
+      "export": "aumlokCeremonyMint",
+      "kind": "mutation"
+    },
+    {
+      "file": "aumlokManifests.ts",
+      "export": "aumlokManifestConsume",
+      "kind": "mutation"
+    },
+    {
+      "file": "aumlokManifests.ts",
+      "export": "aumlokManifestResolve",
+      "kind": "query"
+    },
+    {
+      "file": "aumlokManifests.ts",
+      "export": "aumlokManifestSelfRevoke",
+      "kind": "mutation"
+    },
+    {
+      "file": "aumlokManifests.ts",
+      "export": "aumlokMintManifest",
+      "kind": "mutation"
+    },
+    {
+      "file": "aumlokManifests.ts",
+      "export": "aumlokRevokeManifest",
+      "kind": "mutation"
+    },
+    {
+      "file": "aumlokMemory.ts",
+      "export": "aumlokMemoryRecall",
+      "kind": "query"
+    },
+    {
+      "file": "aumlokMemory.ts",
+      "export": "aumlokMemoryWrite",
+      "kind": "mutation"
+    },
+    {
+      "file": "aumlokRootRegistry.ts",
+      "export": "aumlokGenesisMint",
+      "kind": "mutation"
+    },
+    {
+      "file": "aumlokRootRegistry.ts",
+      "export": "aumlokRevokeRoot",
+      "kind": "mutation"
+    },
+    {
+      "file": "aumlokRootRegistry.ts",
+      "export": "aumlokRotateRoot",
+      "kind": "mutation"
+    },
+    {
+      "file": "codeAttestation.ts",
+      "export": "runCodeAttestation",
+      "kind": "action"
+    },
+    {
+      "file": "memory.ts",
+      "export": "runMemory",
+      "kind": "mutation"
+    },
+    {
+      "file": "nodeA.ts",
+      "export": "emit",
+      "kind": "mutation"
+    },
+    {
+      "file": "nodeA.ts",
+      "export": "exportEnvelope",
+      "kind": "query"
+    },
+    {
+      "file": "nodeA.ts",
+      "export": "revoke",
+      "kind": "mutation"
+    },
+    {
+      "file": "nodeA.ts",
+      "export": "runCapability",
+      "kind": "mutation"
+    },
+    {
+      "file": "nodeB.ts",
+      "export": "pullAndImport",
+      "kind": "action"
+    },
+    {
+      "file": "nodeB.ts",
+      "export": "pullAndRevoke",
+      "kind": "action"
+    },
+    {
+      "file": "nodeB.ts",
+      "export": "runDemo",
+      "kind": "action"
+    },
+    {
+      "file": "nodeB.ts",
+      "export": "runHandshake",
+      "kind": "action"
+    },
+    {
+      "file": "popResolver.ts",
+      "export": "popGatedAct",
+      "kind": "mutation"
+    }
+  ]
+}

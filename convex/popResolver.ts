@@ -18,7 +18,7 @@
  * enclave, swapped behind this identical payload/caveat/nonce contract). Deferred to prod: receipt co-signing, key
  * custody, founder_key_registry write authority. See docs/AUKORA_BRICK6_AUMLOK_POP_RESOLVER.md.
  */
-import { mutation, internalMutation, action } from "./_generated/server";
+import { mutation, internalAction, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { api, internal } from "./_generated/api";
 import { stableStringify, sha256Hex } from "./aukoraCore";
@@ -27,9 +27,15 @@ import { mlDsa65PublicKeyFromSeed, isPqcPublicKeyHex } from "./aukoraPqcSigner";
 import { consumeRateLimit } from "./aukoraRateLimit";
 
 export const POP_FRESHNESS_MS = 60_000; // operator-action freshness window
-// Demo operator capability seed (PoP). The PRIVATE seed is a disposable demo constant the orchestrator signs with; only
-// the PUBLIC key is pinned on the node (admin-provisioned via seedOperatorKey). Prod = AUMLOK device key, same contract.
-export const DEMO_OPERATOR_SEED = process.env.AUMA_OPERATOR_SEED ?? "77".repeat(32);
+// Demo operator capability seed (PoP). There is deliberately NO built-in fallback:
+// an unset or malformed seed disables provisioning/signing instead of silently
+// selecting public test material. Tests inject an explicit throwaway value.
+export function requireDemoOperatorSeed(): string {
+  const seed = process.env.AUMA_OPERATOR_SEED;
+  if (!seed) throw new Error("pop_operator_seed_unconfigured");
+  if (!/^[0-9a-f]{64}$/.test(seed)) throw new Error("pop_operator_seed_invalid");
+  return seed;
+}
 const POP_RATE = () => ({ capacity: Number(process.env.AUKORA_POP_RATE_CAP ?? 30), windowMs: 60_000 });
 
 // ── Canonical serializers (domain-prefixed + version byte; byte-identical across signer/verifier/kit) ──
@@ -123,14 +129,13 @@ export const seedFounderKey = internalMutation({
   },
 });
 
-// Operator-key provisioning. SAFE to expose because it takes NO caller-supplied key — it DERIVES the operator public key
-// from the server-side seed constant and pins it idempotently; an active key is IMMUTABLE (rotation via rotateFounderKey).
-// So the original hijack (caller POSTs their own pubkey) is structurally impossible: a caller can only ever (re)pin the
-// one legitimate key. Demo: the operator seed is a known constant; prod: the node holds only the pubkey, provisioned OOB.
-export const seedOperatorKey = mutation({
+// Internal operator-key provisioning. It takes no caller-supplied key, requires
+// an explicit configured demo seed, derives the public key, and pins it
+// idempotently. An active key remains immutable; rotation uses rotateFounderKey.
+export const seedOperatorKey = internalMutation({
   args: {},
   handler: async (ctx): Promise<any> => {
-    const publicKey = await mlDsa65PublicKeyFromSeed(DEMO_OPERATOR_SEED);
+    const publicKey = await mlDsa65PublicKeyFromSeed(requireDemoOperatorSeed());
     const existing = await ctx.db.query("founder_key_registry").withIndex("by_founder_kid", (q: any) => q.eq("founderUserId", "aukora.operator").eq("keyId", "op-1")).first();
     if (existing) { if (existing.status === "active" && existing.publicKey !== publicKey) throw new Error("pop_key_immutable_active"); await ctx.db.patch(existing._id, { publicKey, status: "active" }); return { updated: true }; }
     await ctx.db.insert("founder_key_registry", { founderUserId: "aukora.operator", keyId: "op-1", publicKey, status: "active", pinnedAt: Date.now() });
@@ -159,7 +164,7 @@ export const rotateFounderKey = internalMutation({
 // ── Live proof: fire the named attacks through the deployed resolver (DEMO founder key held in this action). ──
 // DEMO-ONLY disposable founder seed (env-overridable for hygiene; NEVER a real key). Prod = AUMLOK P-256 enclave key.
 const DEMO_FOUNDER_SEED = process.env.DEMO_FOUNDER_SEED ?? "dd".repeat(32);
-export const runPopCrash = action({
+export const runPopCrash = internalAction({
   args: {},
   handler: async (ctx): Promise<any> => {
     const run = crypto.randomUUID().slice(0, 8);
@@ -200,7 +205,7 @@ export const runPopCrash = action({
 
 // Brick 7 — live KEY ROTATION lifecycle proof (DEMO disposable seeds).
 const ROT_SEED_OLD = "11".repeat(32), ROT_SEED_NEW = "22".repeat(32);
-export const runKeyRotation = action({
+export const runKeyRotation = internalAction({
   args: {},
   handler: async (ctx): Promise<any> => {
     const run = crypto.randomUUID().slice(0, 8);

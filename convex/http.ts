@@ -58,11 +58,11 @@ http.route({ path: "/revoke", method: "POST", handler: gated(DEMO, async (ctx, r
   const b = await req.json();
   return json(await ctx.runMutation(api.nodeA.revoke, { env: b.env, delegationId: b.delegationId, chainKey: b.chainKey }));
 }) });
-// Provision the operator trust root. SAFE: takes NO caller-supplied key — the server DERIVES + pins the one legitimate
-// operator pubkey, idempotently, and an active key is IMMUTABLE. So this cannot be used to hijack the gate (unlike the
-// removed caller-supplied-pubkey variant). See CORE_POP_WIRING_EVIDENCE.md.
+// Provision the operator trust root through an internal mutation. The route is
+// demo-flag-gated and fails closed unless AUMA_OPERATOR_SEED is explicitly
+// configured; no caller-supplied key is accepted.
 http.route({ path: "/provision-operator", method: "POST", handler: gated(DEMO, async (ctx) => {
-  return json(await ctx.runMutation(api.popResolver.seedOperatorKey, {}));
+  return json(await ctx.runMutation(internal.popResolver.seedOperatorKey, {}));
 }) });
 
 // ── Orchestrators ──
@@ -82,7 +82,7 @@ http.route({ path: "/run-capability", method: "POST", handler: gated(DEMO, async
 // ── Ceremony rehearsal (carbon -> silicon identity) ──
 // Node A: run the full ceremony rehearsal.
 http.route({ path: "/run-ceremony", method: "POST", handler: gated(DEMO, async (ctx) => {
-  return json(await ctx.runAction(api.ceremony.runCeremony, {}));
+  return json(await ctx.runAction(internal.ceremony.runCeremony, {}));
 }) });
 // Read-only: a node publishes its OWN signing pubkey (non-secret) so a peer can PULL + pin it from a configured URL.
 // Replaces the removed anonymous POST /pin (caller-supplied key) — there is no public way to SET another node's key.
@@ -177,11 +177,11 @@ http.route({ path: "/audit", method: "GET", handler: gated(DEMO, async (ctx) => 
 }) });
 // Brick 6 — AUMLOK proof-of-possession resolver live proof: fires happy + 9 named attacks through the deployed resolver.
 http.route({ path: "/run-pop-crash", method: "POST", handler: gated(DEMO, async (ctx) => {
-  return json(await ctx.runAction(api.popResolver.runPopCrash, {}));
+  return json(await ctx.runAction(internal.popResolver.runPopCrash, {}));
 }) });
 // Brick 7 — key rotation/versioning lifecycle proof (old active -> rotate -> new active, old retired grandfathered, revoked dead).
 http.route({ path: "/run-key-rotation", method: "POST", handler: gated(DEMO, async (ctx) => {
-  return json(await ctx.runAction(api.popResolver.runKeyRotation, {}));
+  return json(await ctx.runAction(internal.popResolver.runKeyRotation, {}));
 }) });
 // Code attestation — release-manifest provenance attack matrix (body may pass {gitSHA, bundleHash} from compute-bundle-hash.sh).
 http.route({ path: "/run-code-attestation", method: "POST", handler: gated(DEMO, async (ctx, req) => {

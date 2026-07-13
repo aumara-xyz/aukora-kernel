@@ -13,7 +13,7 @@ import { describe, it, expect, afterEach } from "vitest";
 import schema from "../convex/schema";
 import { api, internal } from "../convex/_generated/api";
 import { mlDsa65PublicKeyFromSeed, pqcSign } from "../convex/aukoraPqcSigner";
-import { buildPoPEnvelope, DEMO_OPERATOR_SEED } from "../convex/popResolver";
+import { buildPoPEnvelope, requireDemoOperatorSeed } from "../convex/popResolver";
 import { signChainHeadV3 } from "../convex/aukoraSignedHead";
 import { manifestHash, manifestRootHead, manifestPopHead, consumeHead } from "../convex/aumlokManifests";
 import { serializeRevocationViewV1 } from "../convex/nodeImport";
@@ -23,6 +23,7 @@ const modules = import.meta.glob("../convex/**/*.*s");
 const NODE = "aukora-node-a-demo";                       // THIS node (vitest pins AUMA_NODE_ID)
 const FR_SEED = "c1".repeat(32), SUBJ_SEED = "d2".repeat(32);
 const SRC = "peerB", FROOT = "root.peerB", RKID = "rk-1", SUBJECT = "agent-echo", MFT = "mft-xg";
+const operatorSeed = () => requireDemoOperatorSeed();
 
 async function buildCrossManifest(over: any = {}) {
   const frPub = await mlDsa65PublicKeyFromSeed(FR_SEED), subjPub = await mlDsa65PublicKeyFromSeed(SUBJ_SEED), now = Date.now();
@@ -37,7 +38,7 @@ async function recordView(t: any, rootId: string, revoked: string[], epoch = 1) 
 async function promoteEnv(manifest: any) {
   const now = Date.now();
   const cav = { v: 1, capId: `cap-pr-${manifest.manifestId}-${Math.random().toString(36).slice(2)}`, founderUserId: "aukora.operator", founderKeyId: "op-1", nodeId: NODE, methods: ["promoteCrossGrant"], ring: "local-write", action: "operator", resource: "node:operator", principalId: "demo.operator", roles: ["operator"], notBefore: now - 2000, expiresAt: now + 60_000, maxUses: 1 };
-  return buildPoPEnvelope(DEMO_OPERATOR_SEED, cav, { methodId: "promoteCrossGrant", actualArgs: { sourceNodeId: SRC, manifestId: manifest.manifestId, manifestHash: manifest.manifestHash }, timestamp: now, nonce: `n-${cav.capId}` });
+  return buildPoPEnvelope(operatorSeed(), cav, { methodId: "promoteCrossGrant", actualArgs: { sourceNodeId: SRC, manifestId: manifest.manifestId, manifestHash: manifest.manifestHash }, timestamp: now, nonce: `n-${cav.capId}` });
 }
 const promote = async (t: any, manifest: any) => t.mutation(internal.nodeImport.promoteCrossGrant, { env: { manifest, sourceNodeId: SRC }, promotionEnv: await promoteEnv(manifest) });
 const resolveX = (t: any, manifestId = MFT, root = FROOT) => t.query(api.aumlokManifests.aumlokManifestResolve, { manifestId, ring: "local-write", action: "memory.write", resource: `mem:${root}`, intentCodec: "json_action_v1" });
@@ -48,7 +49,7 @@ async function setup(over: any = {}) {
   const t = convexTest(schema, modules);
   const { frPub, manifest } = await buildCrossManifest(over);
   if (!over.skipPin) await t.mutation(internal.nodeB.pinTrust, { sourceNodeId: SRC, headKeyId: `root:${manifest.rootKeyId}`, publicKey: frPub, rootId: manifest.rootId });
-  await t.mutation(internal.popResolver.seedFounderKey, { founderUserId: "aukora.operator", keyId: "op-1", publicKey: await mlDsa65PublicKeyFromSeed(DEMO_OPERATOR_SEED) });
+  await t.mutation(internal.popResolver.seedFounderKey, { founderUserId: "aukora.operator", keyId: "op-1", publicKey: await mlDsa65PublicKeyFromSeed(operatorSeed()) });
   if (!over.skipView) await recordView(t, manifest.rootId, over.revoked ?? []);
   return { t, frPub, manifest };
 }

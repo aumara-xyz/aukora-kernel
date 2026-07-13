@@ -9,11 +9,11 @@
   two-node run). "cloud-LAB" ≠ production ≠ airgapped. No uptime, scale, or operational claim is made.
 
 ## Cryptography
-- **Corroboration, not audit.** The signing spine reproduces NIST ACVP pure-mode vectors; the Merkle history
+- **Corroboration, not audit.** The ML-DSA-65 verifier agrees with a pinned NIST ACVP FIPS 204 pass/refuse subset; deterministic key-generation/signing fixtures remain implementation-regression tests. The Merkle history
   reproduces Certificate Transparency reference vectors. This is **not** an independent cryptographic audit, and no
   audit status is claimed for the post-quantum dependency.
-- **"ACVP" applies to the ML-DSA-65 signing spine only.** The ML-KEM-768 channel is **KAT-pinned, not yet full
-  FIPS-203 ACVP-conformant** — do not read "ACVP" onto the channel.
+- **"ACVP" applies only to the ML-DSA-65 verification test above.** The ML-KEM-768 channel has generated regression
+  fixtures and is **not FIPS-203 ACVP-conformant** — do not read "ACVP" onto the channel.
 - **No forward secrecy** (the channel uses static-key establishment), **no metadata/traffic-analysis resistance**, and
   **no constant-time / side-channel guarantee**.
 - **Not "quantum-secure."** Post-quantum *primitives* are used; that is not a blanket system-level security claim.

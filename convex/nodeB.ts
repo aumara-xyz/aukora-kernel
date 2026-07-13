@@ -8,7 +8,7 @@ import { buildReceiptChainHash } from "./aukoraCore";
 import { verifyChainHeadV3, verifyChainHeadV4, SIGNED_HEAD_V4_ALG, type ChainHeadFields } from "./aukoraSignedHead";
 import { isPqcPublicKeyHex } from "./aukoraPqcSigner";
 import { receiptHistoryRootHex } from "./aukoraMerkleLog";
-import { buildPoPEnvelope, DEMO_OPERATOR_SEED, resolvePoPSession } from "./popResolver";
+import { buildPoPEnvelope, requireDemoOperatorSeed, resolvePoPSession } from "./popResolver";
 
 const THIS_NODE_ID = (): string => process.env.AUMA_NODE_ID ?? "aukora-node-a-demo";
 
@@ -20,7 +20,7 @@ const envelopeValidator = v.any(); // envelope is cross-node JSON; validated str
 const opEnv = async (nodeId: string, methodId: string, actualArgs: any, principalId: string, capId: string) => {
   const now = Date.now();
   const cav = { v: 1, capId, founderUserId: "aukora.operator", founderKeyId: "op-1", nodeId, methods: ["emit", "revoke", "pinTrust", "promoteCrossGrant"], ring: "local-write", action: actualArgs.action ?? "operator", resource: actualArgs.resource ?? "node:operator", principalId, roles: ["operator"], notBefore: now - 2000, expiresAt: now + 60_000, maxUses: 1 };
-  return await buildPoPEnvelope(DEMO_OPERATOR_SEED, cav, { methodId, actualArgs, timestamp: now, nonce: `n-${capId}-${crypto.randomUUID().slice(0, 8)}` });
+  return await buildPoPEnvelope(requireDemoOperatorSeed(), cav, { methodId, actualArgs, timestamp: now, nonce: `n-${capId}-${crypto.randomUUID().slice(0, 8)}` });
 };
 
 // Node B: ONE atomic importer over the REAL node tables + receipt/head tables. Every refusal returns BEFORE any write.

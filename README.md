@@ -2,10 +2,27 @@
 
 > **A model proposes. The kernel gates and receipts every effect before it becomes real. Other nodes verify.**
 
-The Aukora kernel is the authorization-and-receipt core of a personal node: every effect an agent realizes is gated by a
-signed capability, mediated through a single consume chokepoint, and cryptographically receipted into an append-only
-history that any peer can re-verify. The one law it enforces — *authority is minted only by signature and spent at most
-once* — holds across nodes, partitions, and format versions.
+## Repository status
+
+This repository now has two deliberately separate layers:
+
+- `packages/kernel` is the portable `@aukora/kernel` verifier/reducer. It has
+  no Convex, filesystem, network, environment, ambient-clock, custody, signing,
+  transport, or live-execution capability.
+- `convex` is the broader PROVEN-LAB reference application. It demonstrates
+  persistence, custody experiments, witness/transport lanes, and adapter
+  behavior; those capabilities are not part of the portable package contract.
+
+Start with [the five-minute quickstart](docs/QUICKSTART.md), then inspect the
+[exact package boundary](docs/KERNEL_V0_BOUNDARY.md) and frozen
+[`decide(...)` vectors](packages/kernel/conformance/).
+
+The Aukora kernel is the authorization-and-receipt core of a personal node. The
+portable package deterministically decides, advances replay state, and drafts
+evidence; it never signs, persists, or executes. A conforming adapter must
+atomically persist an allowed consumption before executing an effect. Together,
+that creates one reviewable law: authority is verified under a declared profile
+and a consumption is accepted at most once.
 
 In plain English: Aukora is a trust layer for the AI era. It lets an AI agent touch software, documents, data, tools, or
 workflows only through a human- or organization-bound authority path. Every meaningful effect can leave a signed,
@@ -91,8 +108,10 @@ The first headless implementation is [`convex/aukoraArtifactCustody.ts`](convex/
 
 ## What it does
 
-- **Signs every effect** with post-quantum **ML-DSA-65** (FIPS 204) under a versioned, purpose-domain-bound signed-head
-  format — the algorithm is bound into the signed bytes (downgrade-resistant), with no fallback mode.
+- **Verifies authority by declared profile**: portable AUMLOK promotions require
+  both Ed25519 and **ML-DSA-65**; portable V4 receipt heads use a separate,
+  purpose-bound ML-DSA-65-only profile. Unknown profiles and downgrade attempts
+  refuse. The broader Convex reference app retains its legacy ML-DSA-only head.
 - **Receipts every effect** into an **RFC 6962 append-only Merkle history root** committed inside the signed head, which
   the audit path recomputes from the actual receipts and re-verifies.
 - **Receipts arbitrary artifacts** into the same evidence spine: hash the bytes, bind typed metadata, sign the chain
@@ -103,8 +122,10 @@ The first headless implementation is [`convex/aukoraArtifactCustody.ts`](convex/
   records a signed, non-repudiable finding on an equivocation (a same-size / different-root fork).
 - **Confidential transport** (optional, off by default): an **ML-KEM-768** (FIPS 203) key-establishment + AEAD channel
   adds confidentiality to a witness poll — it gates and mints nothing; strip it and every verdict is byte-identical.
-- **Ships closed**: a clean deploy publishes no live HTTP surface — every route is flag-gated and returns `404` until
-  explicitly enabled.
+- **HTTP routes ship closed**: a clean deploy publishes no custom HTTP route —
+  every route is flag-gated and returns `404` until explicitly enabled. Direct
+  Convex client functions are a separate surface, frozen in
+  `security/convex-public-surface.json` and checked for review-visible drift.
 
 ## What it is — and is not
 
@@ -112,7 +133,7 @@ This is a **PROVEN-LAB** kernel: each property above is exercised by the in-repo
 research/engineering artifact, **not a production system**. Honest fences:
 
 - The system is **tamper-evident** (receipts detect tampering after the fact), **not** tamper-proof.
-- The post-quantum **signing spine** is corroborated against NIST ACVP vectors; this is corroboration, **not** an
+- The ML-DSA-65 **verification path** agrees with a pinned NIST ACVP FIPS 204 pass/refuse subset; this is corroboration, **not** an
   independent cryptographic audit, and **not** a blanket "quantum-secure system" claim.
 - Identity is **self-sovereign at birth**, with an operator-custodied lifecycle (no built-in recovery — by design).
 - No claims of consensus, global finality, public-transparency networks, trusted global time, anonymity, or
@@ -143,10 +164,14 @@ authority layer.
 
 ```bash
 npm ci
-npx vitest run
+npm run test:kernel
+npm run verify:convex-surface
+npm test -- --reporter=dot
+node packages/kernel/examples/observe.mjs
 ```
 
-> CI is not yet configured. The suite must be run locally before any commit.
+`npm run test:release` runs the package, callable-surface, and legacy reference
+suite gates together.
 
 ## License
 

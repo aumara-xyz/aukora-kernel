@@ -10,25 +10,26 @@ import { convexTest } from "convex-test";
 import { describe, it, expect, afterEach } from "vitest";
 import schema from "../convex/schema";
 import { internal } from "../convex/_generated/api";
-import { buildPoPEnvelope, DEMO_OPERATOR_SEED } from "../convex/popResolver";
+import { buildPoPEnvelope, requireDemoOperatorSeed } from "../convex/popResolver";
 import { mlDsa65PublicKeyFromSeed } from "../convex/aukoraPqcSigner";
 
 const modules = import.meta.glob("../convex/**/*.*s");
 const NODE = process.env.AUMA_NODE_ID ?? "aukora-node-a-demo";
 const ATTACKER = "ee".repeat(32);
 const PINPUB = "a1".repeat(32); // a valid-shape ML-DSA pubkey seed (the key being pinned); actual pubkey derived below
+const operatorSeed = () => requireDemoOperatorSeed();
 const trustCount = (t: any) => t.run(async (ctx: any) => (await ctx.db.query("node_trust_registry").collect()).length);
 
 async function provisioned() {
   const t = convexTest(schema, modules);
-  await t.mutation(internal.popResolver.seedFounderKey, { founderUserId: "aukora.operator", keyId: "op-1", publicKey: await mlDsa65PublicKeyFromSeed(DEMO_OPERATOR_SEED) });
+  await t.mutation(internal.popResolver.seedFounderKey, { founderUserId: "aukora.operator", keyId: "op-1", publicKey: await mlDsa65PublicKeyFromSeed(operatorSeed()) });
   const pub = await mlDsa65PublicKeyFromSeed(PINPUB);
   return { t, pub };
 }
 function opEnv(args: any, over: any = {}) {
   const now = Date.now();
   const cav = { v: 1, capId: `cap-${over.capId ?? "p"}`, founderUserId: "aukora.operator", founderKeyId: "op-1", nodeId: NODE, methods: over.methods ?? ["pinTrust"], ring: "local-write", action: "operator", resource: "node:operator", principalId: "demo.operator", roles: ["operator"], notBefore: now - 2000, expiresAt: now + 60_000, maxUses: 1 };
-  return buildPoPEnvelope(over.seed ?? DEMO_OPERATOR_SEED, cav, { methodId: over.methodId ?? "pinTrust", actualArgs: args, timestamp: now, nonce: `n-${over.capId ?? "p"}-${Math.random().toString(36).slice(2)}` });
+  return buildPoPEnvelope(over.seed ?? operatorSeed(), cav, { methodId: over.methodId ?? "pinTrust", actualArgs: args, timestamp: now, nonce: `n-${over.capId ?? "p"}-${Math.random().toString(36).slice(2)}` });
 }
 const gated = (t: any, env: any, a: any) => t.mutation(internal.nodeB.pinTrustGated, { env, ...a });
 

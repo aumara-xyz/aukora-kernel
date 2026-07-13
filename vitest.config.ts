@@ -19,6 +19,7 @@ export default defineConfig({
       // Throwaway test values ONLY — never real secrets. The signing seed is a documented disposable 64-hex seed.
       AUKORA_TOKEN_SECRET: "slice-itest-secret-do-not-use-in-prod",
       AUKORA_CHAIN_SIGNING_SEED: "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff",
+      AUMA_OPERATOR_SEED: "77".repeat(32),
       AUMA_NODE_ID: "aukora-node-a-demo",
     },
   },

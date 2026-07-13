@@ -1,0 +1,77 @@
+{
+  "name": "@aukora/kernel",
+  "version": "0.1.0",
+  "description": "Portable deterministic authority verifier and reducer for Aukora",
+  "author": "Peter Viviani / Aumara",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aumara-xyz/aukora-kernel.git",
+    "directory": "packages/kernel"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "conformance",
+    "examples",
+    "LICENSE",
+    "NOTICE",
+    "PROVENANCE.md",
+    "README.md",
+    "SBOM.cdx.json",
+    "src"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./authority": {
+      "types": "./dist/authority.d.ts",
+      "import": "./dist/authority.js"
+    },
+    "./canonical": {
+      "types": "./dist/canonical.d.ts",
+      "import": "./dist/canonical.js"
+    },
+    "./evidence": {
+      "types": "./dist/evidence.d.ts",
+      "import": "./dist/evidence.js"
+    },
+    "./merkle": {
+      "types": "./dist/merkle.d.ts",
+      "import": "./dist/merkle.js"
+    },
+    "./reducer": {
+      "types": "./dist/reducer.d.ts",
+      "import": "./dist/reducer.js"
+    },
+    "./registries": {
+      "types": "./dist/registry.d.ts",
+      "import": "./dist/registry.js"
+    },
+    "./schemas": {
+      "types": "./dist/schema.d.ts",
+      "import": "./dist/schema.js"
+    },
+    "./conformance/v1.json": "./conformance/v1.json",
+    "./conformance/hybrid-v1.json": "./conformance/hybrid-v1.json",
+    "./conformance/manifest.json": "./conformance/manifest.json",
+    "./SBOM.cdx.json": "./SBOM.cdx.json"
+  },
+  "dependencies": {
+    "@noble/curves": "2.2.0",
+    "@noble/hashes": "2.2.0",
+    "@noble/post-quantum": "0.6.1"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prepack": "npm run build",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts"
+  }
+}

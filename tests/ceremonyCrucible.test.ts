@@ -3,14 +3,14 @@
 /// <reference types="vite/client" />
 /**
  * Brick 2 — CEREMONY / CROSS-NODE attacks ported INTO the demo's runnable suite, exercising the REAL slice functions
- * (api.ceremony.createDelegation / siliconAct / importDelegated / importDelegatedRevocation) against the deployed
+ * (internal.ceremony.createDelegation / siliconAct / importDelegated / importDelegatedRevocation) against the deployed
  * node-a code via convex-test. This turns the previously PARTIAL ("proven only in the eval-dist snapshot") cross-node
  * + chain-tamper claims into honestly PROVEN-in-the-demo. Two instances = Node A (creates) + Node B (imports).
  */
 import { convexTest } from "convex-test";
 import { describe, it, expect } from "vitest";
 import schema from "../convex/schema";
-import { api, internal } from "../convex/_generated/api";
+import { internal } from "../convex/_generated/api";
 import { buildReceiptChainHash } from "../convex/aukoraCore";
 import { signChainHeadV3, resolveChainSigningSeed, type ChainHeadFields } from "../convex/aukoraSignedHead";
 import { mlDsa65PublicKeyFromSeed } from "../convex/aukoraPqcSigner";
@@ -29,8 +29,8 @@ async function setup(run: string) {
   const payload = { delegationId, carbonRoot, siliconPrincipal: silicon, ...SCOPE, nodeId: NODE_ID, issuedAt };
   const delHash = await buildReceiptChainHash(payload, null);
   const sig = await signChainHeadV3(CARBON_SEED, delHead(delegationId, issuedAt, delHash), "delegation");
-  await tA.mutation(api.ceremony.createDelegation, { ...payload, carbonPubkey: carbonPub, delHash, sig });
-  const a: any = await tA.mutation(api.ceremony.siliconAct, { delegationId, chainKey: `cer:${run}:1`, ...SCOPE });
+  await tA.mutation(internal.ceremony.createDelegation, { ...payload, carbonPubkey: carbonPub, delHash, sig });
+  const a: any = await tA.mutation(internal.ceremony.siliconAct, { delegationId, chainKey: `cer:${run}:1`, ...SCOPE });
   await tB.mutation(internal.nodeB.pinTrust, { sourceNodeId: carbonRoot, headKeyId: "carbon", publicKey: carbonPub });
   await tB.mutation(internal.nodeB.pinTrust, { sourceNodeId: NODE_ID, headKeyId: "demo-key-1", publicKey: nodePub });
   return { tA, tB, carbonRoot, silicon, delegationId, env: a.envelope };
@@ -80,8 +80,8 @@ describe("Ceremony Crucible — REAL slice importDelegated (demo runnable suite)
   });
   it("reserved ':rev' suffix refused: delegationId at creation, chainKey at receipt-write (B1.3b defense-in-depth)", async () => {
     const s = await setup("v6d");
-    await expect(s.tA.mutation(api.ceremony.createDelegation, { delegationId: "del:v6d:rev", carbonRoot: "c", carbonPubkey: "x", siliconPrincipal: "sp", ...SCOPE, nodeId: NODE_ID, issuedAt: 1, delHash: "h", sig: "g" })).rejects.toThrow("aukora_delegation_id_reserved_suffix");
-    await expect(s.tA.mutation(api.ceremony.siliconAct, { delegationId: s.delegationId, chainKey: "cer:v6d:rev", ...SCOPE })).rejects.toThrow("aukora_receipt_chainkey_reserved_suffix");
+    await expect(s.tA.mutation(internal.ceremony.createDelegation, { delegationId: "del:v6d:rev", carbonRoot: "c", carbonPubkey: "x", siliconPrincipal: "sp", ...SCOPE, nodeId: NODE_ID, issuedAt: 1, delHash: "h", sig: "g" })).rejects.toThrow("aukora_delegation_id_reserved_suffix");
+    await expect(s.tA.mutation(internal.ceremony.siliconAct, { delegationId: s.delegationId, chainKey: "cer:v6d:rev", ...SCOPE })).rejects.toThrow("aukora_receipt_chainkey_reserved_suffix");
   });
   it("EXPLICIT PIN (no TOFU): an UNPINNED carbon root is REFUSED; after an explicit pin it imports + is IMMUTABLE", async () => {
     const s = await setup("v6b"); // tB has the node key pinned; we use a FRESH carbon root that is NOT pre-pinned
@@ -90,8 +90,8 @@ describe("Ceremony Crucible — REAL slice importDelegated (demo runnable suite)
     const pl = { delegationId: del, carbonRoot: cr, siliconPrincipal: "demo.auma.silicon:v6bf", ...SCOPE, nodeId: NODE_ID, issuedAt: issued };
     const dh = await buildReceiptChainHash(pl, null);
     const sg = await signChainHeadV3(FRESH, delHead(del, issued, dh), "delegation");
-    await s.tA.mutation(api.ceremony.createDelegation, { ...pl, carbonPubkey: freshPub, delHash: dh, sig: sg });
-    const act: any = await s.tA.mutation(api.ceremony.siliconAct, { delegationId: del, chainKey: "cer:v6bf:1", ...SCOPE });
+    await s.tA.mutation(internal.ceremony.createDelegation, { ...pl, carbonPubkey: freshPub, delHash: dh, sig: sg });
+    const act: any = await s.tA.mutation(internal.ceremony.siliconAct, { delegationId: del, chainKey: "cer:v6bf:1", ...SCOPE });
     // B3.5a — NO TOFU: a first-sight (unpinned) carbon root is REFUSED, never auto-pinned.
     expect((await imp(s, act.envelope)).reason).toBe("unpinned_carbon");
     // explicit out-of-band pin, THEN import is accepted (verified against the PINNED value only).

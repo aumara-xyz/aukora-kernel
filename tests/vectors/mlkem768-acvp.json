@@ -1,5 +1,5 @@
 {
-  "source": "Generated from @noble/post-quantum ml_kem768 with known seeds (ACVP-style format)",
+  "source": "Aukora-generated deterministic regression corpus from @noble/post-quantum ml_kem768; ACVP-shaped, not independent NIST evidence",
   "parameterSet": "ML-KEM-768",
   "keyGenAFT": [
     {
