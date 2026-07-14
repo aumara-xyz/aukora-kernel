@@ -1,6 +1,6 @@
 # Aukora Kernel
 
-> **A model proposes. The kernel gates and receipts every effect before it becomes real. Other nodes verify.**
+> **A model proposes. The kernel verifies authority, advances replay state, and drafts evidence. Adapters execute.**
 
 ## Repository status
 
@@ -24,18 +24,17 @@ atomically persist an allowed consumption before executing an effect. Together,
 that creates one reviewable law: authority is verified under a declared profile
 and a consumption is accepted at most once.
 
-In plain English: Aukora is a trust layer for the AI era. It lets an AI agent touch software, documents, data, tools, or
-workflows only through a human- or organization-bound authority path. Every meaningful effect can leave a signed,
-post-quantum receipt proving who authorized it, what was attempted, what state it touched, and whether the evidence still
-verifies later.
+In plain English: Aukora gives an adapter a deterministic contract for deciding whether an AI-proposed effect is
+authorized, consuming that authority once, and producing evidence to be signed by a custody layer. The portable verifier
+can later check who authorized the request, what state transition was claimed, and whether the evidence still verifies.
 
 ![How Aukora Kernel Works](docs/assets/aukora-kernel-overview.png)
 
 ## Why it matters
 
-Aukora is a governance layer for AI agents. It lets an AI agent do useful work — write code, edit files, search memory,
-propose actions, or operate through an adapter — without letting the model own authority. The agent can propose or
-attempt an effect; Aukora decides whether that effect is allowed, blocked, recorded, or reversible.
+Aukora is a governance layer for AI agents. It gives builders primitives for agents to propose work without letting the
+model own authority. The agent proposes an effect; the kernel returns a deterministic decision and next state; a
+conforming adapter controls persistence and execution.
 
 The broader stack combines identity, permissions, receipts, memory, and adapters. A human or node binds authority through
 an identity ceremony, agent engines connect through adapters, risky effects pause, safe effects can proceed, and every
@@ -113,10 +112,10 @@ independent review; this repository makes no such deployment claim.
   both Ed25519 and **ML-DSA-65**; portable V4 receipt heads use a separate,
   purpose-bound ML-DSA-65-only profile. Unknown profiles and downgrade attempts
   refuse. The broader Convex reference app retains its legacy ML-DSA-only head.
-- **Receipts every effect** into an **RFC 6962 append-only Merkle history root** committed inside the signed head, which
-  the audit path recomputes from the actual receipts and re-verifies.
-- **Receipts arbitrary artifacts** into the same evidence spine: hash the bytes, bind typed metadata, sign the chain
-  head, and fail closed on one-byte content tamper, metadata rewrite, row reorder, truncation, or wrong signer.
+- **Verifies receipt histories** against an **RFC 6962 append-only Merkle root** committed inside a signed head; the
+  reference adapter demonstrates append and audit behavior.
+- **Verifies arbitrary-artifact evidence** in the same spine; the reference application demonstrates hashing bytes,
+  binding typed metadata, signing a chain head, and detecting content or history tampering.
 - **Conserves authority**: a live effect is authorized only through `manifest → grant → token → receipt`, flowing through
   one shared consume chokepoint with an OCC use-counter — no second authority path, no double-spend.
 - **Verifies peers**: a witness checks a peer's history head as an append-only `(size, root)` consistency extension and

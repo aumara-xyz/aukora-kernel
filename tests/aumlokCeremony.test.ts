@@ -93,6 +93,13 @@ describe("B2.3 — self-sovereign ceremony mint (root proves itself; no operator
     const c = await build();
     await expect(mint(t, c, { summary: { ...c.summary, statement: "EVIL — grants admin forever" } })).rejects.toThrow("aumlok_ceremony_summary_binding_mismatch");
   });
+  it("unknown challenge and summary fields refuse instead of being silently dropped", async () => {
+    const t = convexTest(schema, modules);
+    await expect(mint(t, await build(ROOT_SEED, { challenge: { surprise: true } })))
+      .rejects.toThrow("aumlok_ceremony_challenge_unknown_field");
+    await expect(mint(t, await build(ROOT_SEED, { summary: { surprise: true } })))
+      .rejects.toThrow("aumlok_ceremony_summary_unknown_field");
+  });
   it("the system refuses to mint a RECOVERY-claiming identity (noRecovery must be true)", async () => {
     const t = convexTest(schema, modules);
     const c = await build(ROOT_SEED, { summary: { noRecovery: false } }); // a summary asserting recoverability, properly signed

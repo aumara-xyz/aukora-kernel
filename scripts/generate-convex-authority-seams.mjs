@@ -99,6 +99,14 @@ const definitions = [
     note: "Root/subject signatures and single-consumption state are security-critical.",
   },
   {
+    file: "aumlokCeremony.ts",
+    kind: "self-sovereign-root-birth-entrypoint",
+    defaultState: "public signed protocol surface",
+    environment: ["AUMA_NODE_ID"],
+    requiredExports: ["aumlokCeremonyMint", "ceremonyHead", "serializeCeremonyV1", "serializeSummaryV1"],
+    note: "Public root birth is authorized by a fresh root proof-of-possession; unknown signed-shape fields refuse.",
+  },
+  {
     file: "codeAttestation.ts",
     kind: "release-evidence-demo",
     defaultState: "internal-only",

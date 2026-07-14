@@ -304,6 +304,36 @@
       "vAnyCount": 4
     },
     {
+      "file": "aumlokCeremony.ts",
+      "kind": "self-sovereign-root-birth-entrypoint",
+      "defaultState": "public signed protocol surface",
+      "note": "Public root birth is authorized by a fresh root proof-of-possession; unknown signed-shape fields refuse.",
+      "exports": [
+        {
+          "name": "aumlokCeremonyMint",
+          "kind": "mutation"
+        },
+        {
+          "name": "ceremonyHead",
+          "kind": "plain-function"
+        },
+        {
+          "name": "serializeCeremonyV1",
+          "kind": "plain-function"
+        },
+        {
+          "name": "serializeSummaryV1",
+          "kind": "plain-function"
+        }
+      ],
+      "importedBy": [],
+      "environment": [
+        "AUKORA_CEREMONY_RATE_CAP",
+        "AUMA_NODE_ID"
+      ],
+      "vAnyCount": 2
+    },
+    {
       "file": "codeAttestation.ts",
       "kind": "release-evidence-demo",
       "defaultState": "internal-only",

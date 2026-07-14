@@ -40,7 +40,7 @@ async function buildCeremony(seed: string, rootId: string, ceremonyId: string) {
 describe("B3.2 — node factory: deterministic byte-identity stamp", () => {
   it("initNode stamps a node; the stamp is deterministic + re-verifiable; a tampered field breaks it", async () => {
     const t = convexTest(schema, modules);
-    const r: any = await t.mutation(api.aukoraNodeFactory.initNode, { deploymentLabel: "aukora-node-a-lab", tier: "lab", rootPins: [FP_A] });
+    const r: any = await t.mutation(internal.aukoraNodeFactory.initNode, { deploymentLabel: "aukora-node-a-lab", tier: "lab", rootPins: [FP_A] });
     expect([r.ok, r.stamped, r.nodeId, r.tier]).toEqual([true, true, NODE, "lab"]);
     expect(r.signingKeyFingerprint).toMatch(/^[0-9a-f]{64}$/); // public fingerprint only
     const id: any = await t.query(api.aukoraNodeFactory.nodeIdentity, {});
@@ -54,22 +54,22 @@ describe("B3.2 — node factory: deterministic byte-identity stamp", () => {
   });
   it("re-stamp is idempotent for the same config; a DIFFERENT config is refused (identity immutable)", async () => {
     const t = convexTest(schema, modules);
-    const first: any = await t.mutation(api.aukoraNodeFactory.initNode, { deploymentLabel: "node-a", tier: "lab" });
-    const again: any = await t.mutation(api.aukoraNodeFactory.initNode, { deploymentLabel: "node-a", tier: "lab" });
+    const first: any = await t.mutation(internal.aukoraNodeFactory.initNode, { deploymentLabel: "node-a", tier: "lab" });
+    const again: any = await t.mutation(internal.aukoraNodeFactory.initNode, { deploymentLabel: "node-a", tier: "lab" });
     expect([again.stamped, again.stampHash]).toEqual([false, first.stampHash]); // idempotent
-    await expect(t.mutation(api.aukoraNodeFactory.initNode, { deploymentLabel: "node-a", tier: "dev" })).rejects.toThrow("aukora_node_already_stamped");
-    await expect(t.mutation(api.aukoraNodeFactory.initNode, { deploymentLabel: "renamed", tier: "lab" })).rejects.toThrow("aukora_node_already_stamped");
+    await expect(t.mutation(internal.aukoraNodeFactory.initNode, { deploymentLabel: "node-a", tier: "dev" })).rejects.toThrow("aukora_node_already_stamped");
+    await expect(t.mutation(internal.aukoraNodeFactory.initNode, { deploymentLabel: "renamed", tier: "lab" })).rejects.toThrow("aukora_node_already_stamped");
   });
   it("tier discipline: only lab/dev stampable; production refused; malformed label/rootPin refused", async () => {
     const t = convexTest(schema, modules);
-    await expect(t.mutation(api.aukoraNodeFactory.initNode, { deploymentLabel: "n", tier: "production" })).rejects.toThrow("aukora_node_tier_invalid");
-    await expect(t.mutation(api.aukoraNodeFactory.initNode, { deploymentLabel: "Bad Label!", tier: "lab" })).rejects.toThrow("aukora_node_label_invalid");
-    await expect(t.mutation(api.aukoraNodeFactory.initNode, { deploymentLabel: "n", tier: "lab", rootPins: ["not-a-fingerprint"] })).rejects.toThrow("aukora_node_rootpin_invalid");
-    expect((await t.mutation(api.aukoraNodeFactory.initNode, { deploymentLabel: "n", tier: "dev" })).tier).toBe("dev"); // dev ok
+    await expect(t.mutation(internal.aukoraNodeFactory.initNode, { deploymentLabel: "n", tier: "production" })).rejects.toThrow("aukora_node_tier_invalid");
+    await expect(t.mutation(internal.aukoraNodeFactory.initNode, { deploymentLabel: "Bad Label!", tier: "lab" })).rejects.toThrow("aukora_node_label_invalid");
+    await expect(t.mutation(internal.aukoraNodeFactory.initNode, { deploymentLabel: "n", tier: "lab", rootPins: ["not-a-fingerprint"] })).rejects.toThrow("aukora_node_rootpin_invalid");
+    expect((await t.mutation(internal.aukoraNodeFactory.initNode, { deploymentLabel: "n", tier: "dev" })).tier).toBe("dev"); // dev ok
   });
   it("secrets discipline: the signing SEED is never persisted — the stamp row holds only the public fingerprint", async () => {
     const t = convexTest(schema, modules);
-    await t.mutation(api.aukoraNodeFactory.initNode, { deploymentLabel: "node-a", tier: "lab" });
+    await t.mutation(internal.aukoraNodeFactory.initNode, { deploymentLabel: "node-a", tier: "lab" });
     const row = await t.run(async (ctx: any) => ctx.db.query("aukora_node_identity").withIndex("by_nodeId", (q: any) => q.eq("nodeId", NODE)).first());
     const blob = JSON.stringify(row).toLowerCase();
     for (const banned of ["seed", "private", "secret", process.env.AUKORA_CHAIN_SIGNING_SEED!.toLowerCase()]) expect(blob.includes(banned)).toBe(false);

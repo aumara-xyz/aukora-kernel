@@ -24,9 +24,24 @@ for (const file of readdirSync(convexRoot).filter((name) => name.endsWith(".ts")
   }
 }
 functions.sort((a, b) => a.file.localeCompare(b.file) || a.export.localeCompare(b.export));
+const internalOnly = new Set([
+  "aukoraNodeFactory.ts:initNode",
+  "codeAttestation.ts:runCodeAttestation",
+  "memory.ts:runMemory",
+  "nodeA.ts:emit",
+  "nodeA.ts:revoke",
+  "nodeA.ts:runCapability",
+  "nodeB.ts:pullAndImport",
+  "nodeB.ts:pullAndRevoke",
+  "nodeB.ts:runDemo",
+  "nodeB.ts:runHandshake",
+]);
+const escapedHarnesses = functions.filter((entry) => internalOnly.has(`${entry.file}:${entry.export}`));
+if (escapedHarnesses.length) throw new Error(`demo or initialization function escaped the internal boundary: ${JSON.stringify(escapedHarnesses)}`);
 const output = JSON.stringify({
   schema: "aukora-convex-public-surface-v1",
   note: "Inventory only; inclusion is not a security approval.",
+  invariants: { demoNetworkAndInitializationFunctions: "internal-only" },
   publicFunctions: functions,
 }, null, 2) + "\n";
 

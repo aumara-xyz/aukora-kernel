@@ -53,11 +53,11 @@ http.route({ path: "/export-harvest", method: "GET", handler: gated(WITNESS, asy
 // The node's signing pubkey is published read-only at GET /node-pubkey; session seeding is no longer a public surface.
 http.route({ path: "/emit", method: "POST", handler: gated(DEMO, async (ctx, req) => {
   const b = await req.json();
-  return json(await ctx.runMutation(api.nodeA.emit, { env: b.env, chainKey: b.chainKey, action: b.action, resource: b.resource }));
+  return json(await ctx.runMutation(internal.nodeA.emit, { env: b.env, chainKey: b.chainKey, action: b.action, resource: b.resource }));
 }) });
 http.route({ path: "/revoke", method: "POST", handler: gated(DEMO, async (ctx, req) => {
   const b = await req.json();
-  return json(await ctx.runMutation(api.nodeA.revoke, { env: b.env, delegationId: b.delegationId, chainKey: b.chainKey }));
+  return json(await ctx.runMutation(internal.nodeA.revoke, { env: b.env, delegationId: b.delegationId, chainKey: b.chainKey }));
 }) });
 // Provision the operator trust root through an internal mutation. The route is
 // demo-flag-gated and fails closed unless AUMA_OPERATOR_SEED is explicitly
@@ -69,15 +69,15 @@ http.route({ path: "/provision-operator", method: "POST", handler: gated(DEMO, a
 // ── Orchestrators ──
 // A→B demo (run on Node B): Node B verifies Node A's receipt.
 http.route({ path: "/run-demo", method: "POST", handler: gated(DEMO, async (ctx) => {
-  return json(await ctx.runAction(api.nodeB.runDemo, {}));
+  return json(await ctx.runAction(internal.nodeB.runDemo, {}));
 }) });
 // Two-way handshake (run on Node A): Node A verifies a Node B–minted receipt (reverse direction).
 http.route({ path: "/run-handshake", method: "POST", handler: gated(DEMO, async (ctx) => {
-  return json(await ctx.runAction(api.nodeB.runHandshake, {}));
+  return json(await ctx.runAction(internal.nodeB.runHandshake, {}));
 }) });
 // Capability scope (run on Node A): proves the kernel governs which actions are allowed + the Aukora Capability Ledger.
 http.route({ path: "/run-capability", method: "POST", handler: gated(DEMO, async (ctx) => {
-  return json(await ctx.runMutation(api.nodeA.runCapability, {}));
+  return json(await ctx.runMutation(internal.nodeA.runCapability, {}));
 }) });
 
 // ── Ceremony rehearsal (carbon -> silicon identity) ──
@@ -171,7 +171,7 @@ http.route({ path: "/import-revocation-view", method: "POST", handler: gated(MES
 }) });
 // Memory boundary (run on Node A): silicon mirror memory under a carbon root, scoped + receipt-coupled.
 http.route({ path: "/run-memory", method: "POST", handler: gated(DEMO, async (ctx) => {
-  return json(await ctx.runMutation(api.memory.runMemory, {}));
+  return json(await ctx.runMutation(internal.memory.runMemory, {}));
 }) });
 http.route({ path: "/audit", method: "GET", handler: gated(DEMO, async (ctx) => {
   return json({ ok: true, surface: "audit" });

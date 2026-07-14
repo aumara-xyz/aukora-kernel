@@ -67,6 +67,7 @@ describe("B3.5b — cross-node grant: happy path (foreign effect, issuer-tagged)
     expect(await promote(t, manifest)).toMatchObject({ ok: true, manifestId: MFT, sourceNodeId: SRC, rootId: FROOT });
     const res: any = await resolveX(t);
     expect([res.ok, res.issuer.kind, res.issuer.sourceNodeId]).toEqual([true, "foreign", SRC]);
+    expect(res.manifest).toBeUndefined(); // public resolve returns a verdict, never the stored authority row/signatures
     const w: any = await xWrite(t);
     expect([w.ok, w.ownerRootId]).toEqual([true, FROOT]);                                     // wrote mem:{foreignRoot}
     const row: any = await t.run((ctx: any) => ctx.db.query("aukora_memory").withIndex("by_owner_key", (q: any) => q.eq("ownerRootId", FROOT).eq("key", "diary")).first());

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (c) 2026 Peter Viviani
-import { action, internalMutation, internalQuery, type MutationCtx } from "./_generated/server";
+import { internalAction, internalMutation, internalQuery, type MutationCtx } from "./_generated/server";
 import { api, internal } from "./_generated/api";
 import { v } from "convex/values";
 import { receiptPayload, verifyReceiptChainCore } from "./aukoraReceipts";
@@ -85,7 +85,7 @@ export const importRevocation = internalMutation({
 
 // Fetch a peer node's envelope over HTTP, then import atomically. sourceUrl override lets EITHER node pull the OTHER
 // (default: AUMA_NODE_A_URL). This is the cross-node transport — symmetric, so it supports the two-way handshake.
-export const pullAndImport = action({
+export const pullAndImport = internalAction({
   args: { chainKey: v.string(), sourceUrl: v.optional(v.string()) },
   handler: async (ctx, args): Promise<{ ok: boolean; reason?: string }> => {
     const base = args.sourceUrl ?? process.env.AUMA_NODE_A_URL;
@@ -141,7 +141,7 @@ export const isNodePinned = internalQuery({
   handler: async (ctx, a) => !!(await ctx.db.query("node_trust_registry").withIndex("by_src_kid", (q) => q.eq("sourceNodeId", a.sourceNodeId).eq("headKeyId", a.headKeyId)).first()),
 });
 
-export const pullAndRevoke = action({
+export const pullAndRevoke = internalAction({
   args: { delegationId: v.string(), chainKey: v.string(), token: v.optional(v.string()) },
   handler: async (ctx, args): Promise<{ ok: boolean; reason?: string }> => {
     const base = process.env.AUMA_NODE_A_URL;
@@ -177,7 +177,7 @@ export const runState = internalQuery({
 });
 
 // Full cross-node demo orchestrator (run once via POST /run-demo). Returns an evidence report.
-export const runDemo = action({
+export const runDemo = internalAction({
   args: {},
   handler: async (ctx): Promise<any> => {
     const A = process.env.AUMA_NODE_A_URL;
@@ -185,21 +185,20 @@ export const runDemo = action({
     const post = async (p: string, body: any) => (await fetch(`${A}${p}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) })).json();
     const get = async (p: string) => (await fetch(`${A}${p}`)).json();
     const run = crypto.randomUUID().slice(0, 8);                                   // unique per run -> reproducible
-    const TOKB = `demo-B-${crypto.randomUUID()}`, ALICE = `agent:alice:${run}`;
+    const ALICE = `agent:alice:${run}`;
     const CK1 = `demo:${run}:1`, CK2 = `demo:${run}:2`;                            // fresh chains -> head.count===1
     const out: any = { run };
 
     const seedA = await get("/node-pubkey"); // read-only pubkey (the anonymous /seedA session route was removed)
     if (!seedA.publicKey) return { error: "Node A signing seed unset (AUKORA_CHAIN_SIGNING_SEED) — set it on node-a", seedA };
     out.nodeAPublicKey = `present(${String(seedA.publicKey).slice(0, 10)}…)`;
-    await ctx.runMutation(internal.seed.seedNodeB, { token: TOKB, principalId: ALICE, nodeId: "aukora-node-b-demo" });
     // B3.5a EXPLICIT PIN (no TOFU): pin Node A's key via the immutable, conflict-checked seam (mirrors runHandshake).
     await ctx.runMutation(internal.nodeB.pinTrust, { sourceNodeId: "aukora-node-a-demo", headKeyId: "demo-key-1", publicKey: seedA.publicKey });
     // CORE OPERATOR AUTH = cryptographic PoP (session seam retired). Provision the operator trust root (safe: server-derived, immutable), then sign.
     await post("/provision-operator", {});
     out.emit1 = await post("/emit", { env: await opEnv("aukora-node-a-demo", "emit", { chainKey: CK1, action: "studio.write", resource: "studio_surface:knvs" }, ALICE, `${run}-e1`), chainKey: CK1, action: "studio.write", resource: "studio_surface:knvs" });
-    out.case1_valid = await ctx.runAction(api.nodeB.pullAndImport, { chainKey: CK1 });
-    out.case2_duplicate = await ctx.runAction(api.nodeB.pullAndImport, { chainKey: CK1 });
+    out.case1_valid = await ctx.runAction(internal.nodeB.pullAndImport, { chainKey: CK1 });
+    out.case2_duplicate = await ctx.runAction(internal.nodeB.pullAndImport, { chainKey: CK1 });
     const env = await get(`/export?chainKey=${encodeURIComponent(CK1)}`);
     if (!env || !env.receipt) {
       out.case3_forged = { skipped: "no envelope to tamper (emit failed?)", emit1: out.emit1 };
@@ -211,7 +210,7 @@ export const runDemo = action({
     const rev = await post("/revoke", { env: await opEnv("aukora-node-a-demo", "revoke", { delegationId: ALICE, chainKey: CK1 }, ALICE, `${run}-rv`), delegationId: ALICE, chainKey: CK1 });
     out.revImport = await ctx.runMutation(internal.nodeB.importRevocation, { rev });
     out.emit2 = await post("/emit", { env: await opEnv("aukora-node-a-demo", "emit", { chainKey: CK2, action: "studio.write", resource: "studio_surface:knvs" }, ALICE, `${run}-e2`), chainKey: CK2, action: "studio.write", resource: "studio_surface:knvs" });
-    out.case4_revoked = await ctx.runAction(api.nodeB.pullAndImport, { chainKey: CK2 });
+    out.case4_revoked = await ctx.runAction(internal.nodeB.pullAndImport, { chainKey: CK2 });
     out.thisRun = await ctx.runQuery(internal.nodeB.runState, { run });           // run-scoped: expect receipts:1, registry:1, revocations:1
     return out;
   },
@@ -219,7 +218,7 @@ export const runDemo = action({
 
 // TWO-WAY HANDSHAKE (run on Node A via POST /run-handshake): the REVERSE direction — Node B mints a governed receipt,
 // Node A pins Node B's key and independently verifies it. Proves the kernel is symmetric (mutual verification).
-export const runHandshake = action({
+export const runHandshake = internalAction({
   args: {},
   handler: async (ctx): Promise<any> => {
     const B = process.env.AUMA_NODE_B_URL;
@@ -236,15 +235,15 @@ export const runHandshake = action({
     // CORE OPERATOR AUTH = cryptographic PoP on Node B too. Provision the operator trust root (safe: server-derived, immutable), then sign.
     await post("/provision-operator", {});
     out.emitB1 = await post("/emit", { env: await opEnv("aukora-node-b-demo", "emit", { chainKey: CK1, action: "studio.write", resource: "studio_surface:knvs" }, BOB, `${run}-e1`), chainKey: CK1, action: "studio.write", resource: "studio_surface:knvs" });
-    out.case1_valid = await ctx.runAction(api.nodeB.pullAndImport, { chainKey: CK1, sourceUrl: B });
-    out.case2_duplicate = await ctx.runAction(api.nodeB.pullAndImport, { chainKey: CK1, sourceUrl: B });
+    out.case1_valid = await ctx.runAction(internal.nodeB.pullAndImport, { chainKey: CK1, sourceUrl: B });
+    out.case2_duplicate = await ctx.runAction(internal.nodeB.pullAndImport, { chainKey: CK1, sourceUrl: B });
     const env = await get(`/export?chainKey=${encodeURIComponent(CK1)}`);
     if (!env || !env.receipt) { out.case3_forged = { skipped: "no envelope (Node B emit failed?)", emitB1: out.emitB1 }; }
     else { const t = JSON.parse(JSON.stringify(env)); t.receipt.goal = "node-b DRAINED the account"; out.case3_forged = await ctx.runMutation(internal.nodeB.importEnvelope, { env: t }); }
     const rev = await post("/revoke", { env: await opEnv("aukora-node-b-demo", "revoke", { delegationId: BOB, chainKey: CK1 }, BOB, `${run}-rv`), delegationId: BOB, chainKey: CK1 });
     out.revImport = await ctx.runMutation(internal.nodeB.importRevocation, { rev });
     out.emitB2 = await post("/emit", { env: await opEnv("aukora-node-b-demo", "emit", { chainKey: CK2, action: "studio.write", resource: "studio_surface:knvs" }, BOB, `${run}-e2`), chainKey: CK2, action: "studio.write", resource: "studio_surface:knvs" });
-    out.case4_revoked = await ctx.runAction(api.nodeB.pullAndImport, { chainKey: CK2, sourceUrl: B });
+    out.case4_revoked = await ctx.runAction(internal.nodeB.pullAndImport, { chainKey: CK2, sourceUrl: B });
     out.thisRun = await ctx.runQuery(internal.nodeB.runState, { run });
     return out;
   },

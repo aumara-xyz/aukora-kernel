@@ -200,7 +200,11 @@ export async function resolveManifestAuthority(
  *  resolveManifestAuthority exists solely for deterministic time-window tests, driven via t.run). */
 export const aumlokManifestResolve = query({
   args: { manifestId: v.string(), ring: v.string(), action: v.string(), resource: v.string(), intentCodec: v.string() },
-  handler: async (ctx, a): Promise<any> => resolveManifestAuthority(ctx, a),
+  handler: async (ctx, a): Promise<any> => {
+    const result = await resolveManifestAuthority(ctx, a);
+    if (!result.ok) return { ok: false, reason: result.reason };
+    return { ok: true, issuer: result.issuer }; // verdict only; the authority row and signatures stay server-side
+  },
 });
 
 /** MINT a manifest. Gated by the two signatures themselves: the ROOT (active key — retired CANNOT mint new) signs the

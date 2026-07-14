@@ -4,14 +4,14 @@
 // Proves: a silicon mirror can have memory UNDER a carbon root, but only inside the owned/delegated boundary.
 // Memory writes are coupled to a governed kernel receipt; recall is authority-SHAPED (demo: reader principal is a harness input, not an authenticated session); cross-principal read fails;
 // revocation severs future write/read; forget tombstones; export lets the carbon root inspect what its mirror remembers.
-import { mutation } from "./_generated/server";
+import { internalMutation } from "./_generated/server";
 import { submitIntentCore } from "./aukoraRuntime";
 import { verifyAndConsumeDecisionToken } from "./aukoraToken";
 import { writeReceiptRow } from "./aukoraReceipts";
 import { sha256Hex } from "./aukoraCore";
 import { requireNodeId } from "./runtimeConfig";
 
-export const runMemory = mutation({
+export const runMemory = internalMutation({
   args: {},
   handler: async (ctx): Promise<any> => {
     const run = crypto.randomUUID().slice(0, 8);

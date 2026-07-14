@@ -12,7 +12,7 @@
  * This is NOT cross-node networking (B3.5), NOT a witness mesh (B3.3), NOT ML-KEM (B3.4). It touches no authority path:
  * the B2.4 manifest→grant→token→receipt law is unchanged, and the B0 `aukora_delegations` lane is not resurrected.
  */
-import { mutation, query } from "./_generated/server";
+import { internalMutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import type { QueryCtx, MutationCtx } from "./_generated/server";
 import { stableStringify, sha256Hex } from "./aukoraCore";
@@ -54,7 +54,7 @@ function normalizeRootPins(x: unknown): string[] {
 
 /** STAMP this deployment's node identity. Idempotent: re-stamping with the SAME config returns the existing stamp; a
  *  DIFFERENT config for the same nodeId is REFUSED (`aukora_node_already_stamped` — identity is immutable). */
-export const initNode = mutation({
+export const initNode = internalMutation({
   args: { deploymentLabel: v.string(), tier: v.string(), rootPins: v.optional(v.array(v.string())) },
   handler: async (ctx, a): Promise<any> => {
     if (typeof a.deploymentLabel !== "string" || !LABEL_RE.test(a.deploymentLabel)) throw new Error("aukora_node_label_invalid");

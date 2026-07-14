@@ -4,9 +4,10 @@
 > kernel does **not** defend against — read "Honest residuals" before relying on anything here.
 
 ## Scope
-This policy covers the Aukora authorization-and-receipt kernel as shipped in this repository: the signing spine,
-the receipt/Merkle history, the manifest→grant→token→receipt authority path, the witness, the optional confidential
-channel, and the HTTP route surface. It does **not** cover any deployment you build on top of it.
+This policy covers both deliberately separated layers in this repository: the portable `@aukora/kernel` verifier/reducer
+and the broader PROVEN-LAB Convex reference application. Signing, persistence, witness, transport, custody experiments,
+and HTTP routes belong to the reference application, not the portable package contract. This policy does **not** cover
+any deployment you build on top of either layer.
 
 ## Trust model (assumptions)
 - **Pinned public keys, no TOFU.** A peer is trusted only by an explicit, operator-installed key pin. The kernel never
@@ -68,7 +69,9 @@ is trusted. Those dependencies, their callers, exports, environment inputs, and
 both artifacts and rejects ambient deployment-identifier fallbacks or embedded
 deterministic seed literals in Convex source. Inventory inclusion is not a
 security approval; each endpoint still requires its own authorization and
-demo/production classification.
+demo/production classification. Initialization, demo-write, and network-driver
+functions are additionally pinned internal-only so regenerating the inventory
+cannot accidentally approve their return to the public API.
 
 ## Reporting a vulnerability
 Please do **not** open public issues for security vulnerabilities. Report privately via

@@ -1,12 +1,10 @@
 {
   "schema": "aukora-convex-public-surface-v1",
   "note": "Inventory only; inclusion is not a security approval.",
+  "invariants": {
+    "demoNetworkAndInitializationFunctions": "internal-only"
+  },
   "publicFunctions": [
-    {
-      "file": "aukoraNodeFactory.ts",
-      "export": "initNode",
-      "kind": "mutation"
-    },
     {
       "file": "aukoraNodeFactory.ts",
       "export": "nodeIdentity",
@@ -128,49 +126,9 @@
       "kind": "mutation"
     },
     {
-      "file": "memory.ts",
-      "export": "runMemory",
-      "kind": "mutation"
-    },
-    {
-      "file": "nodeA.ts",
-      "export": "emit",
-      "kind": "mutation"
-    },
-    {
       "file": "nodeA.ts",
       "export": "exportEnvelope",
       "kind": "query"
-    },
-    {
-      "file": "nodeA.ts",
-      "export": "revoke",
-      "kind": "mutation"
-    },
-    {
-      "file": "nodeA.ts",
-      "export": "runCapability",
-      "kind": "mutation"
-    },
-    {
-      "file": "nodeB.ts",
-      "export": "pullAndImport",
-      "kind": "action"
-    },
-    {
-      "file": "nodeB.ts",
-      "export": "pullAndRevoke",
-      "kind": "action"
-    },
-    {
-      "file": "nodeB.ts",
-      "export": "runDemo",
-      "kind": "action"
-    },
-    {
-      "file": "nodeB.ts",
-      "export": "runHandshake",
-      "kind": "action"
     },
     {
       "file": "popResolver.ts",

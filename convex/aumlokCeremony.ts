@@ -56,6 +56,9 @@ const asName = (x: unknown, f: string): string => { if (typeof x !== "string" ||
 
 // ── The ceremony challenge: canonical serialization → V3 head, signed by the ROOT key under aumlokGenesis (B3.1 P3) ──
 const CEREMONY_FIELDS = ["v", "ceremonyId", "rootId", "keyId", "nodeId", "fingerprint", "summaryHash", "timestamp"] as const;
+const hasOnlyKeys = (value: unknown, fields: readonly string[]): boolean =>
+  !!value && typeof value === "object" && !Array.isArray(value)
+  && Object.keys(value as Record<string, unknown>).every((key) => fields.includes(key));
 export function serializeCeremonyV1(c: any): string { return "aukora-aumlok-genesis-v1|" + stableStringify(pick(c, CEREMONY_FIELDS)); }
 export async function ceremonyHead(c: any): Promise<ChainHeadFields> {
   return { chainKey: `aumlok:genesis:${c?.rootId}`, timestamp: Number(c?.timestamp ?? 0), chainLength: 1, chainHeadHash: await sha256Hex(serializeCeremonyV1(c)) };
@@ -72,6 +75,7 @@ export const aumlokCeremonyMint = mutation({
   args: { publicKey: v.string(), challenge: v.any(), rootSig: v.string(), summary: v.any(), confirmedFingerprint: v.string() },
   handler: async (ctx, a): Promise<any> => {
     const c = a.challenge ?? {};
+    if (!hasOnlyKeys(c, CEREMONY_FIELDS)) throw new Error("aumlok_ceremony_challenge_unknown_field");
     if (c.v !== 1) throw new Error("aumlok_ceremony_version_unsupported");
     if (typeof a.rootSig !== "string" || !a.rootSig) throw new Error("aumlok_ceremony_signature_missing");
     const ceremonyId = asName(c.ceremonyId, "ceremonyId");
@@ -92,6 +96,7 @@ export const aumlokCeremonyMint = mutation({
 
     // The plain-language summary: bound into the challenge (tamper-evident) AND its structured claims enforced.
     const s = a.summary ?? {};
+    if (!hasOnlyKeys(s, SUMMARY_FIELDS)) throw new Error("aumlok_ceremony_summary_unknown_field");
     if ((await sha256Hex(serializeSummaryV1(s))) !== c.summaryHash) throw new Error("aumlok_ceremony_summary_binding_mismatch");
     if (s.rootId !== rootId || s.keyId !== keyId || s.nodeId !== c.nodeId || s.fingerprint !== fingerprint) throw new Error("aumlok_ceremony_summary_field_mismatch");
     if (s.noRecovery !== true) throw new Error("aumlok_ceremony_summary_no_recovery_required"); // B2 truth: there is no recovery
