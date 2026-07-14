@@ -83,28 +83,29 @@ The first headless implementation is [`convex/aukoraArtifactCustody.ts`](convex/
 [`tests/artifactCustody.test.ts`](tests/artifactCustody.test.ts). See
 [`docs/AUKORA_ARTIFACT_CUSTODY.md`](docs/AUKORA_ARTIFACT_CUSTODY.md) for the exact flow and threat model.
 
-## Who benefits
+## What an engineer can verify in five minutes
 
-1. **Finance, trading, and banking** — agents can help with code, research, reports, and infrastructure without being
-   allowed to leak keys, alter trading systems, or bypass approvals.
-2. **Healthcare and biotech** — AI can assist with records, research, workflows, and diagnostics support while keeping
-   patient data, approvals, and audit trails governed.
-3. **Defense and government** — agents can operate around sensitive systems with strict identity, permission, memory, and
-   receipt controls instead of uncontrolled automation.
-4. **Software and cloud infrastructure** — coding agents can modify systems, while risky edits, secrets, deletes,
-   deploys, and production changes can be blocked or separately approved.
-5. **Legal and compliance** — AI can draft, review, and organize sensitive material while preserving evidence trails,
-   permissions, source memory, and reversibility.
-6. **Insurance and risk management** — agents can analyze claims, contracts, and risk data while every action remains
-   auditable and policy-bound.
-7. **Energy and critical infrastructure** — AI can help manage complex systems without being able to silently alter
-   dangerous controls or operational configs.
-8. **Manufacturing, robotics, and supply chain** — agentic systems can coordinate machines, workflows, and maintenance
-   while Aukora governs what they are allowed to change.
-9. **Telecommunications and network operations** — AI can help monitor and repair networks while protecting credentials,
-   routing configs, and critical infrastructure changes.
-10. **Research, education, and enterprise knowledge systems** — AI can build knowledge systems, labs, tutors, and
-    research agents with durable memory, source-backed reasoning, and transparent provenance.
+From a clean checkout, `npm run test:kernel` demonstrates concrete portable
+properties rather than a deployment promise:
+
+1. identical request, state, canonical policy bytes, and caller-supplied time
+   produce an identical decision, next state, and unsigned receipt draft;
+2. unknown fields, versions, domains, algorithms, and authority profiles refuse;
+3. an AUMLOK promotion requires both Ed25519 and ML-DSA-65 signatures over the
+   same canonical payload, while the distinct V4 receipt profile cannot substitute;
+4. a first allowed consumption advances replay state and a repeated consumption
+   refuses;
+5. receipt, Merkle, and artifact evidence fails verification after tampering,
+   reordering, truncation, or key substitution;
+6. the package produces the same frozen results in Node, Bun, Edge Runtime, and
+   a browser-targeted bundle;
+7. the packed tarball installs into an empty consumer and contains no Convex,
+   filesystem, network, environment, custody, signing, or execution surface.
+
+These are integration primitives for governed software. Whether a particular
+deployment is suitable for a regulated, safety-critical, or production setting
+requires its own containment design, adapter audit, operational controls, and
+independent review; this repository makes no such deployment claim.
 
 ## What it does
 
@@ -125,7 +126,9 @@ The first headless implementation is [`convex/aukoraArtifactCustody.ts`](convex/
 - **HTTP routes ship closed**: a clean deploy publishes no custom HTTP route —
   every route is flag-gated and returns `404` until explicitly enabled. Direct
   Convex client functions are a separate surface, frozen in
-  `security/convex-public-surface.json` and checked for review-visible drift.
+  `security/convex-public-surface.json`. Plain exported authority dependencies,
+  including the disabled-by-default demo session resolver, are independently
+  frozen in `security/convex-authority-seams.json`.
 
 ## What it is — and is not
 

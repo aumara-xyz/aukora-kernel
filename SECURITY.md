@@ -45,10 +45,10 @@ channel, and the HTTP route surface. It does **not** cover any deployment you bu
   and operator-key provisioning is internal-only. The test suite injects a documented disposable seed; it is never a
   deployment default and must not be reused.
 - **Demo session resolver.** Some internal reference-app mutations still route
-  through the plaintext session-token lookup in `sessionResolver.ts`. They are
-  not exported by the portable package or listed as direct public Convex
-  functions, but the seam remains a demo artifact—not a production auth
-  boundary.
+  through the bearer-session lookup in `sessionResolver.ts`. The resolver and
+  its internal seed functions fail closed unless `AUKORA_DEMO_SESSIONS_ENABLED`
+  is explicit, and tokens are bounded before lookup. It remains a lab artifact,
+  not a production authentication boundary.
 - **Test-seam env guard.** The channel's `saltOverride` gate uses a runtime `NODE_ENV`/`VITEST` check; a compromised
   operator who controls env vars could enable it — production should use a build-time dead-code flag.
 
@@ -56,15 +56,19 @@ channel, and the HTTP route surface. It does **not** cover any deployment you bu
 Anonymity, unlinkability, metadata- or traffic-analysis resistance; consensus, global finality, or a
 public-transparency network; trusted global time; health-data / PHI handling. See [`LIMITATIONS.md`](LIMITATIONS.md).
 
-## Convex callable-surface inventory
+## Convex callable and authority-seam inventories
 
 HTTP route flags do not control direct Convex client calls. The complete
 generated inventory of exported public `query`, `mutation`, and `action`
 functions is frozen in `security/convex-public-surface.json`.
-`npm run verify:convex-surface` fails when a public function is added, removed,
-renamed, or changes kind without an explicit inventory review. Inclusion in the
-inventory is not a security approval; each mutation/action still requires its
-own authorization and demo/production classification.
+Plain exported helpers are not direct Convex callables but can still decide who
+is trusted. Those dependencies, their callers, exports, environment inputs, and
+`v.any()` counts are frozen separately in
+`security/convex-authority-seams.json`. `npm run verify:convex-surface` checks
+both artifacts and rejects ambient deployment-identifier fallbacks or embedded
+deterministic seed literals in Convex source. Inventory inclusion is not a
+security approval; each endpoint still requires its own authorization and
+demo/production classification.
 
 ## Reporting a vulnerability
 Please do **not** open public issues for security vulnerabilities. Report privately via

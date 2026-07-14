@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (c) 2026 Peter Viviani
 
-import { readdirSync, readFileSync } from "node:fs";
+import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import ts from "typescript";
 
@@ -33,6 +33,9 @@ const output = JSON.stringify({
 if (process.argv.includes("--check")) {
   if (readFileSync(outputPath, "utf8") !== output) throw new Error("Convex public-surface inventory is stale");
   console.log(`Convex public surface: PASS (${functions.length} functions)`);
+} else if (process.argv.includes("--write")) {
+  writeFileSync(outputPath, output);
+  console.log(`wrote ${outputPath}`);
 } else {
   process.stdout.write(output);
 }

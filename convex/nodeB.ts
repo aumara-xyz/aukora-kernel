@@ -9,8 +9,9 @@ import { verifyChainHeadV3, verifyChainHeadV4, SIGNED_HEAD_V4_ALG, type ChainHea
 import { isPqcPublicKeyHex } from "./aukoraPqcSigner";
 import { receiptHistoryRootHex } from "./aukoraMerkleLog";
 import { buildPoPEnvelope, requireDemoOperatorSeed, resolvePoPSession } from "./popResolver";
+import { requireNodeId } from "./runtimeConfig";
 
-const THIS_NODE_ID = (): string => process.env.AUMA_NODE_ID ?? "aukora-node-a-demo";
+const THIS_NODE_ID = requireNodeId;
 
 const envelopeValidator = v.any(); // envelope is cross-node JSON; validated structurally by the importer below
 
@@ -184,7 +185,7 @@ export const runDemo = action({
     const post = async (p: string, body: any) => (await fetch(`${A}${p}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) })).json();
     const get = async (p: string) => (await fetch(`${A}${p}`)).json();
     const run = crypto.randomUUID().slice(0, 8);                                   // unique per run -> reproducible
-    const TOKB = `demo-B-${run}`, ALICE = `agent:alice:${run}`;
+    const TOKB = `demo-B-${crypto.randomUUID()}`, ALICE = `agent:alice:${run}`;
     const CK1 = `demo:${run}:1`, CK2 = `demo:${run}:2`;                            // fresh chains -> head.count===1
     const out: any = { run };
 

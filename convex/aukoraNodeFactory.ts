@@ -18,8 +18,9 @@ import type { QueryCtx, MutationCtx } from "./_generated/server";
 import { stableStringify, sha256Hex } from "./aukoraCore";
 import { mlDsa65PublicKeyFromSeed } from "./aukoraPqcSigner";
 import { resolveChainSigningSeed } from "./aukoraSignedHead";
+import { requireNodeId } from "./runtimeConfig";
 
-const THIS_NODE_ID = (): string => process.env.AUMA_NODE_ID ?? "aukora-node-a-demo";
+const THIS_NODE_ID = requireNodeId;
 const NODE_TIERS = Object.freeze(["lab", "dev"] as const); // "production" is deliberately NOT a stampable tier
 const LABEL_RE = /^[a-z0-9][a-z0-9._-]{0,63}$/; // deployment label grammar (bounded, no exotic chars)
 const FP_RE = /^[0-9a-f]{64}$/;                 // a root-pin fingerprint = 64 hex (sha256)

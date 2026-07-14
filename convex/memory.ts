@@ -9,6 +9,7 @@ import { submitIntentCore } from "./aukoraRuntime";
 import { verifyAndConsumeDecisionToken } from "./aukoraToken";
 import { writeReceiptRow } from "./aukoraReceipts";
 import { sha256Hex } from "./aukoraCore";
+import { requireNodeId } from "./runtimeConfig";
 
 export const runMemory = mutation({
   args: {},
@@ -16,7 +17,7 @@ export const runMemory = mutation({
     const run = crypto.randomUUID().slice(0, 8);
     const carbon = `demo.peter.carbon:${run}`, silicon = `demo.auma.silicon:${run}`;
     const eve = `demo.eve.silicon:${run}`, eveCarbon = `demo.eve.carbon:${run}`;
-    const node = process.env.AUMA_NODE_ID ?? "aukora-node-a-demo";
+    const node = requireNodeId();
     const delegationId = `memdel:${run}`;
     const out: any = { run };
 

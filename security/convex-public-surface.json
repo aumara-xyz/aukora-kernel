@@ -128,11 +128,6 @@
       "kind": "mutation"
     },
     {
-      "file": "codeAttestation.ts",
-      "export": "runCodeAttestation",
-      "kind": "action"
-    },
-    {
       "file": "memory.ts",
       "export": "runMemory",
       "kind": "mutation"

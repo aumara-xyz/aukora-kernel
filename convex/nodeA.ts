@@ -8,9 +8,10 @@ import { writeReceiptRow } from "./aukoraReceipts";
 import { buildReceiptChainHash } from "./aukoraCore";
 import { signChainHeadV3, resolveChainSigningSeed } from "./aukoraSignedHead";
 import { resolvePoPSession } from "./popResolver";
+import { requireHeadKeyId, requireNodeId } from "./runtimeConfig";
 
-const NODE_ID = process.env.AUMA_NODE_ID ?? "aukora-node-a-demo";
-const HEAD_KEY_ID = process.env.AUMA_HEAD_KEY_ID ?? "demo-key-1";
+const NODE_ID = requireNodeId();
+const HEAD_KEY_ID = requireHeadKeyId();
 
 // Node A: emit ONE governed action through the REAL kernel path -> a real signed receipt.
 export const emit = mutation({

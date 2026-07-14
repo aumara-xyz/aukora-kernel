@@ -28,8 +28,9 @@
 - **No recovery, single-key custody.** Identity is operator-custodied with no built-in recovery and no N-of-M /
   threshold custody. Loss of the seed is final.
 - **Trust is by explicit pin only (no TOFU).** Peers are never auto-trusted.
-- **Platform dependency.** The kernel runs on Convex; OCC isolation, transaction atomicity, and the single-chokepoint
-  property (R3, R4) rely on Convex's runtime guarantees — a compromised or buggy Convex runtime could violate them.
+- **Reference-adapter dependency.** The portable package does not depend on Convex and makes no platform atomicity
+  claim. The broader reference application's OCC isolation, transaction atomicity, and live single-chokepoint behavior
+  rely on Convex runtime guarantees; a compromised or buggy adapter/runtime could violate them.
 - **Receipts are self-reported.** The kernel signs and chains caller-supplied fields (grade, verdict, risk); it proves
   *what was reported*, not that the report is accurate — the grading authority is the caller, not the kernel.
 - **Kill switch is single-party and prospective-only.** It prevents new intents; it cannot revoke already-issued

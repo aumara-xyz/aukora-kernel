@@ -13,7 +13,7 @@
  * binding), `subjectId` (re-asserted + matched at consume), `rootId`+`rootKeyId` (root-key lookup + live status), and
  * `manifestId` (the unique lookup key). `subjectKind` is bound + range-checked at mint (rejects an unknown kind) but
  * is NOT yet an authority gate — per-kind policy is DESIGNED/FUTURE, stated not faked. Unknown/extra input fields are
- * DROPPED before hashing+storage, so an unsigned field can never grant authority.
+ * REFUSED before hashing+storage, so an unsigned field can never grant authority.
  *
  * IMMUTABLE v1: there is no amend — changing a manifest means revoke + re-mint. Lifecycle (mint / root-revoke /
  * subject-self-revoke-or-pause) is receipted on the reserved `mft:{manifestId}` V4 chain (one writer,
@@ -34,6 +34,7 @@ import { rootKeyFingerprint } from "./aumlokRootRegistry";
 import { appendManifestLifecycleReceipt, IDENTITY_NAME_RE } from "./aukoraReceipts";
 import { consumeRateLimit } from "./aukoraRateLimit";
 import { FRESHNESS_WINDOW_MS } from "./nodeImport"; // B3.5b: reuse the B3.5a pull-origin freshness window (cross-grant honor gate)
+import { requireNodeId } from "./runtimeConfig";
 
 export const AUMLOK_SUBJECT_KINDS = Object.freeze(["agent", "device", "node", "model"] as const);
 /** Rings a manifest MAY grant. `self-modify` (the kernel ceiling-wall ring, never auto-grantable — aukoraCore
@@ -47,11 +48,15 @@ const CONSUME_FRESHNESS_MS = 60_000;
 /** This deployment's node identity (same source as the rest of the kernel). A manifest is signed FOR a specific node;
  *  mint refuses a foreign nodeId and the resolver refuses a manifest not bound to THIS node — closing cross-node
  *  replay before the B3 mesh exists (where every node pins the same root key). */
-const THIS_NODE_ID = (): string => process.env.AUMA_NODE_ID ?? "aukora-node-a-demo";
+const THIS_NODE_ID = requireNodeId;
 
 // ── Canonical signed serialization (the ONLY bytes the two signatures cover). Nullable limits are normalized to an
-//    explicit null so "absent" and "present" never collide; extra input fields are excluded by construction. ──
+//    explicit null so "absent" and "present" never collide; extra input fields refuse before verification. ──
 type Permission = { ring: string; action: string; resource: string };
+const MANIFEST_FIELDS = ["v", "manifestId", "rootId", "rootKeyId", "nodeId", "subjectId", "subjectKind", "subjectPubKey", "permissions", "allowedIntentCodecs", "notBefore", "expiresAt", "maxUses", "maxPerWindow", "createdAt"] as const;
+const hasOnlyKeys = (value: unknown, fields: readonly string[]): boolean =>
+  !!value && typeof value === "object" && !Array.isArray(value)
+  && Object.keys(value as Record<string, unknown>).every((key) => fields.includes(key));
 function canonicalManifest(m: any) {
   return {
     v: 1,
@@ -83,7 +88,13 @@ export async function subjectRevokeHead(s: any): Promise<ChainHeadFields> { retu
 // Consume request (subject signs under aumlokSubjectPop). useSeq === usedCount is a replay-proof monotonic nonce.
 // subjectId is bound + enforced (must match the manifest) so the signed subjectId is not dead weight.
 const CONSUME_FIELDS = ["v", "manifestId", "subjectId", "action", "resource", "ring", "intentCodec", "useSeq", "timestamp"] as const;
-export function serializeConsumeV1(r: any): string { return "aukora-aumlok-mft-use-v1|" + stableStringify(pick(r, CONSUME_FIELDS)); }
+const MEMORY_CONSUME_FIELDS = [...CONSUME_FIELDS, "key"] as const;
+/** `key` is an effect-specific extension used only by the memory boundary. Including it in the canonical bytes makes
+ *  the subject's signature bind the exact memory slot; the plain consume mutation still refuses that extension. */
+export function serializeConsumeV1(r: any): string {
+  const fields = Object.prototype.hasOwnProperty.call(r ?? {}, "key") ? MEMORY_CONSUME_FIELDS : CONSUME_FIELDS;
+  return "aukora-aumlok-mft-use-v1|" + stableStringify(pick(r, fields));
+}
 export async function consumeHead(r: any): Promise<ChainHeadFields> { return { chainKey: `aumlok:mftuse:${r.manifestId}`, timestamp: Number(r.timestamp), chainLength: 1, chainHeadHash: await sha256Hex(serializeConsumeV1(r)) }; }
 
 // ── Validation (fail closed). Identity names use the frozen IDENTITY_NAME_RE (no colon); scope/codec fields have
@@ -100,7 +111,10 @@ const asRing = (x: unknown): string => {
 
 function validatePermissions(perms: any): Permission[] {
   if (!Array.isArray(perms) || perms.length === 0 || perms.length > 64) throw new Error("aumlok_mft_permissions_invalid");
-  return perms.map((p) => ({ ring: asRing(p?.ring), action: asScope(p?.action, "action"), resource: asScope(p?.resource, "resource") }));
+  return perms.map((p) => {
+    if (!hasOnlyKeys(p, ["ring", "action", "resource"])) throw new Error("aumlok_mft_permission_unknown_field");
+    return { ring: asRing(p.ring), action: asScope(p.action, "action"), resource: asScope(p.resource, "resource") };
+  });
 }
 function validateCodecs(codecs: any): string[] {
   if (!Array.isArray(codecs) || codecs.length === 0 || codecs.length > 16) throw new Error("aumlok_mft_codecs_invalid");
@@ -108,6 +122,7 @@ function validateCodecs(codecs: any): string[] {
 }
 function validateMaxPerWindow(w: any): { capacity: number; windowMs: number } | null {
   if (w == null) return null;
+  if (!hasOnlyKeys(w, ["capacity", "windowMs"])) throw new Error("aumlok_mft_window_unknown_field");
   return { capacity: asPosInt(w.capacity, "maxPerWindow.capacity"), windowMs: asPosInt(w.windowMs, "maxPerWindow.windowMs") };
 }
 
@@ -190,11 +205,12 @@ export const aumlokManifestResolve = query({
 
 /** MINT a manifest. Gated by the two signatures themselves: the ROOT (active key — retired CANNOT mint new) signs the
  *  canonical manifest under aumlokManifest, the SUBJECT counter-signs the SAME commitment under aumlokSubjectPop.
- *  Both verify before storage. Only the canonical fields are hashed+stored, so an unknown input field grants nothing. */
+ *  Both verify before storage. Public shapes are closed; an unknown input field refuses. */
 export const aumlokMintManifest = mutation({
   args: { manifest: v.any(), rootSig: v.string(), subjectPopSig: v.string() },
   handler: async (ctx, a): Promise<any> => {
     const i = a.manifest ?? {};
+    if (!hasOnlyKeys(i, MANIFEST_FIELDS)) throw new Error("aumlok_mft_unknown_field");
     if (i.v !== 1) throw new Error("aumlok_mft_version_unsupported");
     if (typeof a.rootSig !== "string" || !a.rootSig || typeof a.subjectPopSig !== "string" || !a.subjectPopSig) throw new Error("aumlok_mft_signature_missing");
     const manifestId = asName(i.manifestId, "manifestId");
@@ -252,6 +268,7 @@ export const aumlokRevokeManifest = mutation({
   args: { statement: v.any(), rootSig: v.string() },
   handler: async (ctx, a): Promise<any> => {
     const s = a.statement ?? {};
+    if (!hasOnlyKeys(s, REVOKE_FIELDS)) throw new Error("aumlok_mft_revoke_unknown_field");
     if (s.v !== 1) throw new Error("aumlok_mft_version_unsupported");
     if (s.action !== "revoke") throw new Error("aumlok_mft_revoke_action_invalid");
     const manifestId = asName(s.manifestId, "manifestId");
@@ -280,6 +297,7 @@ export const aumlokManifestSelfRevoke = mutation({
   args: { statement: v.any(), subjectSig: v.string() },
   handler: async (ctx, a): Promise<any> => {
     const s = a.statement ?? {};
+    if (!hasOnlyKeys(s, REVOKE_FIELDS)) throw new Error("aumlok_mft_revoke_unknown_field");
     if (s.v !== 1) throw new Error("aumlok_mft_version_unsupported");
     if (s.action !== "revoke" && s.action !== "pause") throw new Error("aumlok_mft_selfaction_invalid");
     const manifestId = asName(s.manifestId, "manifestId");
@@ -310,8 +328,11 @@ export const aumlokManifestSelfRevoke = mutation({
  *  increment is atomic with whatever effect the caller performs: any later throw rolls back the use too (a use is
  *  spent IFF the whole mutation commits). Returns the resolved manifest + the post-increment count. */
 export async function consumeManifestUseCore(
-  ctx: MutationCtx, r: any, subjectSig: unknown,
+  ctx: MutationCtx, r: any, subjectSig: unknown, options: { effect?: "memory" } = {},
 ): Promise<{ manifest: ManifestRow; useSeq: number; usedCount: number; issuer?: ManifestIssuer }> {
+  const allowedFields = options.effect === "memory" ? MEMORY_CONSUME_FIELDS : CONSUME_FIELDS;
+  if (!hasOnlyKeys(r, allowedFields)) throw new Error("aumlok_mft_consume_unknown_field");
+  if (options.effect === "memory" && !Object.prototype.hasOwnProperty.call(r, "key")) throw new Error("aumlok_mft_consume_key_missing");
   if (r?.v !== 1) throw new Error("aumlok_mft_version_unsupported");
   const manifestId = asName(r.manifestId, "manifestId");
   const subjectId = asName(r.subjectId, "subjectId");

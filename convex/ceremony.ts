@@ -16,6 +16,7 @@ import { signChainHeadV3, verifyChainHeadV3, verifyChainHeadV4, SIGNED_HEAD_V4_A
 import { mlDsa65PublicKeyFromSeed } from "./aukoraPqcSigner";
 import { receiptHistoryRootHex } from "./aukoraMerkleLog";
 import { buildPoPEnvelope, requireDemoOperatorSeed } from "./popResolver";
+import { requireNodeId } from "./runtimeConfig";
 
 const delPayloadOf = (d: any) => ({ delegationId: d.delegationId, carbonRoot: d.carbonRoot, siliconPrincipal: d.siliconPrincipal, action: d.action, resource: d.resource, ring: d.ring, nodeId: d.nodeId, issuedAt: d.issuedAt });
 const delHead = (delegationId: string, issuedAt: number, delHash: string): ChainHeadFields => ({ chainKey: `del:${delegationId}`, timestamp: issuedAt, chainLength: 1, chainHeadHash: delHash });
@@ -136,7 +137,7 @@ export const runCeremony = internalAction({
     const hex = (n: number) => [...crypto.getRandomValues(new Uint8Array(n))].map((b) => b.toString(16).padStart(2, "0")).join("");
     const run = crypto.randomUUID().slice(0, 8);
     const carbonRoot = `demo.peter.carbon:${run}`, silicon = `demo.auma.silicon:${run}`, delId = `del:${run}`;
-    const nodeId = process.env.AUMA_NODE_ID ?? "aukora-node-a-demo";
+    const nodeId = requireNodeId();
     const out: any = { run, carbonRoot, silicon, delegationId: delId };
     // carbon keypair (fresh per run; seed in-memory only)
     const carbonSeed = hex(32);

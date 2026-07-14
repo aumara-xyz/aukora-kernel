@@ -36,6 +36,7 @@ import { isPqcPublicKeyHex } from "./aukoraPqcSigner";
 import { mintRootKeyRow, rootKeyFingerprint } from "./aumlokRootRegistry";
 import { appendIdentityLifecycleReceipt, IDENTITY_NAME_RE } from "./aukoraReceipts";
 import { consumeRateLimit } from "./aukoraRateLimit";
+import { requireNodeId } from "./runtimeConfig";
 
 // B3.2 — per-DEPLOYMENT ceremony rate limit (ANTI-SPAM, NOT AUTHORITY). It caps how many self-sovereign mints a node
 // commits per window so a flood of self-signed ceremonies cannot fill the registry with junk roots. It NEVER decides
@@ -49,7 +50,7 @@ const CEREMONY_RATE = (): { capacity: number; windowMs: number } => ({
 });
 
 const CEREMONY_FRESHNESS_MS = 60_000;
-const THIS_NODE_ID = (): string => process.env.AUMA_NODE_ID ?? "aukora-node-a-demo";
+const THIS_NODE_ID = requireNodeId;
 const pick = (o: any, fields: readonly string[]) => { const r: any = {}; for (const f of fields) r[f] = o?.[f]; return r; };
 const asName = (x: unknown, f: string): string => { if (typeof x !== "string" || !IDENTITY_NAME_RE.test(x)) throw new Error(`aumlok_ceremony_name_invalid:${f}`); return x; };
 

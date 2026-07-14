@@ -27,8 +27,9 @@ import { verifyAndConsumeDecisionToken } from "./aukoraToken";
 import { writeReceiptRow, IDENTITY_NAME_RE } from "./aukoraReceipts";
 import { sha256Hex, stableStringify } from "./aukoraCore";
 import { verifyChainHeadV3, type ChainHeadFields } from "./aukoraSignedHead";
+import { requireNodeId } from "./runtimeConfig";
 
-const THIS_NODE_ID = (): string => process.env.AUMA_NODE_ID ?? "aukora-node-a-demo";
+const THIS_NODE_ID = requireNodeId;
 const RECALL_FRESHNESS_MS = 60_000;
 // Memory key: the frozen identity-name grammar (no colon) so `mem:{owner}:{key}` stays an unambiguous chainKey.
 const asMemKey = (x: unknown): string => { if (typeof x !== "string" || !IDENTITY_NAME_RE.test(x)) throw new Error("aumlok_mem_key_invalid"); return x; };
@@ -56,7 +57,7 @@ export const aumlokMemoryWrite = mutation({
 
     // 1) resolve + consume the manifest use (authority + circuit breaker + OCC usedCount++) — atomic in this mutation.
     //    B3.5b: `issuer` is the AUDIT-ONLY tag (local | foreign) — it is RECORDED on the grant + receipt, never branched on.
-    const { manifest: m, useSeq, issuer } = await consumeManifestUseCore(ctx, r, a.subjectSig);
+    const { manifest: m, useSeq, issuer } = await consumeManifestUseCore(ctx, r, a.subjectSig, { effect: "memory" });
     const owner = m.rootId, writer = m.subjectId;
     const issuerKind = issuer?.kind ?? "local";
     const issuerSrc = issuer?.kind === "foreign" ? issuer.sourceNodeId : undefined;

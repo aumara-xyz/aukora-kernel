@@ -25,10 +25,11 @@ import { receiptHistoryRootHex } from "./aukoraMerkleLog";
 import { isAcceptedVersion } from "./aukoraWireRegistry";
 import { resolvePoPSession } from "./popResolver";
 import { utf8ToBytes } from "@noble/hashes/utils.js";
+import { requireNodeId } from "./runtimeConfig";
 
 const flagOn = (name: string): boolean => ["1", "true", "on", "yes"].includes((process.env[name] ?? "").toLowerCase());
 
-const THIS_NODE_ID = (): string => process.env.AUMA_NODE_ID ?? "aukora-node-a-demo";
+const THIS_NODE_ID = requireNodeId;
 
 // ── FROZEN one-way-door constants (B3.5a) ──
 /** The cross-node import envelope surface/version (registered in aukoraWireRegistry; fail-closed on any other). */

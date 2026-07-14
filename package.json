@@ -20,7 +20,9 @@
     "verify:kernel-sbom": "node scripts/generate-kernel-sbom.mjs --check",
     "verify:kernel-runtimes": "node scripts/verify-kernel-runtimes.mjs",
     "verify:kernel-package": "node scripts/verify-kernel-package.mjs",
-    "verify:convex-surface": "node scripts/generate-convex-public-surface.mjs --check",
+    "verify:convex-surface": "node scripts/generate-convex-public-surface.mjs --check && node scripts/generate-convex-authority-seams.mjs --check",
+    "generate:convex-authority-seams": "node scripts/generate-convex-authority-seams.mjs --write",
+    "generate:convex-surface": "node scripts/generate-convex-public-surface.mjs --write",
     "generate:nist-acvp-mldsa": "node scripts/generate-nist-acvp-mldsa.mjs",
     "test:kernel": "npm run test:portable-boundary && npm run typecheck:kernel && npm test --workspace @aukora/kernel && npm run build:kernel && npm run verify:kernel-compatibility && npm run verify:kernel-sbom && npm run verify:kernel-runtimes && npm run verify:kernel-package",
     "test:release": "npm run test:kernel && npm run verify:convex-surface && npm test -- --reporter=dot"
@@ -29,7 +31,7 @@
     "@noble/ciphers": "2.2.0",
     "@noble/hashes": "^1.8.0",
     "@noble/post-quantum": "0.6.1",
-    "convex": "^1.29.3"
+    "convex": "1.42.1"
   },
   "devDependencies": {
     "typescript": "^5.9.3",

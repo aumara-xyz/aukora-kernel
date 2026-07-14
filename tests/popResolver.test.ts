@@ -51,6 +51,13 @@ describe("Brick 6 — AUMLOK proof-of-possession resolver (demo runnable suite)"
     const r: any = await call(s.t, await mkEnv(FOUNDER_SEED, s.cav("cap-h")));
     expect(r.ok).toBe(true); expect(r.session.principalId).toBe(s.founderUserId);
   });
+  it("closed envelopes and capabilities refuse unknown fields", async () => {
+    const s = await setup("closed");
+    const env = await mkEnv(FOUNDER_SEED, s.cav("cap-closed"));
+    await expect(call(s.t, { ...env, surprise: true })).rejects.toThrow("pop_envelope_unknown_field");
+    const caveats = { ...s.cav("cap-closed-cav"), surprise: true };
+    await expect(call(s.t, await mkEnv(FOUNDER_SEED, caveats))).rejects.toThrow("pop_capability_unknown_field");
+  });
   it("STOLEN TOKEN / no bearer: a row or token buys nothing (unknown pinned key) -> pop_key_unknown", async () => {
     const s = await setup("st");
     await expect(call(s.t, await mkEnv(FOUNDER_SEED, s.cav("cap-st", { founderKeyId: "not-pinned" })))).rejects.toThrow("pop_key_unknown");

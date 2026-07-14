@@ -7,6 +7,7 @@ import { resolveChainSigningSeed } from "./aukoraSignedHead";
 import { mlDsa65PublicKeyFromSeed } from "./aukoraPqcSigner";
 import { deriveChannelKeypair, signChannelBinding, channelDecapsulate, channelTranscript, sealFrame, openFrame, CHANNEL_DIR_I2R } from "./aukoraChannel";
 import { utf8ToBytes } from "@noble/hashes/utils.js";
+import { requireHeadKeyId, requireNodeId } from "./runtimeConfig";
 
 // Cross-node transport + demo driver. Both nodes deploy these; only the relevant node's data is meaningful.
 //
@@ -89,7 +90,7 @@ http.route({ path: "/run-ceremony", method: "POST", handler: gated(DEMO, async (
 http.route({ path: "/node-pubkey", method: "GET", handler: gated(WITNESS, async () => {
   const seed = resolveChainSigningSeed();
   const publicKey = seed ? await mlDsa65PublicKeyFromSeed(seed) : null;
-  return json({ sourceNodeId: process.env.AUMA_NODE_ID ?? "aukora-node-a-demo", headKeyId: process.env.AUMA_HEAD_KEY_ID ?? "demo-key-1", publicKey });
+  return json({ sourceNodeId: requireNodeId(), headKeyId: requireHeadKeyId(), publicKey });
 }) });
 // ── B3.4 ML-KEM channel routes (gated AUKORA_B3_CHANNEL_ENABLED, default OFF; DORMANT until Peter's go) ──
 // Publish this node's SIGNED channel-key binding for its current epoch (PUBLIC material only — KEM public key + epoch +
@@ -101,7 +102,7 @@ http.route({ path: "/channel-binding", method: "GET", handler: gated(CHANNEL, as
   const epoch = await ctx.runQuery(api.aukoraWitness.channelSelfEpoch, {});
   const kp = deriveChannelKeypair(seed, epoch);
   try {
-    const { binding, sig } = await signChannelBinding(seed, { nodeId: process.env.AUMA_NODE_ID ?? "aukora-node-a-demo", headKeyId: process.env.AUMA_HEAD_KEY_ID ?? "demo-key-1", epoch, channelPublicKeyHex: kp.publicKeyHex });
+    const { binding, sig } = await signChannelBinding(seed, { nodeId: requireNodeId(), headKeyId: requireHeadKeyId(), epoch, channelPublicKeyHex: kp.publicKeyHex });
     return json({ binding, sig });
   } finally { kp.secretKey.fill(0); }
 }) });
@@ -123,7 +124,7 @@ http.route({ path: "/channel-export", method: "POST", handler: gated(CHANNEL, as
     let ss: Uint8Array;
     try { ss = channelDecapsulate(secretKey, ctHex); } catch { return json({ error: "bad_ciphertext" }); } // wrong-LENGTH ct (structural)
     try {
-      const transcript = channelTranscript({ nodeId: process.env.AUMA_NODE_ID ?? "aukora-node-a-demo", headKeyId: process.env.AUMA_HEAD_KEY_ID ?? "demo-key-1", epoch, channelPublicKeyHex: publicKeyHex, ctHex });
+      const transcript = channelTranscript({ nodeId: requireNodeId(), headKeyId: requireHeadKeyId(), epoch, channelPublicKeyHex: publicKeyHex, ctHex });
       // B3.5c — OPEN the sealed i2r request to recover the chainKey (uniform channel_refused on any failure; no oracle).
       let chainKey: string;
       try { const reqBody = JSON.parse(new TextDecoder().decode(openFrame(ss, transcript, requestFrame, CHANNEL_DIR_I2R))); chainKey = reqBody?.chainKey; } catch { return json({ error: "channel_refused" }); }
@@ -186,7 +187,7 @@ http.route({ path: "/run-key-rotation", method: "POST", handler: gated(DEMO, asy
 // Code attestation — release-manifest provenance attack matrix (body may pass {gitSHA, bundleHash} from compute-bundle-hash.sh).
 http.route({ path: "/run-code-attestation", method: "POST", handler: gated(DEMO, async (ctx, req) => {
   const b = await req.json().catch(() => ({}));
-  return json(await ctx.runAction(api.codeAttestation.runCodeAttestation, { gitSHA: b.gitSHA, bundleHash: b.bundleHash }));
+  return json(await ctx.runAction(internal.codeAttestation.runCodeAttestation, { gitSHA: b.gitSHA, bundleHash: b.bundleHash }));
 }) });
 
 export default http;

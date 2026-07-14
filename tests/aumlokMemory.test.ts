@@ -70,6 +70,15 @@ describe("B2.4 — manifest authority drives the live memory effect", () => {
     expect(row.receiptHash).toBe(rcpt.chainHash);
   });
 
+  it("the subject signature binds the exact memory key and unknown request fields refuse", async () => {
+    const { t } = await setup("closed");
+    const { r, subjectSig } = await memReq({ useSeq: 0 });
+    await expect(t.mutation(api.aumlokMemory.aumlokMemoryWrite, { req: { ...r, key: "other" }, subjectSig, value: "tampered" })).rejects.toThrow("aumlok_mft_subject_pop_invalid");
+    await expect(write(t, { surprise: true })).rejects.toThrow("aumlok_mft_consume_unknown_field");
+    expect(await memRow(t)).toBeNull();
+    expect(await mUsedCount(t)).toBe(0);
+  });
+
   it("wrong action / ring / resource-scope all refuse (no memory row)", async () => {
     const { t } = await setup("scope");
     await expect(write(t, { action: "memory.delete" })).rejects.toThrow("aumlok_mem_action_invalid");      // boundary fixes the action

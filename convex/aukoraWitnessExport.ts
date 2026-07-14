@@ -12,9 +12,10 @@ import { v } from "convex/values";
 import { buildExportEnvelope } from "./aukoraWireFormat";
 import { sha256 } from "@noble/hashes/sha2.js";
 import { bytesToHex, utf8ToBytes } from "@noble/hashes/utils.js";
+import { requireHeadKeyId, requireNodeId } from "./runtimeConfig";
 
-const NODE_ID = (): string => process.env.AUMA_NODE_ID ?? "aukora-node-a-demo";
-const HEAD_KEY_ID = (): string => process.env.AUMA_HEAD_KEY_ID ?? "demo-key-1";
+const NODE_ID = requireNodeId;
+const HEAD_KEY_ID = requireHeadKeyId;
 
 /** `/export` — the receipt-history HEAD as a B3.1 env-v1 envelope: the V4 signed head (public) + per-field digests of
  *  the latest receipt; bodies ABSENT. The witness verifies head + digests against a consistency proof, never the rows. */
