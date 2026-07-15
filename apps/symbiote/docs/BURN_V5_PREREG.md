@@ -81,7 +81,7 @@ universe," not a physics result, and not a claim about any other model or
 render. The falsification framing stays: the eval can fail, the bars are
 frozen, and a REFUSED is reported as REFUSED.
 
-## 7. Results — job `aijob-e00m0abzevb0ttmtg2` (burn3), COMPLETED 2026-07-08 ~03:55 UTC
+## 7. Results — job `private-job-burn3` (infrastructure identifier withheld), COMPLETED 2026-07-08 ~03:55 UTC
 
 **Harness trail (disclosed):** burn1 failed in 58 s (ms-swift 4.x renamed
 `--train_type`; fixed by pinning 3.10.3). burn2 failed at training step 1

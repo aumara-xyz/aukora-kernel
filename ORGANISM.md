@@ -1,6 +1,6 @@
 # Aukora organism workspace
 
-This private consolidation checkpoint brings the recent Aukora work into one inspectable repository without pretending that every donor has already been deduplicated or promoted to canonical status.
+This public consolidation checkpoint brings the recent Aukora work into one inspectable repository without pretending that every donor has already been deduplicated or promoted to canonical status.
 
 ## Authority and ownership
 

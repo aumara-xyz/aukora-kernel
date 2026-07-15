@@ -1,6 +1,9 @@
-# G1_READY_FOR_CODEX_AUDIT
+# G1_READY_FOR_CODEX_AUDIT — historical Round-22 baseline
 
-**Status:** the private G1 governed-evolution deployment bundle is prepared, typechecks, and passes its full negative-control battery **locally**. It is **ready for Codex to audit** before any operator arms G1.
+> This file preserves the original 26-test bundle handoff. The current repaired state and current
+> verification counts are authoritative in `R24_G1_REPAIR_REPORT.md` and `MANIFEST.json`.
+
+**Status at the original handoff:** the locally prepared G1 governed-evolution deployment bundle typechecked and passed its initial negative-control battery. It was ready for Codex to audit before any operator armed G1.
 
 **Mode discipline (honest):** this bundle was prepared **LOCALLY / PRIVATELY only**. It has **not** been deployed, the sealing has **not** been applied, no generation has run, and **nothing was published** this round (no push / issue / PR / merge / release). The author (Local Opus) **has no shell on the Nebius L40S** and does not claim any. The operator — not the author — runs `deploy/seal.sh`, applies egress-deny, and arms the canary, after Codex's audit.
 
@@ -12,7 +15,7 @@
 - **Sealed bundle digest (sha256 over sorted `path:filesha256`):** `3d70472f81a2ae839bca1e6472a807f7faa57564d2b50711c16c5ee93972912f` — see `MANIFEST.json` for all 27 per-file digests.
 - **D6 tracked-tree verification:** tree object `d3f572ae…`; full-tracked-tree `ls-tree` sha256 `8c37bc49…` over 38 entries — see `d6/D6_TREE_VERIFICATION.json`; enforced at runtime by `src/d6selfcheck.ts`.
 
-## Verification performed (by the author, read-only)
+## Original baseline verification (by the author, read-only)
 - `npx tsc --noEmit` → **exit 0** (whole bundle incl. vendored D6).
 - `npx vitest run` → **26/26 pass** (`test/negativeControls.test.ts`), Node v22.23.0 + vitest 2.1.8.
 

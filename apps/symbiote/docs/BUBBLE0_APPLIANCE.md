@@ -23,7 +23,7 @@ this pattern.
 | Model | explicit revision-pinned artifact dir in the bucket: `models/qwen25vl32b-7cfb30d/` — snapshot `7cfb30d71a1f4f49a57592323337a4a4727301da` of Qwen/Qwen2.5-VL-32B-Instruct, materialized symlink-free (the mount holds no symlinks); read with `HF_HUB_OFFLINE=1` + `TRANSFORMERS_OFFLINE=1` |
 | Adapters | v4 `output/auma-vl-v4-1783072814` · v5 found under `output/auma-vl-v5-burn3-07080303/sft` by the same deterministic rule burn3 used |
 | Python deps | `ms-swift==3.10.3` (burn3's pin; resolver-pinned transformers/peft — see §4 honesty) |
-| **Expected verdict (frozen)** | `{"base": {"menlo": 10, "serif": 11}, "v4": {"menlo": 24, "serif": 25}, "v5": {"menlo": 27, "serif": 27}}` — burn3, `aijob-e00m0abzevb0ttmtg2` |
+| **Expected verdict (frozen)** | `{"base": {"menlo": 10, "serif": 11}, "v4": {"menlo": 24, "serif": 25}, "v5": {"menlo": 27, "serif": 27}}` — burn3, `private-job-burn3` (infrastructure identifier withheld) |
 
 ## 3. The contract
 
@@ -49,7 +49,7 @@ the frozen expectation. Any absent pin, gate failure, or verdict drift ⇒
 - Reproduction of **greedy decoding on same-class hardware** is the claim;
   bitwise reproducibility across GPU architectures is not claimed.
 
-## 5. Results — job `aijob-e00rwkaex7d6314q7j` (appl1-07080645), COMPLETED 2026-07-08
+## 5. Results — job `private-job-bubble0-repro` (infrastructure identifier withheld), COMPLETED 2026-07-08
 
 **BUBBLE0_REPRODUCED.** The appliance reproduced the burn3 verdict **byte-exactly**
 on a fresh H100 instance from the digest-pinned image:
@@ -61,7 +61,7 @@ OFFLINE_MODE_ACTIVE
 BUBBLE0_REPRODUCED
 ```
 
-Every arm, every count identical to `aijob-e00m0abzevb0ttmtg2` — greedy decoding
+Every arm, every count identical to `private-job-burn3` — greedy decoding
 reproduced exactly across job instances on same-class hardware, which is itself a
 useful measured fact for the clean-room replication lane (T6).
 

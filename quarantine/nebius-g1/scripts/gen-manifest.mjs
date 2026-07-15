@@ -64,7 +64,7 @@ const sealed = sha(Buffer.from(sealedLines, 'utf8'));
 const base = {
   bundle: 'aukora-g1-bundle',
   version: 'v1-r24-repair',
-  mode: 'QUARANTINED — repaired for outside audit; NOT deployed, NOT armed, NOT published',
+  mode: 'QUARANTINED — repaired and published for audit; NOT deployed, NOT armed',
   d6: {
     commit: pin.d6_commit,
     tree: pin.d6_tree_object,
@@ -74,9 +74,9 @@ const base = {
   },
   verification: {
     tsc_noEmit: 'exit 0',
-    tests: '49/49 pass (negativeControls 26 + r24Repairs 23) + fail-before repro drives base-vs-fixed',
-    runtime: 'Node + vitest 2.1.x',
-    verified_by: 'OPUS NEBIUS lane (author), read-only self-check; independent audit pending',
+    tests: '63/63 pass (negativeControls 26 + r24Repairs 35 + manifest 2) + fail-before repro drives base-vs-fixed',
+    runtime: 'Node + vitest 4.1.x',
+    verified_by: 'OPUS NEBIUS lane (author) plus independent Codex conductor reproduction',
     note: 'files_sha256 covers every material file; manifest_self_sha256 covers this manifest itself.',
   },
   file_count: list.length,

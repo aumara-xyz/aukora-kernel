@@ -38,13 +38,39 @@ function record(meter: TransportMeter, seat: CouncilSeat, resp: SeatResponse): S
 const OPENROUTER_CHAT = 'https://openrouter.ai/api/v1/chat/completions';
 const OPENROUTER_MODELS = 'https://openrouter.ai/api/v1/models';
 const MAX_OUTPUT_TOKENS = 900;
+const MAX_RESPONSE_BYTES = 262_144; // 256 KiB — a hostile/huge body is truncated, not parsed unbounded (V7)
+
+/** V7: read a response body up to a byte cap, honoring the fetch AbortSignal (a slow/huge body cannot
+ *  hang or exhaust memory — over-cap or a stream abort returns null → a non-vote). */
+async function readBoundedJson(res: Response, maxBytes: number): Promise<unknown | null> {
+  const reader = res.body?.getReader();
+  if (!reader) { const t = await res.text(); return t.length > maxBytes ? null : safeParse(t); }
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (value) {
+        total += value.byteLength;
+        if (total > maxBytes) { await reader.cancel(); return null; }
+        chunks.push(value);
+      }
+    }
+  } catch { return null; } // abort during body read (deadline) → non-vote
+  const buf = new Uint8Array(total);
+  let off = 0; for (const c of chunks) { buf.set(c, off); off += c.byteLength; }
+  return safeParse(new TextDecoder().decode(buf));
+}
+function safeParse(t: string): unknown | null { try { return JSON.parse(t); } catch { return null; } }
 
 /** Query the live catalogue ONCE; returns the set of served model ids, or null if the query failed. */
 async function fetchAvailableModels(apiKey: string, signal: AbortSignal): Promise<Set<string> | null> {
   try {
     const res = await fetch(OPENROUTER_MODELS, { headers: { authorization: `Bearer ${apiKey}` }, signal });
     if (!res.ok) return null;
-    const data = (await res.json()) as { data?: Array<{ id?: string }> };
+    const data = (await readBoundedJson(res, 4 * MAX_RESPONSE_BYTES)) as { data?: Array<{ id?: string }> } | null;
+    if (!data) return null;
     const ids = new Set<string>();
     for (const m of data.data ?? []) if (typeof m.id === 'string') ids.add(m.id);
     return ids.size ? ids : null;
@@ -71,31 +97,48 @@ export function liveOpenRouterTransport(apiKey: string | null, meter: TransportM
     }
     meter.providerContacted = true;
     meter.paidCalls += 1;
-    const res = await fetch(OPENROUTER_CHAT, {
-      method: 'POST', signal,
-      headers: { authorization: `Bearer ${apiKey}`, 'content-type': 'application/json' },
-      body: JSON.stringify({
-        model: seat.slug, max_tokens: MAX_OUTPUT_TOKENS, temperature: 0.2,
-        usage: { include: true },
-        messages: [{ role: 'user', content: prompt }],
-      }),
-    });
-    if (res.status === 429) return record(meter, seat, { text: '', served: undefined, finishReason: 'rate_limited' });
-    if (!res.ok) return record(meter, seat, { text: '', served: undefined, finishReason: `http_${res.status}` });
-    const data = (await res.json()) as {
-      model?: string; choices?: Array<{ message?: { content?: string }; finish_reason?: string; native_finish_reason?: string }>;
-      usage?: { completion_tokens?: number; cost?: number };
-    };
-    const text = data.choices?.[0]?.message?.content ?? '';
-    // Never let a leaked key echo back into the artifact: scrub any secret-shaped response to empty.
-    const safeText = textHasSecret(text) ? '' : text;
-    return record(meter, seat, {
-      text: safeText,
-      served: typeof data.model === 'string' ? data.model : undefined,
-      outputTokens: data.usage?.completion_tokens,
-      costUsd: typeof data.usage?.cost === 'number' ? data.usage.cost : undefined,
-      finishReason: data.choices?.[0]?.finish_reason ?? data.choices?.[0]?.native_finish_reason,
-    });
+    // Worst-case cost for THIS paid call. Used as (a) the provider-missing cost fallback when a successful
+    // response carries no `usage.cost`, and (b) the charge for an aborted/orphaned paid call — the provider
+    // may have billed a request we could not measure, so we never undercount it (R24 accounting).
+    const worstCaseUsd = (Math.max(seat.costPer1M, 0) * MAX_OUTPUT_TOKENS) / 1_000_000;
+    try {
+      const res = await fetch(OPENROUTER_CHAT, {
+        method: 'POST', signal,
+        headers: { authorization: `Bearer ${apiKey}`, 'content-type': 'application/json' },
+        body: JSON.stringify({
+          model: seat.slug, max_tokens: MAX_OUTPUT_TOKENS, temperature: 0.2,
+          usage: { include: true },
+          messages: [{ role: 'user', content: prompt }],
+        }),
+      });
+      // 429 / HTTP error are provider REJECTIONS (not billed) → cost 0; the attempt is already counted.
+      if (res.status === 429) return record(meter, seat, { text: '', served: undefined, finishReason: 'rate_limited' });
+      if (!res.ok) return record(meter, seat, { text: '', served: undefined, finishReason: `http_${res.status}` });
+      const parsed = await readBoundedJson(res, MAX_RESPONSE_BYTES);
+      // A response WAS received (likely billed) but is uninterpretable/over-cap → charge worst-case (V7 + billing).
+      if (parsed === null) return record(meter, seat, { text: '', served: undefined, costUsd: worstCaseUsd, finishReason: 'body_cap_or_parse' });
+      const data = parsed as {
+        model?: string; choices?: Array<{ message?: { content?: string }; finish_reason?: string; native_finish_reason?: string }>;
+        usage?: { completion_tokens?: number; cost?: number };
+      };
+      const text = data.choices?.[0]?.message?.content ?? '';
+      // Never let a leaked key echo back into the artifact: scrub any secret-shaped response to empty.
+      const safeText = textHasSecret(text) ? '' : text;
+      const providerCost = typeof data.usage?.cost === 'number' ? data.usage.cost : undefined;
+      return record(meter, seat, {
+        text: safeText,
+        served: typeof data.model === 'string' ? data.model : undefined,
+        outputTokens: data.usage?.completion_tokens,
+        costUsd: providerCost ?? worstCaseUsd, // provider-missing cost fallback (R24)
+        finishReason: data.choices?.[0]?.finish_reason ?? data.choices?.[0]?.native_finish_reason,
+      });
+    } catch (e) {
+      // Abort / network failure AFTER the request was sent → an ORPHANED paid call: the provider may have
+      // billed it though we never measured a response. Charge worst-case, then rethrow so the council
+      // records the timeout/error non-vote. paidCalls already counted this attempt.
+      meter.costUsd.set(seat.id, (meter.costUsd.get(seat.id) ?? 0) + worstCaseUsd);
+      throw e;
+    }
   };
 }
 

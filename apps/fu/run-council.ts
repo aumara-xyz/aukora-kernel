@@ -4,6 +4,14 @@
 // Aukora FU standalone Fusion engine.
 // Advisory-only. It calls OpenRouter, writes validated fusion-run-v1 artifacts into ./runs/,
 // and grants no authority. The browser only reads those artifacts.
+//
+// ⚠️ DEPRECATED (Round-22, V12). This legacy live runner predates the hardened Fu Portal controller
+// (`tools/fu-round`), which supersedes it: structurally-exclusive live/offline/replay/synthetic modes,
+// symlink-safe target reader, D6 secret scanning before any bytes reach a provider, no silent model
+// substitution, bounded response bodies, worst-case + persistent-daily spend accounting, and a canonical
+// FuRoundArtifactV1 bound to target commit/tree + EvidencePack + claim basis. Prefer:
+//     bun tools/fu-round/run.ts --target <path> --mode live
+// This file is retained only for the legacy dashboard/server and MUST NOT be extended.
 import * as fs from "fs";
 import * as path from "path";
 import { assertLegacyTargetSafe } from "./legacy/legacyTargetSafety";
@@ -472,7 +480,7 @@ function sampleResults(council: string[]): Review[] {
 }
 
 async function main() {
-  console.warn('[fu][legacy] This is the preserved v0.1 shard runner, not the hardened canonical council in src/. Use `bun run core:verify` for the canonical offline core.');
+  console.warn('[fu][DEPRECATED] Legacy live runner (Round-22 V12). Superseded by the hardened Fu Portal controller: `bun tools/fu-round/run.ts --target <path> --mode live`. Not extended; retained only for the legacy dashboard/server.');
   loadDotenv();
   const sample = process.argv.includes("--sample");
   const council = models();

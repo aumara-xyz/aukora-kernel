@@ -12,10 +12,14 @@ function git(args: string[], cwd = repo): string {
   return execFileSync('git', args, { cwd, encoding: 'utf8' }).trim();
 }
 
-function initRepo(dir: string) {
-  git(['init', '-b', 'main'], dir);
+function configureTestIdentity(dir: string) {
   git(['config', 'user.name', 'Test Owner'], dir);
   git(['config', 'user.email', 'test@example.test'], dir);
+}
+
+function initRepo(dir: string) {
+  git(['init', '-b', 'main'], dir);
+  configureTestIdentity(dir);
 }
 
 beforeEach(() => {
@@ -154,6 +158,7 @@ describe('inboxAppend: fenced opt-in propagation (#96 multi-way comms)', () => {
     // A second clone advances origin behind our back.
     clone = fs.mkdtempSync(path.join(fs.realpathSync(os.tmpdir()), 'aukora-inbox-clone-'));
     git(['clone', origin, clone], path.dirname(clone));
+    configureTestIdentity(clone);
     fs.writeFileSync(path.join(clone, 'docs', 'INBOX.md'), 'diverged\n', 'utf8');
     git(['add', '.'], clone);
     git(['commit', '-m', 'other lane moved origin'], clone);

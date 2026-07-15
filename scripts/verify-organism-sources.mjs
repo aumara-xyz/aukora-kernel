@@ -6,9 +6,9 @@ import crypto from "node:crypto";
 const root = path.resolve(import.meta.dirname, "..");
 
 const expected = {
-  "apps/fu": { files: 50, digest: "fc7c58546de9208b54449304f5be98a03f4b0f8f7e649e8c0fa6ee49f7a7bedb" },
-  "apps/symbiote": { files: 1057, digest: "1a57994d88648466672c0276636dcae0f017c710b7ae809c2987b48a81249650" },
-  "quarantine/nebius-g1": { files: 42, digest: "97401175478b8d97e2b0d17cc767d111d441f409f7dec2f39eb1f9531a3a1e36" },
+  "apps/fu": { files: 51, digest: "13466e5b13ff6ae668005d27cee6e31199aad71c524d85ec4b4355f1e2d24ecb" },
+  "apps/symbiote": { files: 942, digest: "7b3ba131b364b4df6ed6b913a75829e1e2df22cec11875328cd089e45bbde9ff" },
+  "quarantine/nebius-g1": { files: 42, digest: "2ac6e210bb72517bb3062a5b053a3fc9b4aa62d099199f9300887b14060e74d7" },
   "research/energy-sensing": { files: 2, digest: "f3342de161e425e39b6d4c16ea9268a4bffdff18c8b753c3cf8349574bfbde25" },
 };
 

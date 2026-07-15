@@ -10,11 +10,11 @@
   "file_count": 41,
   "files_sha256": {
     "FU_ROUND_OFFLINE.json": "efbc99b4acb56c3df9fa494d72e26edf1bf032d23dd1b5dfab155597b05c0cf3",
-    "G1_READY_FOR_CODEX_AUDIT.md": "47a577fe2b5756eceb060e2f544db192dc5dad8864718ff6becc5d37fbd26d89",
+    "G1_READY_FOR_CODEX_AUDIT.md": "d422ef8261276c5dee580459b0daa4de151492cfffa8b07f78bfd6b747d5c1ac",
     "IMPORT_BLOCKERS_R23.md": "0faba99d373e98bddb78b55cc67dd63a294a4a551efd3db2746139a30dba7b71",
-    "R24_G1_REPAIR_REPORT.md": "3487a9c87d401bbb4f2a59770139ba4c74caae11b991815c73d94edb751e9506",
+    "R24_G1_REPAIR_REPORT.md": "7acf75f283a09c5942e8d9946de30ef0f45c4b00f8cf8c78ff4157027a03fe60",
     "README.md": "c711e6e4329271f68a2e5301b1d02eabd07962094c5eb4e1ff738842bd26e55a",
-    "bun.lock": "a7689a719c3439cf8e7ab79579a11cb001f9323306d4774590c120c605b158f6",
+    "bun.lock": "d6555e20313a5148b66639641c229d08eb0404e8ee8a81e42b2570b8d657e1b0",
     "d6/D6_TREE_VERIFICATION.json": "ae4144780fb3328a7ddf52bcfecb2bb99b3f63b3f6dacc794956db61cc337eda",
     "d6/evidence/canonical.ts": "c48a7b9cbfcf338237602dd44cc3fd414221137f0863d1aabb6b1f03ad0febf6",
     "d6/evidence/catalogue.ts": "718f02edeeed1405c17182be8d1d5ddc9915b9fdfa5e513bf96d0bb57595f872",
@@ -26,12 +26,12 @@
     "deploy/deploy-allowlist.json": "c7f9142814159835818a5f5767b0439dc3ca5c2d813db74c9c986d8779d3d5d0",
     "deploy/seal.sh": "b8ba9e11680fc4fb84518e9376539386c6b851aa0570f5c591d8c6bfd494dad7",
     "deploy/vm-policy.md": "0b49bb12d3b09488b851ad6a7f50c6a1b30fb5f048720d2d63cd38a62f108f2b",
-    "package-lock.json": "982c14709714811e2e800732722f5aae919a3fb0db38019e2c0a65c5836d9730",
-    "package.json": "d70b47124fe11af3c49831e5d90922807ef686e6c129b0dccc872367f10ddbfb",
+    "package-lock.json": "476832042a0487a0c4c3abd1bfb7095200cd5e3dbff57e295dc04e27581820ec",
+    "package.json": "ff3310e6afff96e162ecc27b24270ade7a99f235a19608286cdfd2b6d4230742",
     "scripts/fail-before.sh": "1e4ad4780e5324a4091eca4a8c06baa4aae3814bf0046e662ae3c386899392c8",
     "scripts/failbefore.repro.test.ts": "fb0cd20d7e1e7cc6a5ccf59c59fd9e52ed4267ae73b3f3e681ac9604e26fde0f",
     "scripts/failbefore.vitest.config.ts": "96f067f53fd6a7c6ddeb9ef4f1543917f770ed1f7cad5d32e71e589a323097f7",
-    "scripts/gen-manifest.mjs": "1761ea4b1cf18055c1725169a756811b41213d4b4843a9c6b6980d8ea2240f82",
+    "scripts/gen-manifest.mjs": "a5d4e953196c5324f3730c6811446f23c1ed008c476ae8ab8e28839e3cbed547",
     "src/allowlist.ts": "59ccf11fdb63b7767d1343b3e482021f62e9be629c3634ad188fec04901fcb9d",
     "src/containment.ts": "bdf87ea36644094f4cfd505b70e456ad2d6d5f4467102d81d8cad93d0d7de0d4",
     "src/controller.ts": "dc5002bd23a062d72a4b40895357d977acc5b3ba1babd08600127b50f10bed6a",
@@ -51,15 +51,15 @@
     "tsconfig.json": "db0daf8f999009f55a71466cfa95b6afc4f33dcde15f120998c54b88b7ef09ae",
     "vitest.config.ts": "114f97aaa7540c847b7aa7d97a3c71a9a446e7ecfa4b00713f38aca6f13145c3"
   },
-  "manifest_self_sha256": "96406ba21a3dcea507a0c07f65e49deb60b6c9653090df6d575202581e91104c",
-  "mode": "QUARANTINED — repaired for outside audit; NOT deployed, NOT armed, NOT published",
-  "sealed_bundle_digest_sha256": "df964ae3c6c734c40da1d560a4587afcc43a3c4d27610129a68a706f864774d9",
+  "manifest_self_sha256": "e18565d72d4bea5739f4415fa5f126d4c0a181b5e66b7418554634bc0b1e29c9",
+  "mode": "QUARANTINED — repaired and published for audit; NOT deployed, NOT armed",
+  "sealed_bundle_digest_sha256": "cfbeef93ed6893f70c06fb22a957631bc0940dd92906582ca15fbf39a37259a1",
   "verification": {
     "note": "files_sha256 covers every material file; manifest_self_sha256 covers this manifest itself.",
-    "runtime": "Node + vitest 2.1.x",
-    "tests": "49/49 pass (negativeControls 26 + r24Repairs 23) + fail-before repro drives base-vs-fixed",
+    "runtime": "Node + vitest 4.1.x",
+    "tests": "63/63 pass (negativeControls 26 + r24Repairs 35 + manifest 2) + fail-before repro drives base-vs-fixed",
     "tsc_noEmit": "exit 0",
-    "verified_by": "OPUS NEBIUS lane (author), read-only self-check; independent audit pending"
+    "verified_by": "OPUS NEBIUS lane (author) plus independent Codex conductor reproduction"
   },
   "version": "v1-r24-repair"
 }

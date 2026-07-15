@@ -1,8 +1,8 @@
 # R24 — G1 quarantine repair report (OPUS NEBIUS / Coding Lane B)
 
 **Status: STILL QUARANTINED / DO NOT DEPLOY / DO NOT ARM.** This lane repaired the eight R23 import blockers with
-fail-before/pass-after evidence. It did NOT deploy, arm, provision a VM, create cloud resources, push, or merge.
-The author has no shell on any Nebius VM and claims none. Promotion still requires independent outside audit.
+fail-before/pass-after evidence. No repair activity deployed, armed, provisioned a VM, or created cloud resources.
+The code is published for review; publication does not authorize execution. Independent Codex reproduction is green.
 
 Base: `main = 11ed50a6c04f9f2b7d64c2dd036b892a4b4c0b58` (tree `f935e815…`). Lane branch: `codex/r24-g1-repair`.
 Scope: `quarantine/nebius-g1/**` and its tests only.
@@ -38,6 +38,6 @@ is the vendored D6 primitive. `advisoryOnly:true` / `grantsAuthority:false` pres
 
 ## Not done (by rule)
 
-No deploy, no `seal.sh` execution, no egress config, no VM, no arming, no canary run, no push, no merge, no
-visibility change. Live Fu: no approved provider credential present ⇒ honest offline non-vote (see
+No deploy, no `seal.sh` execution, no egress config, no VM, no arming, and no canary run. Live Fu: no approved
+provider credential present ⇒ honest offline non-vote (see
 `FU_ROUND_OFFLINE.json`), never fabricated.

@@ -4,7 +4,7 @@
 
 ## Repository status
 
-This private Round-23 checkpoint also contains the wider Aukora organism under explicit namespaces. Start with [`ORGANISM.md`](ORGANISM.md) for the authority map, donor provenance, implemented-vs-design status, quarantine boundary, and consolidation rules. [`PUBLICATION_BLOCKERS.md`](PUBLICATION_BLOCKERS.md) is intentionally open; this tree is not yet approved for public release.
+This public Round-23 checkpoint also contains the wider Aukora organism under explicit namespaces. Start with [`ORGANISM.md`](ORGANISM.md) for the authority map, donor provenance, implemented-vs-design status, quarantine boundary, and consolidation rules. [`PUBLICATION_BLOCKERS.md`](PUBLICATION_BLOCKERS.md) is intentionally open; this repository is already public, and those items track remaining consolidation, hardening, and IP-review work rather than a pending publish decision.
 
 The Kernel itself has two deliberately separate layers:
 
@@ -180,8 +180,17 @@ npm test -- --reporter=dot
 node packages/kernel/examples/observe.mjs
 ```
 
-`npm run test:release` runs the package, callable-surface, and legacy reference
-suite gates together.
+`npm run test:release` runs the portable-package gates (`test:kernel`), the Fu
+evidence/council canonical-boundary and Fu-harness gates (`test:fu`,
+`test:fu-app`), the preserved Symbiote core + Convex suites (`test:symbiote`), the
+organism-source provenance check (`verify:organism-sources`), the Convex
+callable-surface freeze (`verify:convex-surface`), and the legacy Convex reference
+suite. Note: `test:symbiote` was newly wired in and currently surfaces one
+pre-existing `apps/symbiote/core` failure (`policyKernel.test.ts` oracle
+disagreement on `EXPORT_EXCLUSIONS.txt` / `RELEASE_MANIFEST.sha256`, reproducible
+on the prior main) — so `test:release` is expected to fail at that step until the
+Symbiote-core oracle is corrected. This is intentional: green root CI previously
+did not exercise the Symbiote organism at all.
 
 ## License
 
