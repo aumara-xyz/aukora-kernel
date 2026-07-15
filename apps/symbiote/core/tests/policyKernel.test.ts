@@ -40,7 +40,11 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..');
 // => Ring 1; CONTRIBUTING.md => Ring 3. The dead root bun.lock rule (root lockfile no longer
 // tracked) is marked reserved:true, preserving its ratified Ring-1 pin instead of deleting it.
 // Pin re-stamped in the same commit per the mechanism above.
-const RATIFIED_TABLE_SHA256 = 'b743682081d478085ba42cf06f5dc88d7830514821ae903a408bd598a4a4c2d9';
+// AMENDED (public-consolidation oracle repair, 2026-07-16, owner-directed): the tracked release
+// integrity files EXPORT_EXCLUSIONS.txt and RELEASE_MANIFEST.sha256 are explicitly Ring 1. This
+// preserves the kernel's prior fail-closed result and makes the independent coverage oracle total.
+// Pin re-stamped in the same commit per the mechanism above.
+const RATIFIED_TABLE_SHA256 = '12ec79fd998d0d0c1f0a749bfddb691ececf41303782b0ea6abbd6a30b13bdb3';
 
 let kernel: PolicyKernel;
 beforeAll(() => {

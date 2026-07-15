@@ -7,7 +7,7 @@ const root = path.resolve(import.meta.dirname, "..");
 
 const expected = {
   "apps/fu": { files: 51, digest: "13466e5b13ff6ae668005d27cee6e31199aad71c524d85ec4b4355f1e2d24ecb" },
-  "apps/symbiote": { files: 942, digest: "3f4e6f220737475b0d6e5901cf91a887078e3f546601fd727f8f1557fbdbc828" },
+  "apps/symbiote": { files: 942, digest: "785c7074545a6168204f959bc8d17576bc6acc95b98381390187775156e10101" },
   "quarantine/nebius-g1": { files: 31, digest: "242e7268d5e33af21fca6a299379be688af8df2ce26c57dd16c42e530ded8142" },
   "research/energy-sensing": { files: 2, digest: "f3342de161e425e39b6d4c16ea9268a4bffdff18c8b753c3cf8349574bfbde25" },
 };
