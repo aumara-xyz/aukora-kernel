@@ -14,12 +14,23 @@ import {
   DEFAULT_DRAFT_HORIZON_MS,
   EXPIRING_SOON_WINDOW_MS,
 } from '../src/stalenessCore';
+import * as canonicalStaleness from '@aukora/kernel/staleness';
+import * as compatibilityStaleness from '../src/stalenessCore';
 import { buildSelfEditProposalArtifact, validateSelfEditProposalArtifact } from '../src/selfEditProposalArtifact';
 import { buildProposalIntent, validateProposalIntent } from '../src/proposalIntent';
 import { computeProposalHash } from '../src/proposalHash';
 
 const T0 = Date.parse('2026-07-08T00:00:00.000Z');
 const iso = (ms: number) => new Date(ms).toISOString();
+
+describe('staleness single-source boundary', () => {
+  it('the Symbiote compatibility surface is the canonical Kernel package surface', () => {
+    expect(compatibilityStaleness.stampExpiresBy).toBe(canonicalStaleness.stampExpiresBy);
+    expect(compatibilityStaleness.stalenessVerdict).toBe(canonicalStaleness.stalenessVerdict);
+    expect(compatibilityStaleness.challengeStalenessGate).toBe(canonicalStaleness.challengeStalenessGate);
+    expect(compatibilityStaleness.stalenessGrantsAuthority).toBe(canonicalStaleness.stalenessGrantsAuthority);
+  });
+});
 
 describe('stalenessVerdict — flagged never hidden, age on every read', () => {
   it('fresh inside a stamped horizon; expiringSoon inside the warning window; stale past it', () => {

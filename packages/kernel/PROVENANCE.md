@@ -14,6 +14,11 @@ an independent audit, or a production-security certification.
 - The hybrid conformance file contains public deterministic test material only.
   Its fixture seeds remain outside the distributed package and must never be
   used for custody or deployment.
+- The portable staleness law was extracted from the source-locked Symbiote
+  compatibility surface at `apps/symbiote/core/src/stalenessCore.ts`. The app
+  now re-exports `@aukora/kernel/staleness`, and tests require function identity
+  so the retired application copy cannot drift back into a second authority
+  implementation.
 - Independent primitive corroboration is intentionally narrow: the repository
   test suite executes one accepting and one refusing ML-DSA-65 case extracted
   from NIST ACVP-Server FIPS 204 data at a pinned source commit with whole-file
