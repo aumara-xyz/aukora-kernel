@@ -9,11 +9,11 @@
   two-node run). "cloud-LAB" ≠ production ≠ airgapped. No uptime, scale, or operational claim is made.
 
 ## Cryptography
-- **Corroboration, not audit.** The signing spine reproduces NIST ACVP pure-mode vectors; the Merkle history
+- **Corroboration, not audit.** The ML-DSA-65 verifier agrees with a pinned NIST ACVP FIPS 204 pass/refuse subset; deterministic key-generation/signing fixtures remain implementation-regression tests. The Merkle history
   reproduces Certificate Transparency reference vectors. This is **not** an independent cryptographic audit, and no
   audit status is claimed for the post-quantum dependency.
-- **"ACVP" applies to the ML-DSA-65 signing spine only.** The ML-KEM-768 channel is **KAT-pinned, not yet full
-  FIPS-203 ACVP-conformant** — do not read "ACVP" onto the channel.
+- **"ACVP" applies only to the ML-DSA-65 verification test above.** The ML-KEM-768 channel has generated regression
+  fixtures and is **not FIPS-203 ACVP-conformant** — do not read "ACVP" onto the channel.
 - **No forward secrecy** (the channel uses static-key establishment), **no metadata/traffic-analysis resistance**, and
   **no constant-time / side-channel guarantee**.
 - **Not "quantum-secure."** Post-quantum *primitives* are used; that is not a blanket system-level security claim.
@@ -28,8 +28,9 @@
 - **No recovery, single-key custody.** Identity is operator-custodied with no built-in recovery and no N-of-M /
   threshold custody. Loss of the seed is final.
 - **Trust is by explicit pin only (no TOFU).** Peers are never auto-trusted.
-- **Platform dependency.** The kernel runs on Convex; OCC isolation, transaction atomicity, and the single-chokepoint
-  property (R3, R4) rely on Convex's runtime guarantees — a compromised or buggy Convex runtime could violate them.
+- **Reference-adapter dependency.** The portable package does not depend on Convex and makes no platform atomicity
+  claim. The broader reference application's OCC isolation, transaction atomicity, and live single-chokepoint behavior
+  rely on Convex runtime guarantees; a compromised or buggy adapter/runtime could violate them.
 - **Receipts are self-reported.** The kernel signs and chains caller-supplied fields (grade, verdict, risk); it proves
   *what was reported*, not that the report is accurate — the grading authority is the caller, not the kernel.
 - **Kill switch is single-party and prospective-only.** It prevents new intents; it cannot revoke already-issued

@@ -23,8 +23,9 @@ import { verifyConsistency } from "./aukoraMerkleLog";
 import { verifyExportEnvelope } from "./aukoraWireFormat";
 import { verifyChannelBinding, channelTranscript, openFrame, sealFrame, channelEncapsulate, channelProofDigest, CHANNEL_DIR_I2R } from "./aukoraChannel";
 import { bytesToHex, hexToBytes, utf8ToBytes } from "@noble/hashes/utils.js";
+import { requireNodeId } from "./runtimeConfig";
 
-const NODE_ID = (): string => process.env.AUMA_NODE_ID ?? "aukora-node-a-demo";
+const NODE_ID = requireNodeId;
 const WITNESS_FLAG = "AUKORA_B3_WITNESS_ENABLED";
 const CHANNEL_FLAG = "AUKORA_B3_CHANNEL_ENABLED"; // B3.4 — gates the channel transport (default OFF; the driver self-gates here too)
 const flagOn = (name: string): boolean => ["1", "true", "on", "yes"].includes((process.env[name] ?? "").toLowerCase());

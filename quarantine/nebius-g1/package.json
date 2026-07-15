@@ -1,0 +1,16 @@
+{
+  "name": "aukora-g1-bundle",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "G1 governed evolutionary optimizer engine + negative-control tests. The candidate genome cannot measure itself or gain authority; the immutable controller computes every measurement, digest, and verdict.",
+  "scripts": {
+    "test": "vitest run",
+    "verify": "tsc --noEmit && vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

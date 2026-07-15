@@ -5,8 +5,8 @@
 // mirror; the silicon acts only inside that scope via the real kernel; a second node independently verifies the
 // carbon->silicon delegation chain; revocation by the carbon root blocks future silicon action; forged delegation
 // metadata fails; re-runs use fresh ids and stay green. Grounded language only.
-import { mutation, action, internalMutation } from "./_generated/server";
-import { api, internal } from "./_generated/api";
+import { internalAction, internalMutation } from "./_generated/server";
+import { internal } from "./_generated/api";
 import { v } from "convex/values";
 import { submitIntentCore } from "./aukoraRuntime";
 import { verifyAndConsumeDecisionToken } from "./aukoraToken";
@@ -15,13 +15,14 @@ import { buildReceiptChainHash } from "./aukoraCore";
 import { signChainHeadV3, verifyChainHeadV3, verifyChainHeadV4, SIGNED_HEAD_V4_ALG, resolveChainSigningSeed, type ChainHeadFields } from "./aukoraSignedHead";
 import { mlDsa65PublicKeyFromSeed } from "./aukoraPqcSigner";
 import { receiptHistoryRootHex } from "./aukoraMerkleLog";
-import { buildPoPEnvelope, DEMO_OPERATOR_SEED } from "./popResolver";
+import { buildPoPEnvelope, requireDemoOperatorSeed } from "./popResolver";
+import { requireNodeId } from "./runtimeConfig";
 
 const delPayloadOf = (d: any) => ({ delegationId: d.delegationId, carbonRoot: d.carbonRoot, siliconPrincipal: d.siliconPrincipal, action: d.action, resource: d.resource, ring: d.ring, nodeId: d.nodeId, issuedAt: d.issuedAt });
 const delHead = (delegationId: string, issuedAt: number, delHash: string): ChainHeadFields => ({ chainKey: `del:${delegationId}`, timestamp: issuedAt, chainLength: 1, chainHeadHash: delHash });
 
 // Node A: store a carbon-signed delegation.
-export const createDelegation = mutation({
+export const createDelegation = internalMutation({
   args: { delegationId: v.string(), carbonRoot: v.string(), carbonPubkey: v.string(), siliconPrincipal: v.string(), action: v.string(), resource: v.string(), ring: v.string(), nodeId: v.string(), issuedAt: v.number(), delHash: v.string(), sig: v.string() },
   handler: async (ctx, a) => {
     // ":rev" is RESERVED: a delegationId ending in it would make `del:<id>` collide with another delegation's
@@ -31,7 +32,7 @@ export const createDelegation = mutation({
     return { ok: true };
   },
 });
-export const markRevoked = mutation({
+export const markRevoked = internalMutation({
   args: { delegationId: v.string() },
   handler: async (ctx, { delegationId }) => {
     const d = await ctx.db.query("aukora_delegations").withIndex("by_delegationId", (q) => q.eq("delegationId", delegationId)).first();
@@ -42,7 +43,7 @@ export const markRevoked = mutation({
 
 // Node A: the silicon mirror acts UNDER the delegation (real kernel path). Grant is scoped to the DELEGATION's
 // capability, so a requested action outside scope finds no grant -> refused. Returns the delegated envelope.
-export const siliconAct = mutation({
+export const siliconAct = internalMutation({
   args: { delegationId: v.string(), chainKey: v.string(), action: v.string(), resource: v.string(), ring: v.string() },
   handler: async (ctx, a): Promise<any> => {
     const del = await ctx.db.query("aukora_delegations").withIndex("by_delegationId", (q) => q.eq("delegationId", a.delegationId)).first();
@@ -124,7 +125,7 @@ export const importDelegatedRevocation = internalMutation({
 });
 
 // Node A: full ceremony rehearsal orchestrator (POST /run-ceremony). Carbon seed stays in memory; never stored.
-export const runCeremony = action({
+export const runCeremony = internalAction({
   args: {},
   handler: async (ctx): Promise<any> => {
     const NB = process.env.AUMA_NODE_B_URL;
@@ -136,7 +137,7 @@ export const runCeremony = action({
     const hex = (n: number) => [...crypto.getRandomValues(new Uint8Array(n))].map((b) => b.toString(16).padStart(2, "0")).join("");
     const run = crypto.randomUUID().slice(0, 8);
     const carbonRoot = `demo.peter.carbon:${run}`, silicon = `demo.auma.silicon:${run}`, delId = `del:${run}`;
-    const nodeId = process.env.AUMA_NODE_ID ?? "aukora-node-a-demo";
+    const nodeId = requireNodeId();
     const out: any = { run, carbonRoot, silicon, delegationId: delId };
     // carbon keypair (fresh per run; seed in-memory only)
     const carbonSeed = hex(32);
@@ -148,7 +149,7 @@ export const runCeremony = action({
     const delPayload = { delegationId: delId, carbonRoot, siliconPrincipal: silicon, action: "studio.write", resource: "studio_surface:knvs", ring: "local-write", nodeId, issuedAt };
     const delHash = await buildReceiptChainHash(delPayload, null);
     const delSig = await signChainHeadV3(carbonSeed, delHead(delId, issuedAt, delHash), "delegation");
-    await ctx.runMutation(api.ceremony.createDelegation, { ...delPayload, carbonPubkey, delHash, sig: delSig });
+    await ctx.runMutation(internal.ceremony.createDelegation, { ...delPayload, carbonPubkey, delHash, sig: delSig });
     // B3.5a EXPLICIT PIN (no TOFU) + Db9 OPERATOR-PoP: Node B pins the carbon key + Node A's signing key out-of-band
     // BEFORE import. A pin is an effect-authority input (B3.5b), so /pin-trust now requires an operator PoP — provision the
     // operator on Node B, then sign each pin (the cav is bound to Node B's nodeId). Import verifies against PINNED values.
@@ -157,33 +158,33 @@ export const runCeremony = action({
     const pinEnv = async (args: any, tag: string) => {
       const now = Date.now();
       const cav = { v: 1, capId: `cer-pin-${run}-${tag}`, founderUserId: "aukora.operator", founderKeyId: "op-1", nodeId: nbNode, methods: ["pinTrust"], ring: "local-write", action: "operator", resource: "node:operator", principalId: "demo.operator", roles: ["operator"], notBefore: now - 2000, expiresAt: now + 60_000, maxUses: 1 };
-      return buildPoPEnvelope(DEMO_OPERATOR_SEED, cav, { methodId: "pinTrust", actualArgs: args, timestamp: now, nonce: `n-cer-pin-${run}-${tag}` });
+      return buildPoPEnvelope(requireDemoOperatorSeed(), cav, { methodId: "pinTrust", actualArgs: args, timestamp: now, nonce: `n-cer-pin-${run}-${tag}` });
     };
     const carbonArgs = { sourceNodeId: carbonRoot, headKeyId: "carbon", publicKey: carbonPubkey, rootId: null };
     await post("/pin-trust", { env: await pinEnv(carbonArgs, "carbon"), ...carbonArgs });
     const nodeArgs = { sourceNodeId: nodeId, headKeyId: "demo-key-1", publicKey: nodeAPubkey, rootId: null };
     await post("/pin-trust", { env: await pinEnv(nodeArgs, "node"), ...nodeArgs });
     // CASE 1: valid — silicon acts in scope -> Node B verifies the carbon->silicon chain
-    const a1 = await ctx.runMutation(api.ceremony.siliconAct, { delegationId: delId, chainKey: `cer:${run}:1`, action: "studio.write", resource: "studio_surface:knvs", ring: "local-write" });
+    const a1 = await ctx.runMutation(internal.ceremony.siliconAct, { delegationId: delId, chainKey: `cer:${run}:1`, action: "studio.write", resource: "studio_surface:knvs", ring: "local-write" });
     out.case1_valid = a1.ok ? await post("/import-delegated", { env: a1.envelope }) : { ok: false, reason: `act:${a1.reason}` };
     // CASE 2: scope violation — silicon attempts an action outside the delegated scope
-    const a2 = await ctx.runMutation(api.ceremony.siliconAct, { delegationId: delId, chainKey: `cer:${run}:2`, action: "studio.delete", resource: "studio_surface:knvs", ring: "local-write" });
+    const a2 = await ctx.runMutation(internal.ceremony.siliconAct, { delegationId: delId, chainKey: `cer:${run}:2`, action: "studio.delete", resource: "studio_surface:knvs", ring: "local-write" });
     out.case2_scope_violation = a2.ok ? { silicon: "EMITTED(bad)" } : { silicon_refused: a2.reason };
     // CASE 3: forged delegation metadata -> Node B refuses
-    const a3 = await ctx.runMutation(api.ceremony.siliconAct, { delegationId: delId, chainKey: `cer:${run}:3`, action: "studio.write", resource: "studio_surface:knvs", ring: "local-write" });
+    const a3 = await ctx.runMutation(internal.ceremony.siliconAct, { delegationId: delId, chainKey: `cer:${run}:3`, action: "studio.write", resource: "studio_surface:knvs", ring: "local-write" });
     let forged: any = { ok: false, reason: "act_failed" };
     if (a3.ok) { const e = JSON.parse(JSON.stringify(a3.envelope)); e.delegation.siliconPrincipal = "demo.attacker.silicon"; forged = await post("/import-delegated", { env: e }); }
     out.case3_forged_delegation = forged;
     // CASE 4: revocation. Pre-mint a receipt, then carbon revokes; Node B refuses the pre-minted receipt (cross-node)
     //          AND Node A refuses to mint anything new under the revoked delegation (local).
-    const aPre = await ctx.runMutation(api.ceremony.siliconAct, { delegationId: delId, chainKey: `cer:${run}:4`, action: "studio.write", resource: "studio_surface:knvs", ring: "local-write" });
+    const aPre = await ctx.runMutation(internal.ceremony.siliconAct, { delegationId: delId, chainKey: `cer:${run}:4`, action: "studio.write", resource: "studio_surface:knvs", ring: "local-write" });
     const revokedAt = Date.now();
     const revHash = await buildReceiptChainHash({ type: "delegation_revocation", carbonRoot, delegationId: delId, revokedAt }, null);
     const revSig = await signChainHeadV3(carbonSeed, { chainKey: `del:${delId}:rev`, timestamp: revokedAt, chainLength: 1, chainHeadHash: revHash }, "delegation");
-    await ctx.runMutation(api.ceremony.markRevoked, { delegationId: delId });
+    await ctx.runMutation(internal.ceremony.markRevoked, { delegationId: delId });
     out.revImport = await post("/import-delegated-revocation", { rev: { carbonRoot, delegationId: delId, revokedAt, sig: revSig } });
     out.case4_crossnode_revoked = aPre.ok ? await post("/import-delegated", { env: aPre.envelope }) : { ok: false, reason: `act:${aPre.reason}` };
-    const aPost = await ctx.runMutation(api.ceremony.siliconAct, { delegationId: delId, chainKey: `cer:${run}:5`, action: "studio.write", resource: "studio_surface:knvs", ring: "local-write" });
+    const aPost = await ctx.runMutation(internal.ceremony.siliconAct, { delegationId: delId, chainKey: `cer:${run}:5`, action: "studio.write", resource: "studio_surface:knvs", ring: "local-write" });
     out.case4_local_refusal = aPost.ok ? { minted: "bad" } : { node_a_refused: aPost.reason };
     return out;
   },

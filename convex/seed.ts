@@ -4,11 +4,20 @@ import { internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { resolveChainSigningSeed } from "./aukoraSignedHead";
 import { mlDsa65PublicKeyFromSeed } from "./aukoraPqcSigner";
+import { flagEnabled, requireNodeId } from "./runtimeConfig";
+import { DEMO_SESSIONS_FLAG } from "./sessionResolver";
+
+function validateDemoSession(token: string, nodeId: string): void {
+  if (!flagEnabled(DEMO_SESSIONS_FLAG)) throw new Error("demo_sessions_disabled");
+  if (token.trim().length < 32 || token.length > 256) throw new Error("demo_session_token_invalid");
+  if (nodeId !== requireNodeId()) throw new Error("demo_session_node_mismatch");
+}
 
 // Node A: seed a demo session (token -> demo principal). Returns Node A's PUBLIC key (non-secret) to pin on Node B.
 export const seedNodeA = internalMutation({
   args: { token: v.string(), principalId: v.string(), nodeId: v.string() },
   handler: async (ctx, args) => {
+    validateDemoSession(args.token, args.nodeId);
     const existing = await ctx.db.query("node_sessions").withIndex("by_token", (q) => q.eq("token", args.token)).first();
     if (!existing) await ctx.db.insert("node_sessions", { token: args.token, principalId: args.principalId, nodeId: args.nodeId, roles: ["operator"] });
     const seed = resolveChainSigningSeed();
@@ -23,6 +32,7 @@ export const seedNodeA = internalMutation({
 export const seedNodeB = internalMutation({
   args: { token: v.string(), principalId: v.string(), nodeId: v.string() },
   handler: async (ctx, args) => {
+    validateDemoSession(args.token, args.nodeId);
     const existing = await ctx.db.query("node_sessions").withIndex("by_token", (q) => q.eq("token", args.token)).first();
     if (!existing) await ctx.db.insert("node_sessions", { token: args.token, principalId: args.principalId, nodeId: args.nodeId, roles: ["operator"] });
     return { seeded: true };

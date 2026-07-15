@@ -1,0 +1,379 @@
+{
+  "schema": "aukora-convex-authority-seams-v1",
+  "note": "Authority-dependency inventory; this complements, and does not replace, the public callable-surface inventory.",
+  "invariants": {
+    "ambientDeploymentFallbacks": "forbidden",
+    "deterministicSeedLiteralsInConvexSource": "forbidden",
+    "demoBearerSessions": "disabled by default"
+  },
+  "seams": [
+    {
+      "file": "sessionResolver.ts",
+      "kind": "legacy-demo-bearer-session-resolver",
+      "defaultState": "disabled-unless-AUKORA_DEMO_SESSIONS_ENABLED",
+      "note": "Plain exported helpers are authority dependencies even though they are not Convex client callables.",
+      "exports": [
+        {
+          "name": "DEMO_SESSIONS_FLAG",
+          "kind": "value"
+        },
+        {
+          "name": "requireFounderUserId",
+          "kind": "plain-function"
+        },
+        {
+          "name": "resolveFounderUserId",
+          "kind": "plain-function"
+        },
+        {
+          "name": "resolveSession",
+          "kind": "plain-function"
+        }
+      ],
+      "importedBy": [
+        "aukoraReceipts.ts",
+        "aukoraRuntime.ts",
+        "seed.ts"
+      ],
+      "environment": [
+        "AUKORA_DEMO_SESSIONS_ENABLED",
+        "AUMA_NODE_ID"
+      ],
+      "vAnyCount": 0
+    },
+    {
+      "file": "popResolver.ts",
+      "kind": "proof-of-possession-authority-resolver",
+      "defaultState": "verify-only; demo drivers internal",
+      "note": "Resolves method/argument/node-bound signed capabilities against pinned public keys.",
+      "exports": [
+        {
+          "name": "buildPoPEnvelope",
+          "kind": "plain-function"
+        },
+        {
+          "name": "POP_FRESHNESS_MS",
+          "kind": "value"
+        },
+        {
+          "name": "popGatedAct",
+          "kind": "mutation"
+        },
+        {
+          "name": "requireDemoOperatorSeed",
+          "kind": "plain-function"
+        },
+        {
+          "name": "resolvePoPSession",
+          "kind": "plain-function"
+        },
+        {
+          "name": "revokePopCap",
+          "kind": "internalMutation"
+        },
+        {
+          "name": "rotateFounderKey",
+          "kind": "internalMutation"
+        },
+        {
+          "name": "runKeyRotation",
+          "kind": "internalAction"
+        },
+        {
+          "name": "runPopCrash",
+          "kind": "internalAction"
+        },
+        {
+          "name": "seedFounderKey",
+          "kind": "internalMutation"
+        },
+        {
+          "name": "seedOperatorKey",
+          "kind": "internalMutation"
+        },
+        {
+          "name": "serializeCapV1",
+          "kind": "plain-function"
+        },
+        {
+          "name": "serializeRequestV1",
+          "kind": "plain-function"
+        }
+      ],
+      "importedBy": [
+        "aumlokRootRegistry.ts",
+        "ceremony.ts",
+        "nodeA.ts",
+        "nodeB.ts",
+        "nodeImport.ts"
+      ],
+      "environment": [
+        "AUKORA_DEMO_ATTACKER_SEED",
+        "AUKORA_DEMO_FOUNDER_SEED",
+        "AUKORA_DEMO_ROTATION_NEW_SEED",
+        "AUKORA_DEMO_ROTATION_OLD_SEED",
+        "AUKORA_POP_RATE_CAP",
+        "AUMA_NODE_ID",
+        "AUMA_OPERATOR_SEED"
+      ],
+      "vAnyCount": 2
+    },
+    {
+      "file": "runtimeConfig.ts",
+      "kind": "fail-closed-adapter-configuration",
+      "defaultState": "required",
+      "note": "Central source for explicit node/head identifiers and disposable demo seed injection.",
+      "exports": [
+        {
+          "name": "flagEnabled",
+          "kind": "plain-function"
+        },
+        {
+          "name": "requireDemoSeed",
+          "kind": "plain-function"
+        },
+        {
+          "name": "requireHeadKeyId",
+          "kind": "plain-function"
+        },
+        {
+          "name": "requireNodeId",
+          "kind": "plain-function"
+        }
+      ],
+      "importedBy": [
+        "aukoraNodeFactory.ts",
+        "aukoraWitness.ts",
+        "aukoraWitnessExport.ts",
+        "aumlokCeremony.ts",
+        "aumlokManifests.ts",
+        "aumlokMemory.ts",
+        "ceremony.ts",
+        "codeAttestation.ts",
+        "http.ts",
+        "memory.ts",
+        "nodeA.ts",
+        "nodeB.ts",
+        "nodeImport.ts",
+        "popResolver.ts",
+        "seed.ts",
+        "sessionResolver.ts"
+      ],
+      "environment": [
+        "AUMA_HEAD_KEY_ID",
+        "AUMA_NODE_ID"
+      ],
+      "vAnyCount": 0
+    },
+    {
+      "file": "aumlokRootRegistry.ts",
+      "kind": "aumlok-root-lifecycle-entrypoints",
+      "defaultState": "public signed protocol surface",
+      "note": "Public exposure requires PoP, method, argument, node, freshness, and replay verification.",
+      "exports": [
+        {
+          "name": "AUMLOK_METHODS",
+          "kind": "value"
+        },
+        {
+          "name": "aumlokGenesisMint",
+          "kind": "mutation"
+        },
+        {
+          "name": "aumlokRevokeRoot",
+          "kind": "mutation"
+        },
+        {
+          "name": "aumlokRotateRoot",
+          "kind": "mutation"
+        },
+        {
+          "name": "mintRootKeyRow",
+          "kind": "plain-function"
+        },
+        {
+          "name": "rootKeyFingerprint",
+          "kind": "plain-function"
+        },
+        {
+          "name": "rotationHead",
+          "kind": "plain-function"
+        },
+        {
+          "name": "serializeRotationV1",
+          "kind": "plain-function"
+        }
+      ],
+      "importedBy": [
+        "aumlokCeremony.ts",
+        "aumlokManifests.ts"
+      ],
+      "environment": [],
+      "vAnyCount": 6
+    },
+    {
+      "file": "aumlokManifests.ts",
+      "kind": "aumlok-delegation-lifecycle-entrypoints",
+      "defaultState": "public signed protocol surface",
+      "note": "Root/subject signatures and single-consumption state are security-critical.",
+      "exports": [
+        {
+          "name": "AUMLOK_CODEC_RE",
+          "kind": "value"
+        },
+        {
+          "name": "AUMLOK_MANIFEST_RINGS",
+          "kind": "value"
+        },
+        {
+          "name": "AUMLOK_SUBJECT_KINDS",
+          "kind": "value"
+        },
+        {
+          "name": "aumlokManifestConsume",
+          "kind": "mutation"
+        },
+        {
+          "name": "aumlokManifestResolve",
+          "kind": "query"
+        },
+        {
+          "name": "aumlokManifestSelfRevoke",
+          "kind": "mutation"
+        },
+        {
+          "name": "aumlokMintManifest",
+          "kind": "mutation"
+        },
+        {
+          "name": "aumlokRevokeManifest",
+          "kind": "mutation"
+        },
+        {
+          "name": "consumeHead",
+          "kind": "plain-function"
+        },
+        {
+          "name": "consumeManifestUseCore",
+          "kind": "plain-function"
+        },
+        {
+          "name": "manifestHash",
+          "kind": "plain-function"
+        },
+        {
+          "name": "manifestPopHead",
+          "kind": "plain-function"
+        },
+        {
+          "name": "manifestRootHead",
+          "kind": "plain-function"
+        },
+        {
+          "name": "resolveManifestAuthority",
+          "kind": "plain-function"
+        },
+        {
+          "name": "rootRevokeHead",
+          "kind": "plain-function"
+        },
+        {
+          "name": "serializeConsumeV1",
+          "kind": "plain-function"
+        },
+        {
+          "name": "serializeManifestV1",
+          "kind": "plain-function"
+        },
+        {
+          "name": "serializeRevokeV1",
+          "kind": "plain-function"
+        },
+        {
+          "name": "subjectRevokeHead",
+          "kind": "plain-function"
+        }
+      ],
+      "importedBy": [
+        "aumlokMemory.ts",
+        "nodeImport.ts"
+      ],
+      "environment": [
+        "AUMA_NODE_ID"
+      ],
+      "vAnyCount": 4
+    },
+    {
+      "file": "aumlokCeremony.ts",
+      "kind": "self-sovereign-root-birth-entrypoint",
+      "defaultState": "public signed protocol surface",
+      "note": "Public root birth is authorized by a fresh root proof-of-possession; unknown signed-shape fields refuse.",
+      "exports": [
+        {
+          "name": "aumlokCeremonyMint",
+          "kind": "mutation"
+        },
+        {
+          "name": "ceremonyHead",
+          "kind": "plain-function"
+        },
+        {
+          "name": "serializeCeremonyV1",
+          "kind": "plain-function"
+        },
+        {
+          "name": "serializeSummaryV1",
+          "kind": "plain-function"
+        }
+      ],
+      "importedBy": [],
+      "environment": [
+        "AUKORA_CEREMONY_RATE_CAP",
+        "AUMA_NODE_ID"
+      ],
+      "vAnyCount": 2
+    },
+    {
+      "file": "codeAttestation.ts",
+      "kind": "release-evidence-demo",
+      "defaultState": "internal-only",
+      "note": "The empirical attack runner is internal and accepts only explicitly configured disposable seeds.",
+      "exports": [
+        {
+          "name": "attestImport",
+          "kind": "internalMutation"
+        },
+        {
+          "name": "runCodeAttestation",
+          "kind": "internalAction"
+        },
+        {
+          "name": "seedReleaseManifest",
+          "kind": "internalMutation"
+        },
+        {
+          "name": "serializeManifestV1",
+          "kind": "plain-function"
+        },
+        {
+          "name": "signReleaseManifest",
+          "kind": "plain-function"
+        },
+        {
+          "name": "tamperManifestField",
+          "kind": "internalMutation"
+        },
+        {
+          "name": "verifyManifest",
+          "kind": "plain-function"
+        }
+      ],
+      "importedBy": [],
+      "environment": [
+        "AUKORA_DEMO_ATTACKER_RELEASE_SEED",
+        "AUKORA_DEMO_RELEASE_SEED"
+      ],
+      "vAnyCount": 0
+    }
+  ]
+}

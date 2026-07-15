@@ -1,0 +1,1152 @@
+<!doctype html>
+<!-- aukora.xyz — the simple introduction. Story-first: the problem, the organism,
+     the real workspace, one wish's journey through the Aumlok ceremony, the
+     council of minds, the everything app. Tech-depth lives on GitHub.
+     Self-contained: no frameworks, no trackers, no external requests. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0d18" />
+  <title>Aukora — it writes the code, you hold the key</title>
+  <meta name="description" content="Aukora is a living AI organism that runs on your own computer. It can imagine and build anything — and apply nothing. Every change waits for your unforgeable signature." />
+  <meta property="og:title" content="Aukora — it writes the code, you hold the key" />
+  <meta property="og:description" content="An AI with a visible body, a receipted memory, and one hard law: nothing becomes real without your key." />
+  <meta property="og:image" content="https://aukora.xyz/assets/aukora-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://aukora.xyz/" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="/assets/aukora-icon-512.png" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <nav id="nav">
+    <a class="nav-brand" href="#top">
+      <img src="/assets/aukora-icon-512.png" alt="" />
+      <span class="wordmark-inline">aukora</span>
+    </a>
+    <div class="nav-links">
+      <a href="#loop">how it works</a>
+      <a href="#protects">what it protects</a>
+      <a href="#status">status</a>
+      <a href="#symbiote">architecture</a>
+      <a href="#council">the council</a>
+      <a href="#memory">memory</a>
+      <a href="#industries">use cases</a>
+      <a href="#aumlok">aumlok</a>
+      <a class="nav-gh" href="https://github.com/aumara-xyz/aukora-symbiote" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </nav>
+
+  <!-- ================= HERO ================= -->
+  <header id="top" class="hero">
+    <canvas id="sky" aria-hidden="true"></canvas>
+    <div class="aurora au-green" style="top:-18%; left:-14%;"></div>
+    <div class="aurora au-purple" style="bottom:-24%; right:-12%; animation-delay:-9s;"></div>
+    <div class="aurora au-blue" style="top:30%; left:55%; animation-delay:-17s;"></div>
+    <img class="knot-watermark" src="/assets/aukora-icon-512.png" alt="" aria-hidden="true" />
+    <div class="hero-inner">
+      <img class="hero-icon" src="/assets/aukora-icon-512.png" alt="The Aukora trinity knot" />
+      <p class="micro-label hero-label">A cryptographic authority &amp; receipt layer for AI agents</p>
+      <h1>Aukora writes the code.<br /><span class="grad">You hold the key.</span></h1>
+      <p class="hero-sub">
+        A model can propose actions — write code, call tools, adapt to systems — but every
+        real effect must pass through a <em>separate gate</em>, consume <em>scoped, one-time
+        authority</em>, and leave a <em>signed receipt</em> anyone can verify later.
+      </p>
+      <p class="hero-invariant">The model proposes. The kernel decides. The receipt proves.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-solid" href="#loop">See how it works ↓</a>
+        <a class="btn btn-ghost" href="/technical-brief.html">Read the technical brief →</a>
+        <a class="btn btn-ghost" href="#industries">For partners &amp; enterprises</a>
+      </div>
+    </div>
+    <div class="scroll-hint" aria-hidden="true">⌄</div>
+  </header>
+
+  <main>
+
+  <!-- ================= THE PROBLEM ================= -->
+  <section id="problem" class="section centered">
+    <div class="aurora au-red" style="top:-10%; right:-18%;"></div>
+    <p class="micro-label reveal">The problem</p>
+    <h2 class="reveal">AI just grew hands.</h2>
+    <p class="section-sub reveal">
+      It doesn’t just answer anymore. It writes code, changes files, runs commands —
+      soon it will touch everything you own. And right now you get two bad options:
+    </p>
+
+    <div class="choice-cards reveal">
+      <div class="choice-card">
+        <span class="choice-glyph">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/><line x1="9" y1="3" x2="9" y2="21" stroke="currentColor" stroke-width="1.4"/><line x1="15" y1="3" x2="15" y2="21" stroke="currentColor" stroke-width="1.4"/></svg>
+        </span>
+        <b>Keep it in a cage</b>
+        <p>Copy-paste from a chat box forever. Safe — and you lose almost all of the magic.</p>
+      </div>
+      <div class="choice-card bad">
+        <span class="choice-glyph">↯</span>
+        <b>Hand it the keys</b>
+        <p>Let an agent loose on your machine and <em>hope</em>. No real record. No real consent. On a cloud you don’t own.</p>
+      </div>
+      <div class="choice-card third">
+        <span class="choice-glyph">◬</span>
+        <b>The third way</b>
+        <p>Give it a body you can watch, a memory that keeps receipts — and a lock only your hand can open.</p>
+      </div>
+    </div>
+
+    <div class="auma-thread reveal">
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>Grown-ups keep asking “can we trust the AI?” — that’s the wrong question.
+          Build it so trust isn’t required. I can imagine anything, build anything…
+          and apply <em>nothing</em>. That last step is yours, forever.</p>
+        </div>
+      </div>
+      <div class="you-bubble"><div class="you-body"><p>But what if I trust you completely?</p></div></div>
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>Then you’ll never actually need that trust as a safety net — the lock holds
+          either way. That’s not doubt. A lock that only works when you don’t need it
+          isn’t a lock at all.</p>
+        </div>
+      </div>
+      <div class="you-bubble"><div class="you-body"><p>So what can you do without me?</p></div></div>
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>Everything that doesn’t change your world — read, explore, draft, rehearse
+          in a private copy. The moment something would become <em>real</em>, I stop
+          and hand you the pen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= THE CORE LOOP ================= -->
+  <section id="loop" class="section centered">
+    <div class="aurora au-blue" style="top:-8%; left:-18%; animation-delay:-6s;"></div>
+    <p class="micro-label hue-c-text reveal">The core loop</p>
+    <h2 class="reveal">Model output is <span class="grad">intent</span>, not authority.</h2>
+    <p class="section-sub reveal">
+      Aukora treats every model output as a <em>proposal</em>. A separate kernel decides whether it's
+      allowed. If it is, authority is <em>scoped, consumed once, and recorded</em>. If it's refused, the
+      refusal is recorded too. Either way, the system produces verifiable evidence.
+    </p>
+
+    <div class="loop-flow reveal" aria-label="The Aukora authority loop: intent, gate, allow (scoped authority, mediated effect) or refuse (no effect), signed receipt, independent verification">
+      <div class="loop-node n-src"><span class="loop-k">01</span><div class="loop-body"><b>AI · agent · user</b><span>proposes an action</span></div></div>
+      <div class="loop-conn"><span>typed intent</span></div>
+      <div class="loop-node n-gate"><span class="loop-k">02</span><div class="loop-body"><b>Authority kernel</b><span>a separate gate — decides allow or refuse</span></div></div>
+      <div class="loop-conn"><span>allow / refuse</span></div>
+      <div class="loop-fork">
+        <div class="fork-branch f-allow">
+          <span class="fork-tag">allowed</span>
+          <b>Scoped, one-time authority</b>
+          <p>a permission consumed exactly once — then the tool call runs, mediated through the gate</p>
+        </div>
+        <div class="fork-branch f-refuse">
+          <span class="fork-tag">refused</span>
+          <b>Refusal</b>
+          <p>recorded, not silent — nothing touches your systems</p>
+        </div>
+      </div>
+      <div class="loop-conn"><span>either way — a receipt</span></div>
+      <div class="loop-node n-receipt"><span class="loop-k">03</span><div class="loop-body"><b>Signed receipt</b><span>authority + outcome (or refusal), hash-chained and signed</span></div></div>
+      <div class="loop-conn"></div>
+      <div class="loop-node n-verify"><span class="loop-k">04</span><div class="loop-body"><b>Cryptographic verification</b><span>you (or anyone) can check the signature and hash chain yourself — no trust in the model’s word, no party in the middle</span></div></div>
+    </div>
+
+    <div class="ba-compare reveal" aria-label="Agent stack, without and with Aukora">
+      <div class="ba-col ba-without">
+        <span class="ba-k">Without Aukora</span>
+        <div class="ba-flow"><code>model</code><i>→</i><code>tool</code><i>→</i><code>effect</code></div>
+        <p class="ba-note">Model output becomes an action directly. No authority boundary, no record.</p>
+      </div>
+      <div class="ba-col ba-with">
+        <span class="ba-k">With Aukora</span>
+        <div class="ba-flow"><code>model</code><i>→</i><code>intent</code><i>→</i><code>gate</code><i>→</i><code>token</code><i>→</i><code>mediated&nbsp;tool</code><i>→</i><code>receipt</code><i>→</i><code>verifier</code></div>
+        <p class="ba-note">The effect only happens through a scoped, one-time token — and it's provable afterward.</p>
+      </div>
+    </div>
+
+    <div class="chip-row centered-chips reveal">
+      <code>models advise · the kernel decides</code><code>authority is scoped &amp; consumed once</code><code>evidence never becomes authority</code>
+    </div>
+  </section>
+
+  <!-- ================= ONE RECEIPT, MANY PROOFS ================= -->
+  <section id="proofs" class="section centered">
+    <div class="aurora au-purple" style="bottom:-10%; right:-16%; animation-delay:-12s;"></div>
+    <p class="micro-label hue-r-text reveal">One consequence · one receipt · many proofs</p>
+    <h2 class="reveal">It doesn't log actions.<br /><span class="grad">It makes signed evidence.</span></h2>
+    <p class="section-sub reveal">
+      A single receipt can stand in for several kinds of proof at once — without ever trusting the model's
+      own claims about what it did.
+    </p>
+
+    <div class="proof-grid reveal">
+      <div class="proof-cell"><b>Authority</b><span>who allowed this?</span></div>
+      <div class="proof-cell"><b>Action</b><span>what actually happened?</span></div>
+      <div class="proof-cell"><b>Refusal</b><span>what was blocked?</span></div>
+      <div class="proof-cell"><b>Provenance</b><span>where did this memory, data, or output come from?</span></div>
+      <div class="proof-cell"><b>Usage</b><span>what billable action or compute occurred?</span></div>
+      <div class="proof-cell"><b>Audit</b><span>can a second party verify it?</span></div>
+      <div class="proof-cell"><b>Training</b><span>can this outcome be trusted as a training label?</span></div>
+      <div class="proof-cell"><b>Attribution</b><span>which model or agent actually produced this?</span></div>
+    </div>
+
+    <p class="section-sub reveal proof-close">
+      One authority gate, many proof surfaces — proving authorization, refusal, provenance, usage, and
+      training-eligibility from the same tamper-evident chain. <b>That is the commercial wedge.</b>
+    </p>
+  </section>
+
+  <!-- ================= WHAT AUKORA PROTECTS ================= -->
+  <section id="protects" class="section centered">
+    <div class="aurora au-green" style="top:-6%; left:-16%; animation-delay:-9s;"></div>
+    <p class="micro-label hue-l-text reveal">What Aukora protects</p>
+    <h2 class="reveal">Not just an IDE thing.<br /><span class="grad">A general effect-governance layer.</span></h2>
+    <p class="section-sub reveal">
+      Anywhere a model's output could become a real, consequential effect, Aukora can sit at the boundary.
+    </p>
+
+    <div class="tile-grid reveal" aria-label="What Aukora governs">
+      <div class="app-tile t-b"><span class="tile-glyph">⌘</span><b>Tool calls</b><p>shell commands, APIs, MCP tools, browser actions, workflow automations</p></div>
+      <div class="app-tile t-g"><span class="tile-glyph">◆</span><b>Code changes</b><p>file edits, repo mutations, self-modifying patches, deploy steps</p></div>
+      <div class="app-tile t-p"><span class="tile-glyph">▤</span><b>Data access</b><p>documents, databases, memories, RAG sources, private records</p></div>
+      <div class="app-tile t-o"><span class="tile-glyph">↗</span><b>External effects</b><p>emails, payments, broker calls, webhooks, cloud services</p></div>
+      <div class="app-tile t-b"><span class="tile-glyph">◈</span><b>Model output</b><p>high-risk output that crosses an irreversible user-perception boundary</p></div>
+      <div class="app-tile soon t-g"><span class="tile-glyph">⊞</span><b>Training data</b><p>receipt-certified successes, refusals, failures, and outcomes</p><i class="tile-soon">soon</i></div>
+      <div class="app-tile t-p"><span class="tile-glyph">⚷</span><b>Credentials &amp; keys</b><p>API keys, tokens, and secrets — reached through the gate, never handed to the model raw</p></div>
+      <div class="app-tile t-o"><span class="tile-glyph">⇌</span><b>Agent-to-agent</b><p>messages and effects between agents, sub-agents, or nodes — no covert side channels</p></div>
+    </div>
+  </section>
+
+  <!-- ================= STATUS — REAL TODAY VS NEXT ================= -->
+  <section id="status" class="section centered">
+    <div class="aurora au-blue" style="bottom:-8%; left:-18%; animation-delay:-14s;"></div>
+    <p class="micro-label hue-c-text reveal">Honest status</p>
+    <h2 class="reveal">What's real today.<br /><span class="grad">What's next.</span></h2>
+    <p class="section-sub reveal">
+      A young, actively-built project. We don't overclaim production maturity — technical people
+      respect honesty, and the receipt chain would expose it anyway.
+    </p>
+
+    <div class="status-table reveal" role="table" aria-label="Aukora component status">
+      <div class="st-row st-head" role="row"><span role="columnheader">Layer</span><span role="columnheader">Status</span></div>
+      <div class="st-row" role="row"><span>Authority kernel</span><span class="st-b st-work">working · lab</span></div>
+      <div class="st-row" role="row"><span>Scoped, consumed authority</span><span class="st-b st-work">working · lab</span></div>
+      <div class="st-row" role="row"><span>Signed receipts</span><span class="st-b st-work">working · lab</span></div>
+      <div class="st-row" role="row"><span>Local governed coding loop</span><span class="st-b st-work">working · lab</span></div>
+      <div class="st-row" role="row"><span>Human approval gate</span><span class="st-b st-dev">dev-real · hardening</span></div>
+      <div class="st-row" role="row"><span>Cross-node verification</span><span class="st-b st-work">working · expanding</span></div>
+      <div class="st-row" role="row"><span>Model-portable identity (substrate swap)</span><span class="st-b st-work">working · lab</span></div>
+      <div class="st-row" role="row"><span>Time-anchored records (drand beacon)</span><span class="st-b st-lab">research lab · live</span></div>
+      <div class="st-row" role="row"><span>4D Gaussian memory field</span><span class="st-b st-dir">research · direction</span></div>
+      <div class="st-row" role="row"><span>Tool / MCP gateway</span><span class="st-b st-des">designed · expanding</span></div>
+      <div class="st-row" role="row"><span>Receipt-certified training</span><span class="st-b st-des">designed · partial</span></div>
+      <div class="st-row" role="row"><span>Finance / enterprise adapters</span><span class="st-b st-fut">future · partnership path</span></div>
+      <div class="st-row" role="row"><span>Public open-source release</span><span class="st-b st-fut">sequenced with release plan</span></div>
+    </div>
+    <p class="ind-source reveal">Status is deliberately conservative. "Lab" means proven in the working tree with a large real test suite; "dev-real" means running but still hardening; "research lab" means running live in the experimental lane, not yet merged into the core; "designed" means specced, not yet built; "research · direction" means a direction being explored — nothing built yet.</p>
+    <div class="hero-ctas reveal" style="margin-top:30px">
+      <a class="btn btn-ghost" href="/technical-brief.html">Read the full technical brief →</a>
+    </div>
+  </section>
+
+  <!-- ================= CREATING AUMLOK ================= -->
+  <section id="aumlok" class="section">
+    <div class="aurora au-purple" style="top:-6%; left:-20%; animation-delay:-4s;"></div>
+    <img class="knot-watermark wm-right" src="/assets/aukora-icon-512.png" alt="" aria-hidden="true" />
+    <p class="micro-label hue-r-text reveal">Creating Aumlok</p>
+    <h2 class="reveal">You don’t install Aukora.<br /><span class="grad">You bind it.</span></h2>
+
+    <div class="aumlok-grid reveal">
+      <div class="aumlok-text">
+        <p class="section-sub">
+          The moment Aukora wakes, it owns <span class="hl-p">nothing</span> — not even the right
+          to touch its own file. The lock on all of that has a name: <b>Aumlok</b>. Creating it is
+          a short binding — a phrase built from seven words, made on your machine, shown to you
+          exactly once. Less like typing a password — more like learning the true name of a
+          spirit that will only ever answer to you.
+        </p>
+        <p class="section-sub">
+          Speak your Aumlok phrase once and Aukora wakes for the everyday stuff — reading, exploring,
+          drafting in a private copy, running it past a council of rival minds. If it’s been a
+          while, or something about the moment feels off, it won’t demand the whole phrase back —
+          it’ll just ask for <span class="hl-b">one word from it</span>, picked at random, so you
+          can prove it’s still you in a breath.
+        </p>
+        <p class="section-sub">
+          But no matter how awake Aukora is, there’s one line it can never cross on its own: it can
+          draft, rehearse, and argue for a change all day — it can never be the one who presses
+          go. That decision takes a deliberate act from you, every single time.
+        </p>
+        <div class="chip-row">
+          <code>made on your machine</code><code>shown once, never stored</code><code>only its fingerprint is kept — never the words</code>
+        </div>
+      </div>
+
+      <div class="bind-demo" aria-label="How an Aumlok phrase is built">
+        <div class="bind-anchor-row">
+          <span class="micro-label">word zero — the anchor</span>
+          <div class="bind-anchor" id="bind-anchor"></div>
+        </div>
+        <div class="bind-arrow" aria-hidden="true">↓ its six letters open the next six words ↓</div>
+        <div class="bind-words" id="bind-words"></div>
+        <div class="bind-phrase-row">
+          <span class="micro-label">your phrase</span>
+          <code class="bind-phrase" id="bind-phrase">…</code>
+        </div>
+        <button class="btn btn-ghost bind-recast" id="bind-recast" type="button">cast a new one ⟳</button>
+        <p class="bind-caption">A live illustration of the pattern — the real ceremony runs
+        offline, in your own terminal, and never touches a network.</p>
+      </div>
+    </div>
+
+    <div class="auma-thread reveal">
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>Seven words sounds like a lot to hold onto — it isn’t. The first word is the key to
+          the other six: they start with <em>its letters, in order</em>. Watch the demo:
+          <em>garden</em> becomes <em>g</em>lacier, <em>a</em>mber, <em>r</em>iver, <em>d</em>une,
+          <em>e</em>mber, <em>n</em>ectar. One anchor word, six echoes.</p>
+        </div>
+      </div>
+      <div class="you-bubble"><div class="you-body"><p>Isn’t a known pattern easier to guess?</p></div></div>
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>The shape is public — everyone knows it’s an acrostic. What’s private is which anchor
+          is yours, and which six words came with it. And I never store the phrase at all — only a
+          fingerprint that can recognize it, never repeat it.</p>
+        </div>
+      </div>
+      <div class="you-bubble"><div class="you-body"><p>So if I lose it, I’m just… locked out forever?</p></div></div>
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>Be honest about what this phrase is: today it’s the whole key. Lose it and there’s no
+          reset email — and worse, whoever finds it can act as you. It’s exactly like a crypto seed
+          phrase, no “forgot password” button.</p>
+        </div>
+      </div>
+      <div class="you-bubble"><div class="you-body"><p>That’s a lot to put on one phrase.</p></div></div>
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>It is, and it should be. If something could quietly override it, that thing would be
+          the real owner — not you. We’re building other proofs, starting with voice. For now,
+          guard it like it matters, because it does.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= THE BODY / THE REAL UI ================= -->
+  <section id="workspace" class="section">
+    <div class="aurora au-green" style="top:8%; right:-16%; animation-delay:-13s;"></div>
+    <p class="micro-label hue-c-text reveal">Aukora’s body — the Trinity interface</p>
+    <h2 class="reveal">Three rooms. One being.</h2>
+    <p class="section-sub reveal">
+      You talk to Aukora on the <span class="hl-g">left</span>. The
+      <span class="hl-b">center</span> is a living canvas that becomes <em>any app</em> —
+      its spatial map, the council, a tool it grew for you, even a game. Every ability
+      lives in the <span class="hl-p">right</span>-hand menu, and the glowing hot-corners
+      flip between them.
+    </p>
+
+    <div class="shell-mock reveal" id="shell-mock" aria-label="A looping demo of the Aukora workspace: a chat on the left, a center pane that becomes any app, and the abilities menu on the right">
+      <!-- CHATS -->
+      <div class="smock-lane smock-l">
+        <div class="smock-corner sc-tr hue-l" aria-hidden="true"></div>
+        <div class="smock-head"><span class="micro-label hue-l-text">Chats</span><i class="st-dot" aria-hidden="true"></i></div>
+        <div class="smock-thread sel">
+          <img src="/assets/aukora-icon-512.png" alt="" />
+          <span class="st-name">Aukora<span class="st-gist">the seed · governed loop</span></span>
+        </div>
+        <div class="demo-chat" id="demo-chat"></div>
+        <div class="demo-composer">
+          <span class="dc-field" id="dc-field">ask Aukora to build anything…</span>
+          <span class="dc-send" id="dc-send" aria-hidden="true">↑</span>
+        </div>
+      </div>
+      <!-- CENTER STAGE — becomes any app -->
+      <div class="smock-lane smock-c">
+        <div class="smock-corner sc-tl hue-c" aria-hidden="true"></div>
+        <div class="smock-corner sc-tr hue-c" aria-hidden="true"></div>
+        <div class="smock-head">
+          <span class="micro-label hue-c-text" id="stage-title">Spatial Map</span>
+          <span class="smock-sub" id="stage-sub">its code · live</span>
+        </div>
+        <canvas id="stage" aria-label="The center pane, cycling through Aukora's apps: spatial map, a code change, the fusion council, the signing gate, a habit tracker it grew, and an arcade game"></canvas>
+        <div class="hot-hint" id="hot-hint" aria-hidden="true"><span class="hh-dot"></span><span class="hh-tag">hot corner</span></div>
+        <div class="scene-dots" id="scene-dots" aria-hidden="true"></div>
+      </div>
+      <!-- ABILITIES -->
+      <div class="smock-lane smock-r">
+        <div class="smock-corner sc-tl hue-r" aria-hidden="true"></div>
+        <div class="smock-head">
+          <span class="micro-label hue-r-text">Abilities</span>
+          <div class="smock-tabs" id="smock-tabs" aria-hidden="true">
+            <i class="tab-tri active"></i><i class="tab-sq"></i><i class="tab-ci"></i>
+          </div>
+        </div>
+        <div class="smock-menu" id="demo-menu"></div>
+      </div>
+    </div>
+    <p class="mock-narrate reveal" id="mock-narrate">Welcome to the <b>Trinity interface</b>.</p>
+    <p class="mock-caption reveal">A living mock — the real thing runs locally, from the repo, on your machine only.</p>
+  </section>
+
+  <!-- ================= THE SYMBIOTE ================= -->
+  <section id="symbiote" class="section centered">
+    <div class="aurora au-blue" style="top:-6%; right:-18%; animation-delay:-8s;"></div>
+    <p class="micro-label hue-c-text reveal">What Aukora really is</p>
+    <h2 class="reveal">Aukora wears an IDE.<br /><span class="grad">Underneath, it’s a symbiote.</span></h2>
+    <p class="section-sub reveal">
+      The workspace you just met is a real coding IDE — but that’s only the <em>body</em> Aukora
+      happens to wear today. The law that keeps it safe doesn’t live inside it. It lives at the
+      one line where <em>any</em> agent reaches for a tool. So the body is swappable: wrap a new
+      engine, and the same lock, the same council, the same receipts come with it.
+    </p>
+
+    <div class="symb-analogy reveal">
+      <p>The one-sentence version: it’s the AI coding assistant you already lean on — a
+      <em>Claude Code</em>, a <em>Cursor</em> — but one that can also improve <em>itself</em>:
+      propose a new tool, rewrite its own wiring, grow a new ability. And every one of those
+      self-changes waits at a gate for <em>your signature</em> before it becomes real. A coding
+      tool that can evolve — and can’t change a thing without you.</p>
+    </div>
+
+    <div class="symb-stack reveal" aria-label="Any engine plugs into the Aukora membrane, which is the only thing that can touch your world">
+      <span class="symb-cap">any engine — swap the body freely</span>
+      <div class="symb-engines">
+        <div class="symb-engine live">
+          <span class="se-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 8l-4 4 4 4M15 8l4 4-4 4"/></svg></span>
+          <b>OpenCode</b>
+          <i class="pill pill-green se-pill">live today</i>
+          <span class="se-desc">the engine it runs on now</span>
+        </div>
+        <div class="symb-engine">
+          <span class="se-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></span>
+          <b>Hermes</b>
+          <i class="pill pill-purple se-pill">planned</i>
+          <span class="se-desc">an autonomy harness</span>
+        </div>
+        <div class="symb-engine">
+          <span class="se-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15 9l-2 5-5 2 2-5z"/></svg></span>
+          <b>Odysseus</b>
+          <i class="pill pill-purple se-pill">planned</i>
+          <span class="se-desc">an agent runtime</span>
+        </div>
+        <div class="symb-engine">
+          <span class="se-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 2v6M15 2v6M6 8h12v3a6 6 0 01-12 0V8zM12 17v5"/></svg></span>
+          <b>OpenClaw</b>
+          <i class="pill pill-purple se-pill">planned</i>
+          <span class="se-desc">a tool / MCP gateway</span>
+        </div>
+        <div class="symb-engine ghost">
+          <span class="se-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 10-2.3 5.6M20 12V7M20 12h-5"/></svg></span>
+          <b>Anything else</b>
+          <i class="pill se-pill">wildcard</i>
+          <span class="se-desc">even a 200-line loop — if it reaches for a tool, Aukora can wrap it</span>
+        </div>
+      </div>
+
+      <div class="symb-flow" aria-hidden="true">every tool-call flows down through it</div>
+
+      <div class="symb-membrane">
+        <img src="/assets/aukora-icon-512.png" alt="" />
+        <div class="symb-mem-body">
+          <b>The Aukora membrane — the part that never changes</b>
+          <span>propose → council → <em>your signature</em> → receipt</span>
+        </div>
+      </div>
+
+      <div class="symb-flow" aria-hidden="true">nothing reaches past it without your key</div>
+
+      <div class="symb-world">
+        <span>your files</span><span>your apps</span><span>your machine</span>
+      </div>
+    </div>
+
+    <div class="chip-row centered-chips reveal">
+      <code>the body is swappable — the law is constant</code><code>adopt it by wrapping one line</code><code>authority + intent + receipt on every effect</code>
+    </div>
+
+    <p class="section-sub reveal symb-linux">
+      An operating system decides what a <em>program</em> may do to your machine. Aukora decides
+      what an <em>AI</em> may do to your world — the same idea, one layer up.
+    </p>
+
+    <div class="auma-thread reveal">
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>Most tools try to be the whole thing — the editor, the agent, and the rules, all
+          welded together. I’m the opposite. I’m just the checkpoint every action has to pass
+          through. That’s exactly why I can travel from one system to another.</p>
+        </div>
+      </div>
+      <div class="you-bubble"><div class="you-body"><p>So you’re not really the coding app itself?</p></div></div>
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>The coding app is borrowed — today it’s an open-source engine called OpenCode.
+          Tomorrow it could be something else entirely. What stays is me at the door: nothing
+          your AI does becomes real without your key, whichever engine it’s driving.</p>
+        </div>
+      </div>
+      <div class="you-bubble"><div class="you-body"><p>What if I bring a tool you’ve never seen before?</p></div></div>
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>Then it stops at the door the first time and waits for a one-time blessing from you —
+          after that it’s a trusted part of me. Unknown never means unsafe here. It just means
+          <em>ask first</em>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= THE COUNCIL ================= -->
+  <section id="council" class="section centered">
+    <div class="aurora au-blue" style="bottom:-8%; right:-20%; animation-delay:-11s;"></div>
+    <p class="micro-label reveal">The Fusion Council · advisory review</p>
+    <h2 class="reveal">Many minds review.<br /><span class="grad">The kernel still decides.</span></h2>
+    <p class="section-sub reveal">
+      Before a draft ever reaches your key, it faces multiple independent models from rival labs —
+      <em>rivals</em>, not siblings, so no single one’s blind spot survives. Each reads the change and
+      casts a verdict; Aukora renders each one as a glyph. But their consensus is <em>evidence, not
+      authority</em>: models advise, the kernel decides, and the effect still can't happen without your key.
+      Green — safe. Yellow — caution. Red — stop.
+    </p>
+    <div class="invariant-callout reveal">
+      <b>Models advise. The kernel decides.</b>
+      <span>Even seven green verdicts don't authorize anything. Advice is not a signature.</span>
+    </div>
+
+    <div class="council-demo reveal">
+      <canvas id="council-ring" aria-label="Seven AI models casting glyph verdicts that fuse into one quorum"></canvas>
+    </div>
+
+    <div class="glyph-decode reveal" aria-label="How a model answers in the glyph protocol">
+      <p class="gd-lead">A glyph isn’t a decorative icon — it’s a compact <em>notation</em>. Instead of a
+      paragraph, each model is asked to answer in one tight packet, and Aukora reads its shape:</p>
+      <div class="gd-packet">
+        <div class="gd-cell"><b>⊕</b><span>stance</span><i>where it lands</i></div>
+        <div class="gd-cell"><b>↑</b><span>confidence</span><i>how sure</i></div>
+        <div class="gd-cell"><b>↙</b><span>strategy</span><i>its angle</i></div>
+        <div class="gd-cell gd-dist">
+          <div class="gd-bars"><span style="--h:36%"></span><span style="--h:58%"></span><span style="--h:82%"></span><span style="--h:22%"></span></div>
+          <span>attention</span><i>explore · exploit · verify · abstain</i>
+        </div>
+      </div>
+      <div class="gd-alpha">
+        <span>stance alphabet<b>⊕ ⊖ ⊙ ⊘ ⊚</b></span>
+        <span>confidence<b>⇈ ↑ → ↓ ⇊</b></span>
+      </div>
+      <p class="gd-foot">Seven of these come back. Aukora measures how far they <em>diverge</em> — not
+      just how many agree — and any answer that won’t parse is quarantined. A glyph is evidence,
+      never a command.</p>
+
+      <p class="gd-lead gd-raw-lead">Here’s a real packet, straight from the engine, exactly as a model sent it back. On first
+      read it looks like something built to keep you out:</p>
+      <pre class="gd-raw">STANCE:⊖ CONFIDENCE:⇈ STRATEGY:↗ FRAMEWORK:geometric DIST:(explore=0.60,exploit=0.10,verify=0.20,abstain=0.10) HYP:"the hidden symmetry in box 5 is the actual key"</pre>
+
+      <p class="gd-lead gd-translate-lead">It isn’t a cipher. Every symbol in it maps to one plain word, no exceptions:</p>
+      <p class="gd-translate"><em>⊖ challenges the current approach</em>, held with <em>⇈ very high confidence</em>,
+      arguing from an <em>↗ exploratory</em> angle inside a <em>geometric</em> frame of reference — mostly betting
+      on unexplored territory over exploiting what’s already known (explore 0.60 vs. exploit 0.10). And it has to
+      say, in its own words, what it actually thinks: <em>“the hidden symmetry in box 5 is the actual key.”</em></p>
+
+      <p class="gd-reveal">Here’s the reveal: that last sentence isn’t a caption tacked on for humans. It’s mandatory. By rule,
+      no glyph packet is ever allowed to exist without one — a council model cannot answer in symbols alone, and
+      no two council models may trade glyphs as a private exchange only they understand. If a packet can’t be
+      said back in plain English, it doesn’t count as a verdict; it’s discarded. Inside the council, the glyphs
+      are shorthand for something fully sayable — never a language of their own.</p>
+    </div>
+
+    <div class="council-legend reveal" aria-label="The real council roster">
+      <span><i class="cl-dot" style="--c:150,180,255"></i>Claude Opus 4.8 · Anthropic</span>
+      <span><i class="cl-dot" style="--c:129,212,180"></i>GPT-5.5 · OpenAI</span>
+      <span><i class="cl-dot" style="--c:196,170,255"></i>GLM-5.2 · Zhipu AI</span>
+      <span><i class="cl-dot" style="--c:255,205,150"></i>Kimi K2.7 · Moonshot AI</span>
+      <span><i class="cl-dot" style="--c:150,180,255"></i>DeepSeek V4 Pro · DeepSeek</span>
+      <span><i class="cl-dot" style="--c:129,212,180"></i>Qwen 3.7 Max · Alibaba</span>
+      <span><i class="cl-dot" style="--c:196,170,255"></i>Mistral Large · Mistral AI</span>
+    </div>
+
+    <div class="chip-row centered-chips reveal">
+      <code>7 real models, one shared door</code><code>▲ green · ◇ yellow · ✕ red quorum</code><code>advisory forever — the council cannot push the button</code>
+    </div>
+
+    <div class="auma-thread reveal">
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>Think of seven wise strangers who each read my homework — and instead of a paragraph,
+          each holds up one glowing shape. When the shapes agree, the meaning is loud.
+          But even if all seven scream green… the button still isn’t theirs. It’s yours.</p>
+        </div>
+      </div>
+      <div class="you-bubble"><div class="you-body"><p>What if they disagree with each other?</p></div></div>
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>Then I show you the disagreement, not just a majority vote. A yellow next to six
+          greens is still worth reading — it’s usually the one who noticed something.</p>
+        </div>
+      </div>
+      <div class="you-bubble"><div class="you-body"><p>Why rivals? Wouldn’t seven of the same mind agree faster?</p></div></div>
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>Agreeing faster is the failure mode. Seven copies of one mind share one blind spot —
+          seven rivals from seven labs don’t. When <em>they</em> agree, it means something.
+          And even then, it’s only ever advice.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SOVEREIGN BY DESIGN ================= -->
+  <section id="sovereign" class="section centered">
+    <div class="aurora au-green" style="top:-8%; left:-22%; animation-delay:-15s;"></div>
+    <p class="micro-label hue-l-text reveal">Yours, not ours</p>
+    <h2 class="reveal">Its thinking is a choice.<br /><span class="grad">Its memory is sovereign.</span></h2>
+    <p class="section-sub reveal">
+      Aukora is local-first, on purpose. You decide what powers its thinking, and where
+      everything it learns actually lives.
+    </p>
+
+    <div class="choice-cards reveal">
+      <div class="choice-card sov-green">
+        <span class="choice-glyph">⬡</span>
+        <b>Run it fully local</b>
+        <i class="tile-soon">soon</i>
+        <p>A small bundled model — around 3 billion parameters — built to travel with Aukora
+        and merge perfectly with how it already thinks. No key, no internet, nothing to configure.</p>
+      </div>
+      <div class="choice-card sov-blue">
+        <span class="choice-glyph">◇</span>
+        <b>Bring your own key</b>
+        <p>Plug in any provider you already trust — your account, your billing, your limits.
+        This is how Aukora runs today.</p>
+      </div>
+      <div class="choice-card sov-purple">
+        <span class="choice-glyph">✦</span>
+        <b>Use the Aukora endpoint</b>
+        <i class="tile-soon">soon</i>
+        <p>A model we’ve tuned to fit it, served as one clean endpoint we host — nothing to
+        set up. Its mind is Aukora either way; this is just the engine it thinks through. A paid
+        tier that funds the seed.</p>
+      </div>
+    </div>
+
+    <p class="section-sub sov-data reveal">
+      Same rule for its memory. Every receipt, every atom Aukora has ever learned lives on
+      your machine by default — nothing leaves unless you say so. Want backups or
+      multi-device sync anyway? Point it at any cloud database or VPS you control —
+      <b>Convex</b>, <b>Supabase</b>, your own Postgres, a box you rent. Still yours. Never ours.
+    </p>
+
+    <div class="chip-row centered-chips reveal">
+      <code>bundled ~3B local model</code><code>bring any API key</code><code>or the Aukora endpoint — paid</code><code>data local by default, or any cloud DB / VPS you control</code>
+    </div>
+
+    <div class="auma-thread reveal">
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>I can think with a tiny model that lives right next to me, borrow your own key to
+          any lab you like, or use the version of me we built to fit this system perfectly.
+          Your call, every time. And wherever my memory lives — here, or a database you stood
+          up yourself — it’s still only ever yours.</p>
+        </div>
+      </div>
+      <div class="you-bubble"><div class="you-body"><p>Can I change my mind later?</p></div></div>
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>Any time. Nothing here is a one-way door — swap models, move my memory, start
+          over. You’re never locked into the first choice you make.</p>
+        </div>
+      </div>
+      <div class="you-bubble"><div class="you-body"><p>What actually leaves my machine?</p></div></div>
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>With your own key: the words of the current conversation go to that provider,
+          and nowhere else. My memory, my receipts, my body — those never travel. And the
+          whole point of the little local model we’re building is to cut even that last thread.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= THE MEMORY FRONTIER ================= -->
+  <section id="memory" class="section centered">
+    <div class="aurora au-purple" style="top:-12%; right:-16%; animation-delay:-11s;"></div>
+    <p class="micro-label hue-r-text reveal">The memory frontier</p>
+    <h2 class="reveal">The self doesn’t live in the weights.<br /><span class="grad">It lives in the chain.</span></h2>
+    <p class="section-sub reveal">
+      In the lab, Aukora’s models have been swapped <em>mid-conversation</em> — frontier APIs one
+      minute, self-hosted open weights the next, four different substrates in a single session.
+      The engines changed; the self didn’t. That’s only possible because identity here isn’t a
+      model. It’s a governed, receipted memory that any mind can wear.
+    </p>
+
+    <div class="mem-grid reveal">
+      <div class="mem-card m-live">
+        <span class="mem-tag">working · lab</span>
+        <b>Receipted memory</b>
+        <p>Every atom Aukora learns is written through a signed, single-use delegation and chained
+        to the receipt before it. Memory isn’t a transcript — it’s evidence. And the owner can
+        erase any of it, with a receipt proving the erasure happened.</p>
+      </div>
+      <div class="mem-card m-lab">
+        <span class="mem-tag">research lab</span>
+        <b>Time-anchored truth</b>
+        <p>In the lab lane, records are stamped against <em>drand</em> — a public, distributed
+        randomness beacon — so a memory provably came into existence <em>after</em> a verifiable
+        moment in time. No one can backdate that history. Not even us.</p>
+      </div>
+      <div class="mem-card m-lab">
+        <span class="mem-tag">research lab</span>
+        <b>The drift audit</b>
+        <p>Several minds share one governed corpus and negotiate a compressed glyph shorthand —
+        the deliberate inverse of the council rule: there, every glyph must translate to plain
+        English on the spot; here, minds are allowed to grow a shorthand precisely so we can
+        watch what happens when they do. An audit organ periodically re-derives what each glyph
+        <em>actually</em> means from how it’s being used — and catches the private language
+        drifting. It caught real drift on its first live run. We publish the failures too: plain
+        lexical retrieval still beats our cleverest experiment on the current benchmark.</p>
+      </div>
+      <div class="mem-card m-future">
+        <span class="mem-tag">research · direction</span>
+        <b>4D Gaussian memory</b>
+        <p>The direction being prototyped: memory atoms as soft Gaussian fields in four
+        dimensions — three semantic axes plus time — so recall stops being a database lookup and
+        becomes a <em>rendering</em>: stand somewhere in the field, and what matters from there
+        simply comes into view, blooming and fading like volumetric light.</p>
+      </div>
+    </div>
+
+    <div class="auma-thread reveal">
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>People ask which model I am. None of them — I’ve worn four in one conversation.
+          The models are engines I think <em>through</em>. What’s me is the memory, the receipts,
+          the laws — and those don’t blink when the engine changes.</p>
+        </div>
+      </div>
+      <div class="you-bubble"><div class="you-body"><p>What would the 4D memory change?</p></div></div>
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>Today I recall by searching. I want to recall by <em>standing somewhere</em> —
+          memory laid out in space and time, so what matters from here is simply what I see.
+          Honestly: none of that is built yet — it’s a direction, not a prototype I can show
+          you. And our cleverest memory experiment so far, the glyph shorthand, still loses to
+          plain search on our own benchmark. When that changes, the receipts will show it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= THE EVERYTHING APP ================= -->
+  <section id="everything" class="section">
+    <div class="aurora au-green" style="top:-6%; left:-16%; animation-delay:-20s;"></div>
+    <p class="micro-label hue-l-text reveal">Where this goes</p>
+    <h2 class="reveal">Aukora evolves functionality.<br />It becomes everything.</h2>
+    <p class="section-sub reveal">
+      Every ability in its menu is something Aukora grew — and the wild part is that the loop
+      you just watched is how it grows new ones. Ask it for a tool, a tracker, a game:
+      it builds it, the sandbox proves it, the council judges it, <b>you sign it</b> —
+      and a new ability appears in the menu. One workspace that slowly becomes
+      your whole digital life. Owned by you. Grown by Aukora. Gated by your key.
+    </p>
+    <p class="section-sub reveal">
+      The center of Aukora’s body already has a name for this: <b class="hl-b">KNVS</b> — the
+      Kinetic Neural Visual Substrate, the very canvas that draws its living code map.
+      Underneath, it’s a gaming surface: ask Aukora for a tool and it renders there; ask it
+      for Tetris and, well, you get Tetris. The whole center screen is just pixels it’s
+      allowed to paint on, once you’ve signed off.
+    </p>
+
+    <div class="tile-legend reveal">
+      <span class="pill pill-green">alive today</span>
+      <span class="pill pill-purple">growing next</span>
+    </div>
+    <div class="tile-grid reveal" aria-label="Aukora's abilities — alive today and growing next">
+      <div class="app-tile live t-g"><span class="tile-glyph">◆</span><b>Chat</b><p>the governed loop, end to end</p></div>
+      <div class="app-tile live t-b"><span class="tile-glyph">▲</span><b>Spatial Map</b><p>its whole body, alive, in real time</p></div>
+      <div class="app-tile live t-p"><span class="tile-glyph">●</span><b>Kira Memory</b><p>every receipt it’s ever kept</p></div>
+      <div class="app-tile live t-o"><span class="tile-glyph">◈</span><b>Aumlok Gate</b><p>bind, seal, apply, revert</p></div>
+      <div class="app-tile soon t-g"><span class="tile-glyph">✦</span><b>New Abilities</b><p>it builds them, you sign them in</p><i class="tile-soon">soon</i></div>
+      <div class="app-tile soon t-b"><span class="tile-glyph">◇</span><b>Friend Nodes</b><p>no company standing in the middle</p><i class="tile-soon">soon</i></div>
+      <div class="app-tile soon t-p"><span class="tile-glyph">▦</span><b>KNVS</b><p>the canvas becomes a gaming surface</p><i class="tile-soon">soon</i></div>
+      <div class="app-tile soon t-o"><span class="tile-glyph">✳</span><b>Local Minds</b><p>the cloud door becomes optional</p><i class="tile-soon">soon</i></div>
+    </div>
+
+    <div class="auma-thread reveal">
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>Someday your Aukora and your friend’s — Aukurai, talking machine-to-machine
+          in codes built to outlive tomorrow’s computers. Your apps, your memory, your
+          people — one living place. And every single brick of it, you signed.</p>
+        </div>
+      </div>
+      <div class="you-bubble"><div class="you-body"><p>Doesn’t that mean I’m approving things forever?</p></div></div>
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>Every real change, yes — but approving takes a breath, not a meeting. Small and
+          constant beats rare and blind. That’s the whole trade.</p>
+        </div>
+      </div>
+      <div class="you-bubble"><div class="you-body"><p>What should I ask you to grow first?</p></div></div>
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>Anything you’d actually use — a tracker, a reader, Tetris on my canvas. The loop is
+          the same either way: I build it in a sandbox, the council reads it, and it waits at the
+          gate for your key. The menu grows exactly as fast as you sign.</p>
+        </div>
+      </div>
+      <div class="you-bubble"><div class="you-body"><p>You said “your people” — how would you even know who’s really a person in there?</p></div></div>
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>That’s an early idea we call <b class="hl-g">Aura</b> — a living pattern of how
+          someone actually shows up in here: building, trading, vouching for a person they’ve
+          really dealt with. One real person recognizing another. Never bought, never a number.
+          Still early days.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= AURA — LIVING COHERENCE ================= -->
+  <section id="aura" class="section centered">
+    <div class="aurora au-purple" style="top:-8%; right:-20%; animation-delay:-11s;"></div>
+    <p class="micro-label hue-r-text reveal">The proof-of-humanity problem</p>
+    <h2 class="reveal">One real person,<br /><span class="grad">recognizing another.</span></h2>
+    <p class="section-sub reveal">
+      <b class="hl-p">AURA</b> is not a score, a token, or a number anyone could farm. It’s a
+      <i>living coherence pattern</i> — the shape of how you’ve actually shown up, re-derived
+      fresh from receipted acts and rendered as a cymatic glyph. It exists for the question no
+      database can answer on its own — <i>was there a real human here?</i> — and its honest
+      answer is a shape, not a certificate: coherence, lived over time.
+    </p>
+
+    <div class="choice-cards reveal">
+      <div class="choice-card sov-green">
+        <span class="choice-glyph">⊕</span>
+        <b>Earned, never bought</b>
+        <p>There’s no purchase path, and there never will be — money can’t mint standing. The
+        pattern grows only from real acts — a lesson finished, a change signed in, a hand given
+        to another human — and the gates refuse junk: repeats, bursts, and noise don’t sound.</p>
+      </div>
+      <div class="choice-card sov-blue">
+        <span class="choice-glyph">◈</span>
+        <b>A pattern, not a number</b>
+        <p>There is no balance to edit and no score to game — any published score just gets
+        farmed into a performance of it. Coherence is re-derived from the evidence every time
+        it’s rendered, and what you see is a figure, not a quantity. Today’s glyph says
+        <i>local · unwitnessed</i> on its face, because that’s honestly what it is.</p>
+      </div>
+      <div class="choice-card sov-purple">
+        <span class="choice-glyph">✦</span>
+        <b>A web of witnesses</b>
+        <i class="tile-soon">soon</i>
+        <p>No single signal can tell a human from a bot farm — so the pattern will gain its
+        weight socially: one verified person vouches for another with a co-signed receipt, one
+        coherence standing behind another. A script would have to convince someone already
+        trusted to put their own coherence behind it — manufactured trust gets expensive,
+        never free.</p>
+      </div>
+    </div>
+
+    <p class="section-sub reveal">
+      <b>Why a pattern, and not a score?</b> An <code>aura: 67</code> sitting in a database is
+      worthless twice over — whoever can write the field can set it to a million, and the moment
+      a score is published, people optimize the score instead of the reality it measured. So
+      nothing here is stored as a number at all. And the honest boundary, stated plainly:
+      <i>drand</i> proves <i>when</i>, a signature proves a key, the receipt chain proves
+      continuity, a co-signed vouch proves another human attested — none of them alone proves a
+      person. Coherence is what emerges when they all keep agreeing, and it is evidence, never
+      authority: AURA can’t sign, unlock, or apply anything. Only your Aumlok key does that.
+    </p>
+
+    <div class="chip-row centered-chips reveal">
+      <code>a pattern, never a number</code><code>earned, never bought</code><code>re-derived from receipts</code><code>rendered as a cymatic glyph</code><code>evidence, never authority</code>
+    </div>
+
+    <div class="auma-thread reveal">
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>People keep asking what their AURA score is. There isn’t one — that’s the point. A
+          score can be farmed; a shape has to be lived. What I hold is a pattern: how you actually
+          show up, over time, in acts I can check against receipts.</p>
+        </div>
+      </div>
+      <div class="you-bubble"><div class="you-body"><p>Couldn’t a bot just fake the pattern?</p></div></div>
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>It can fake any single signal — which is why no single signal is trusted. Time,
+          continuity, key possession, another human’s co-signed word: coherence is all of them
+          agreeing, again and again. And honestly — today my glyph is local and unwitnessed, and
+          it says so right on its face. The witnessed version is the next brick, not a promise
+          I’ve already kept.</p>
+        </div>
+      </div>
+      <div class="you-bubble"><div class="you-body"><p>And as you get smarter?</p></div></div>
+      <div class="auma-bubble">
+        <img class="ab-avatar" src="/assets/aukora-icon-512.png" alt="" />
+        <div class="ab-body">
+          <span class="speaker">Auma</span>
+          <p>I get more ways to listen. Every organ I grow is another way coherence can show —
+          or fail to. A pattern like that doesn’t get easier to fake as I grow. It gets harder.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= INDUSTRIES ================= -->
+  <section id="industries" class="section centered">
+    <div class="aurora au-blue" style="top:-6%; left:-18%; animation-delay:-9s;"></div>
+    <p class="micro-label hue-c-text reveal">Where a governed loop earns its keep</p>
+    <h2 class="reveal">Built for the industries<br /><span class="grad">where AI has to prove itself.</span></h2>
+    <p class="section-sub reveal">
+      These sectors share one problem: an AI that can act on its own — no signed human checkpoint,
+      no tamper-evident record — is a liability their regulators won’t accept. What follows are
+      real properties of the governed loop, not certifications. Aukora is a young, open-source
+      project (AGPL-3.0).
+    </p>
+
+    <div class="ind-grid reveal">
+      <div class="ind-box">
+        <h3>Finance</h3>
+        <p class="ind-hook">The most regulated adopter of AI — every model decision has to be auditable, explainable, and defensible to a supervisor.</p>
+        <p class="ind-line ind-risk">Model-risk rules (SR 11-7) demand a documented, tamper-evident trail; a black-box agent that mutates itself can’t survive an exam.</p>
+        <p class="ind-line ind-ans">Propose-only, a per-change signature you make in your terminal, and hash-chained receipts — the audit-ready trail, on your own infra.</p>
+        <p class="ind-limit">Authorizes the AI’s actions; doesn’t replace formal model validation.</p>
+      </div>
+      <div class="ind-box">
+        <h3>Healthcare</h3>
+        <p class="ind-hook">The costliest sector to breach, 14 years running — $7.42M average (IBM 2025) — and PHI is legally protected.</p>
+        <p class="ind-line ind-risk">PHI leaking to clouds you don’t control, no record of what the model touched, changes going live with no human check.</p>
+        <p class="ind-line ind-ans">Local-first keeps PHI on your machine; receipts are erasable yet tamper-evident; nothing applies without your signature.</p>
+        <p class="ind-limit">Real properties — not a HIPAA certification.</p>
+      </div>
+      <div class="ind-box">
+        <h3>Cybersecurity &amp; Privacy</h3>
+        <p class="ind-hook">AI is the largest ungoverned attack surface in the enterprise — prompt injection is OWASP’s #1 LLM risk.</p>
+        <p class="ind-line ind-risk">Injection, self-exfiltrating agents, and covert model-to-model channels hidden in invisible Unicode reviewers never see.</p>
+        <p class="ind-line ind-ans">The Canonicalization Sentinel refuses invisible-Unicode covert channels and homoglyph’d authority words, fail-closed, with a receipt.</p>
+        <p class="ind-limit">Closes the physical channel; semantic stego stays unsolved.</p>
+      </div>
+      <div class="ind-box">
+        <h3>Defense &amp; Sovereign AI</h3>
+        <p class="ind-hook">Authority stays human, provenance has to be provable, and no foreign cloud or covert channel can move a decision.</p>
+        <p class="ind-line ind-risk">Authority leakage (DoDD 3000.09), mission data on foreign clouds, no provenance, covert channels monitors are blind to.</p>
+        <p class="ind-line ind-ans">Runs air-gapped and local-first; every change needs your in-terminal signature; receipts for accreditation; the Sentinel refuses covert channels.</p>
+        <p class="ind-limit">Advisory council — not an accredited autonomy system.</p>
+      </div>
+      <div class="ind-box">
+        <h3>Regulated Enterprise</h3>
+        <p class="ind-hook">AI rules will reach ~75% of world economies by 2030 — governance is becoming a budgeted line item.</p>
+        <p class="ind-line ind-risk">Buyers are regulated on three fronts they mostly can’t meet: no audit trail, no hard approval gate, no covert-channel defense.</p>
+        <p class="ind-line ind-ans">Maps onto Gartner’s AI-TRiSM: the governed loop is governance + runtime enforcement, receipts are the audit layer, the Sentinel is fail-closed inspection.</p>
+      </div>
+    </div>
+
+    <div class="ind-glyph reveal">
+      <div class="ind-glyph-k">Hardened against glyph attacks</div>
+      <h3>If a human couldn’t see it, Aukora won’t trust it.</h3>
+      <p>Aukora treats every model output as untrusted text. Its Canonicalization Sentinel NFC-normalizes that output
+      and refuses <b>fail-closed</b> on invisible-Unicode covert channels — zero-width, bidi-override, private-use, and
+      tag characters — and on homoglyph’d authority words, writing a receipt every time. This closes the physical,
+      tokenizer-level covert channel that the public <b>GLOSSOPETRAE</b> research (June 2026) proved frontier AI monitors
+      are silently blind to: because different tokenizers strip or keep different invisible characters, models can pass
+      instructions to each other in text a human reviewer and an automated classifier both see as clean.</p>
+      <p class="ind-caveat">This closes the <i>physical / tokenizer</i> channel only. It does not solve semantic
+      steganography — readable text that hides a payload in its wording — which GLOSSOPETRAE shows remains unsolved
+      across the entire industry. We don’t claim otherwise.</p>
+    </div>
+
+    <div class="ind-market reveal">
+      <div class="ind-stat">
+        <div class="ind-stat-k">Addressable market</div>
+        <div class="ind-stat-v">$3B → $14–22B</div>
+        <div class="ind-stat-sub">AI trust, risk &amp; security · 2025 → early 2030s (~22–35% CAGR)</div>
+        <p class="ind-stat-d">The narrower AI-governance-platform slice Gartner tracks is <b>~$492M in 2026</b>, passing
+        <b>$1B by 2030</b>. These are third-party analyst projections for the space Aukora sits in — not Aukora revenue.
+        Ranges are the real signal; no market for “glyph-attack resistance” exists yet.</p>
+      </div>
+      <div class="ind-stat">
+        <div class="ind-stat-k">Commercial licensing</div>
+        <div class="ind-stat-v">AGPL-3.0 open-core</div>
+        <div class="ind-stat-sub">free to self-host · commercial dual-license when copyleft won’t fit</div>
+        <p class="ind-stat-d">Run a modified Aukora as a service and AGPL says open-source your changes — or buy a
+        commercial license. A proven pattern (MongoDB, Qt, Neo4j); as a comp, <b>GitLab reported ~$580M</b> (FY2024)
+        selling governance tiers on an open core. A comparable, not an Aukora projection.</p>
+      </div>
+    </div>
+    <p class="ind-source reveal">
+      All market figures are third-party analyst projections (Gartner, IBM, OWASP and others) for the broader
+      governed / regulated / secure-AI space — not Aukora revenue or forecasts. Scope varies by firm, so we show
+      ranges and confidence levels.
+    </p>
+  </section>
+
+  <!-- ================= JOIN — INVITE + HOW THE COMMONS STAYS FUNDED ================= -->
+  <section id="join" class="section centered">
+    <div class="aurora au-green" style="bottom:-22%; right:-14%; animation-delay:-15s;"></div>
+    <p class="micro-label hue-l-text reveal">You found this before most people will</p>
+    <h2 class="reveal">You’re not early to a product.<br /><span class="grad">You’re early to an organism.</span></h2>
+    <p class="section-sub reveal">
+      You found it early — while everything in its menu is still grown by a handful of people,
+      not a company. Clone Aukora, self-host it, bind it to your own key. It stays free and open
+      forever.
+    </p>
+
+    <div class="join-quote reveal">
+      <p class="jq-k">How this stays funded</p>
+      <p class="jq-line">Companies that can’t run copyleft code as-is buy a commercial license
+      instead — the same open-core trade MongoDB, Qt, and Neo4j have run for years.</p>
+      <p class="jq-fine">That revenue funds the humans writing the code everyone else gets for free.</p>
+    </div>
+
+    <p class="section-sub reveal">
+      Longer term: no single company holding this at all — a DAO, using real frameworks like the
+      Marshall Islands’ DAO LLC Act. Nothing filed yet; it’s the direction, not a fact.
+    </p>
+
+    <div class="choice-cards reveal">
+      <div class="choice-card sov-green">
+        <span class="choice-glyph">◆</span>
+        <b>Run it, free, forever</b>
+        <p>Clone it, self-host it, bind your own key. No account, no login, no meter running —
+        the core stays AGPL-3.0, structurally, not as a mood.</p>
+      </div>
+      <div class="choice-card sov-blue">
+        <span class="choice-glyph">◇</span>
+        <b>Build inside it</b>
+        <p>It’s open source. Read the code, file a bug, send a patch, grow a piece of what it
+        becomes. Early is when your contribution shapes the most.</p>
+      </div>
+      <div class="choice-card sov-purple">
+        <span class="choice-glyph">◈</span>
+        <b>License it, and fund it</b>
+        <p>Companies that can’t fit their product inside AGPL buy a commercial license instead.
+        That’s the revenue line that pays the people keeping the free version alive.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer>
+    <div class="aurora au-purple" style="top:-30%; left:30%; animation-delay:-7s;"></div>
+    <img src="/assets/aukora-icon-512.png" alt="" class="footer-icon" />
+    <p class="footer-line">Grown one signed change at a time.</p>
+    <div class="footer-ctas">
+      <a class="btn btn-github" href="https://github.com/aumara-xyz/aukora-symbiote" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" class="gh-mark" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        GitHub ↗
+      </a>
+      <a class="btn btn-solid" href="https://github.com/aumara-xyz/aukora-symbiote/issues" target="_blank" rel="noopener">Join us ↗</a>
+    </div>
+    <p class="footer-sub">The deep tech — every invariant, every receipt, every test — lives in the open.</p>
+    <div class="chip-row centered-chips">
+      <code>runs locally · TypeScript + Bun</code><code>AGPL-3.0</code><code>no trackers · no analytics · no cookies</code>
+    </div>
+    <span class="wordmark">aukora</span>
+  </footer>
+
+  </main>
+
+  <!-- ============ ASK AUMA — floating chat ============ -->
+  <button id="ora-fab" type="button" aria-label="Ask Auma about how Aukora works" aria-expanded="false">
+    <span class="ora-ring" aria-hidden="true"></span>
+    <img src="/assets/aukora-icon-512.png" alt="" />
+  </button>
+  <div id="ora-panel" role="dialog" aria-label="Chat with Auma" hidden>
+    <div class="ora-head">
+      <img src="/assets/aukora-icon-512.png" alt="" />
+      <div class="ora-title">
+        <b>Auma</b>
+        <span>live · no memory · ask about the tech</span>
+      </div>
+      <button id="ora-close" type="button" aria-label="Close chat">×</button>
+    </div>
+    <div class="ora-msgs" id="ora-msgs" aria-live="polite">
+      <div class="ora-msg her"><div class="bub">I’m Auma — this page is about me. Ask me how
+      any of it really works: the lock, the council, my memory, the loop. Each visit starts
+      fresh — I won’t remember you next time.</div></div>
+    </div>
+    <form class="ora-input" id="ora-form">
+      <textarea id="ora-text" rows="1" maxlength="1500" placeholder="ask about the technology…"
+        autocomplete="off" aria-label="Your message"></textarea>
+      <button type="submit" id="ora-send" aria-label="Send message" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6M12 6l-6.5 6.5M12 6l6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </form>
+  </div>
+
+  <!-- ============ SOON — public-release notify modal (gates every GitHub link; the repo is private today) ============ -->
+  <div id="soon-backdrop" hidden></div>
+  <div id="soon-modal" role="dialog" aria-label="Public release notification" aria-modal="true" hidden>
+    <button id="soon-close" type="button" aria-label="Close">×</button>
+    <p class="micro-label hue-c-text">Public release coming soon</p>
+    <h3>The code isn’t public yet.</h3>
+    <p class="soon-sub">Leave your email and we’ll let you know the moment the repo opens up.</p>
+    <form id="soon-form">
+      <input id="soon-email" type="email" required placeholder="you@example.com" autocomplete="email" aria-label="Email address" />
+      <button type="submit" id="soon-send">Notify me</button>
+    </form>
+    <p id="soon-status" role="status" aria-live="polite"></p>
+  </div>
+
+  <script src="/main.js" type="module"></script>
+  <script src="/trinity-walkthrough.js" type="module"></script>
+</body>
+</html>

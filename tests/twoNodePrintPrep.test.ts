@@ -12,7 +12,7 @@
 import { convexTest } from "convex-test";
 import { describe, it, expect, afterEach } from "vitest";
 import schema from "../convex/schema";
-import { api } from "../convex/_generated/api";
+import { api, internal } from "../convex/_generated/api";
 
 const modules = import.meta.glob("../convex/**/*.*s");
 const ORIG = { node: process.env.AUMA_NODE_ID, seed: process.env.AUKORA_CHAIN_SIGNING_SEED };
@@ -22,8 +22,8 @@ afterEach(() => { process.env.AUMA_NODE_ID = ORIG.node; process.env.AUKORA_CHAIN
 async function printNode(nodeId: string, seed: string) {
   process.env.AUMA_NODE_ID = nodeId; process.env.AUKORA_CHAIN_SIGNING_SEED = seed;
   const t = convexTest(schema, modules);
-  const stamp: any = await t.mutation(api.aukoraNodeFactory.initNode, { deploymentLabel: nodeId, tier: "lab" });
-  const reStamp: any = await t.mutation(api.aukoraNodeFactory.initNode, { deploymentLabel: nodeId, tier: "lab" }); // idempotent re-stamp = determinism
+  const stamp: any = await t.mutation(internal.aukoraNodeFactory.initNode, { deploymentLabel: nodeId, tier: "lab" });
+  const reStamp: any = await t.mutation(internal.aukoraNodeFactory.initNode, { deploymentLabel: nodeId, tier: "lab" }); // idempotent re-stamp = determinism
   const exportStatus = (await t.fetch("/export?chainKey=x", { method: "GET" })).status;   // cross-node route (MESH flag OFF)
   const importStatus = (await t.fetch("/import-delegated", { method: "POST" })).status;    // cross-node import (MESH flag OFF)
   const runDemoStatus = (await t.fetch("/run-demo", { method: "POST" })).status;           // B0/demo lane (DEMO flag OFF)
@@ -70,6 +70,6 @@ describe("B3.3 prep — two fresh lab nodes (deterministic stamp, distinct ident
   it("production tier is refused at stamp (lab/dev only)", async () => {
     process.env.AUMA_NODE_ID = "aukora-lab-alpha"; process.env.AUKORA_CHAIN_SIGNING_SEED = "a1".repeat(32);
     const t = convexTest(schema, modules);
-    await expect(t.mutation(api.aukoraNodeFactory.initNode, { deploymentLabel: "aukora-lab-alpha", tier: "production" })).rejects.toThrow("aukora_node_tier_invalid");
+    await expect(t.mutation(internal.aukoraNodeFactory.initNode, { deploymentLabel: "aukora-lab-alpha", tier: "production" })).rejects.toThrow("aukora_node_tier_invalid");
   });
 });

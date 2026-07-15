@@ -1,0 +1,10 @@
+# Generated Fusion Council run artifacts — local output, never committed.
+runs/*.json
+!runs/.gitkeep
+
+# Local secrets/config.
+.env
+*.log
+
+# Optional local review target folder.
+target/

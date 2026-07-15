@@ -1,0 +1,4 @@
+node_modules/
+models/
+bun.lock
+_fetch-model.mjs

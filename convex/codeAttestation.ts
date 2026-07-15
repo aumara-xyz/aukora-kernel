@@ -10,12 +10,13 @@
  * compromised host can still run swapped code while advertising a blessed manifestId. bundleHash is the REPRODUCIBLE
  * slice-tarball hash (scripts/compute-bundle-hash.sh), not the opaque deployed Convex bundle. External witness = deferred.
  */
-import { internalMutation, action } from "./_generated/server";
+import { internalAction, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
-import { api, internal } from "./_generated/api";
+import { internal } from "./_generated/api";
 import { stableStringify, sha256Hex } from "./aukoraCore";
 import { signChainHeadV3, verifyChainHeadV3, type ChainHeadFields } from "./aukoraSignedHead";
 import { mlDsa65PublicKeyFromSeed } from "./aukoraPqcSigner";
+import { requireDemoSeed } from "./runtimeConfig";
 
 const RELEASE_AUTHORITY = "aukora.release"; // the release-key authority id in founder_key_registry (distinct from PoP)
 const MANIFEST_FIELDS = ["manifestId", "version", "gitSHA", "bundleHash", "bundleHashAlg"] as const;
@@ -71,13 +72,14 @@ export const attestImport = internalMutation({
 });
 
 // ── Live proof: fire the attestation attack matrix (DEMO release key held in this action). ──
-const DEMO_RELEASE_SEED = "33".repeat(32), ATTACKER_RELEASE_SEED = "44".repeat(32);
-export const runCodeAttestation = action({
+export const runCodeAttestation = internalAction({
   args: { gitSHA: v.optional(v.string()), bundleHash: v.optional(v.string()) },
   handler: async (ctx, a): Promise<any> => {
+    const demoReleaseSeed = requireDemoSeed("AUKORA_DEMO_RELEASE_SEED", "att_demo_release_seed");
+    const attackerReleaseSeed = requireDemoSeed("AUKORA_DEMO_ATTACKER_RELEASE_SEED", "att_demo_attacker_seed");
     const run = crypto.randomUUID().slice(0, 8);
     const gitSHA = a.gitSHA ?? "DEMO_GITSHA_unverified", bundleHash = a.bundleHash ?? "DEMO_BUNDLEHASH_run_compute-bundle-hash.sh";
-    const relPub = await mlDsa65PublicKeyFromSeed(DEMO_RELEASE_SEED);
+    const relPub = await mlDsa65PublicKeyFromSeed(demoReleaseSeed);
     await ctx.runMutation(internal.popResolver.seedFounderKey, { founderUserId: RELEASE_AUTHORITY, keyId: "rk-1", publicKey: relPub });
     const seed = async (mid: string, version: number, signSeed: string, over: any = {}) => {
       const m = { manifestId: mid, version, gitSHA, bundleHash, bundleHashAlg: "sha256-slice-tarball", releaseKeyId: "rk-1", ...over };
@@ -90,23 +92,23 @@ export const runCodeAttestation = action({
     };
     const results: any[] = [];
     // 1 happy (blessed manifest, fresh source)
-    await seed(`rel-ok-${run}`, 1, DEMO_RELEASE_SEED);
+    await seed(`rel-ok-${run}`, 1, demoReleaseSeed);
     results.push(await fire("1_valid_blessed_manifest", `rel-ok-${run}`, `srcA-${run}`));
     // 2 forged (signed by attacker release key, but claims rk-1)
-    await seed(`rel-forge-${run}`, 1, ATTACKER_RELEASE_SEED);
+    await seed(`rel-forge-${run}`, 1, attackerReleaseSeed);
     results.push(await fire("2_forged_signature", `rel-forge-${run}`, `srcB-${run}`));
     // 3 unknown manifestId
     results.push(await fire("3_unknown_manifest", `rel-ghost-${run}`, `srcC-${run}`));
     // 4 gitSHA/bundleHash mismatch (tamper after signing)
-    await seed(`rel-mm-${run}`, 1, DEMO_RELEASE_SEED);
+    await seed(`rel-mm-${run}`, 1, demoReleaseSeed);
     await ctx.runMutation(internal.codeAttestation.tamperManifestField, { manifestId: `rel-mm-${run}`, bundleHash: "TAMPERED_BUNDLE" });
     results.push(await fire("4_gitsha_bundle_mismatch", `rel-mm-${run}`, `srcD-${run}`));
     // 5 rollback/downgrade (v2 then v1 on same source)
-    await seed(`rel-v2-${run}`, 2, DEMO_RELEASE_SEED); await seed(`rel-v1-${run}`, 1, DEMO_RELEASE_SEED);
+    await seed(`rel-v2-${run}`, 2, demoReleaseSeed); await seed(`rel-v1-${run}`, 1, demoReleaseSeed);
     results.push(await fire("5a_accept_v2", `rel-v2-${run}`, `srcE-${run}`));
     results.push(await fire("5b_rollback_v1", `rel-v1-${run}`, `srcE-${run}`));
     // 6 revoked release (status pulled)
-    await seed(`rel-rev-${run}`, 1, DEMO_RELEASE_SEED, { status: "revoked" });
+    await seed(`rel-rev-${run}`, 1, demoReleaseSeed, { status: "revoked" });
     results.push(await fire("6_revoked_manifest", `rel-rev-${run}`, `srcF-${run}`));
     const LEGIT = new Set(["1_valid_blessed_manifest", "5a_accept_v2"]);
     const happyOk = results.filter((r) => LEGIT.has(r.label)).every((r) => r.outcome === "ALLOWED");

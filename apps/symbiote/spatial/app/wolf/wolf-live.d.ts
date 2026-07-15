@@ -1,0 +1,10 @@
+export const LIVE_PRODUCT: string;
+export const LIVE_PRODUCT_NAME: string;
+export const MIN_POLL_MS: number;
+export const WITNESS_AGREE_PCT: number;
+export const LIVE_SOURCES: Readonly<Record<string, { name: string }>>;
+export function fetchKrakenTicker(fetchImpl?: typeof fetch): Promise<any>;
+export function fetchKrakenHistory(fetchImpl?: typeof fetch): Promise<any>;
+export function fetchCoinbaseSpot(fetchImpl?: typeof fetch): Promise<any>;
+export function secondWitness(tapePrice: number, witnessPrice: number): any;
+export function makeLiveQuote(...args: any[]): any;

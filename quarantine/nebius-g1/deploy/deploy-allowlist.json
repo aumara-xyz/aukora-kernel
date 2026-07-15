@@ -1,0 +1,30 @@
+{
+  "schema": "aukora-g1-deploy-allowlist-v0",
+  "note": "EXPLICIT, fail-closed deploy allowlist for the G1 sealed-VM bundle. A bundle-relative path is permitted to transfer to the VM iff it matches an `allow` glob AND matches NO `deny` glob. Enforcement is PRE-TRANSFER: src/allowlist.ts (assertDeployable / checkBundle) is the pure enforcer, and deploy/seal.sh re-checks this file and refuses to arm if any key-material path is present in the staged bundle. Unknown paths are DENIED by default (no allow match).",
+  "glob": {
+    "**": "matches any run of characters including '/'",
+    "**/": "matches zero or more leading path segments",
+    "*": "matches any run of characters except '/'",
+    "?": "matches a single character except '/'"
+  },
+  "allow": [
+    "d6/**",
+    "src/**",
+    "test/**",
+    "package.json",
+    "tsconfig.json",
+    "deploy/**",
+    "MANIFEST.json"
+  ],
+  "deny": [
+    "**/*.key",
+    "**/id_rsa*",
+    "**/id_ed25519*",
+    "**/.ssh/**",
+    "**/*.pem",
+    "**/.env*",
+    "**/*secret*",
+    "**/authority-*.key"
+  ],
+  "denyRationale": "Every private key / secret-material shape is excluded so no SSH key, signing key, PEM, dotenv, or any *secret* file can ride into a bundle that is explicitly built to hold NO authority and NO production memory. `deny` wins over `allow`: a path under an allowed directory (e.g. deploy/authority-node.key) is still refused. This list is a coarse structural net; content-level secret detection is D6 textHasSecret, applied by the controller to genome fields, not here."
+}

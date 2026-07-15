@@ -50,6 +50,10 @@ export function rootKeyFingerprint(publicKeyHex: string): string {
 // root A can never verify against root B's head — chain_id binding). NOT a receipt chainKey (never written as one).
 const ROT_FIELDS = ["v", "rootId", "oldKeyId", "newKeyId", "newPublicKey", "newFingerprint", "reason", "timestamp"] as const;
 const pick = (o: any, fields: readonly string[]) => { const r: any = {}; for (const f of fields) r[f] = o?.[f]; return r; };
+const assertOnlyKeys = (value: unknown, fields: readonly string[], code: string): void => {
+  if (!value || typeof value !== "object" || Array.isArray(value)
+    || Object.keys(value as Record<string, unknown>).some((key) => !fields.includes(key))) throw new Error(code);
+};
 export function serializeRotationV1(s: any): string { return "aukora-aumlok-rot-v1|" + stableStringify(pick(s, ROT_FIELDS)); }
 export async function rotationHead(s: any): Promise<ChainHeadFields> {
   return { chainKey: `aumlok:rot:${s?.rootId}`, timestamp: Number(s?.timestamp ?? 0), chainLength: 1, chainHeadHash: await sha256Hex(serializeRotationV1(s)) };
@@ -115,6 +119,7 @@ export const aumlokGenesisMint = mutation({
   // exact operation (no confused-deputy: an envelope signed for one method can't be redirected to another).
   args: { env: v.any(), actualArgs: v.any(), nodeId: v.string() },
   handler: async (ctx, a): Promise<any> => {
+    assertOnlyKeys(a.actualArgs, ["rootId", "keyId", "publicKey"], "aumlok_genesis_unknown_field");
     const session = await resolvePoPSession(ctx, a.env, AUMLOK_METHODS.genesis, a.actualArgs, a.nodeId); // throws pop_* → rolls back
     const rootId = asName(a.actualArgs?.rootId, "rootId");
     const keyId = asName(a.actualArgs?.keyId, "keyId");
@@ -132,6 +137,8 @@ export const aumlokGenesisMint = mutation({
 export const aumlokRotateRoot = mutation({
   args: { env: v.any(), actualArgs: v.any(), nodeId: v.string() }, // methodId hard-coded below (see aumlokGenesisMint)
   handler: async (ctx, a): Promise<any> => {
+    assertOnlyKeys(a.actualArgs, ["statement", "rotationSig"], "aumlok_rotation_args_unknown_field");
+    assertOnlyKeys(a.actualArgs?.statement, ROT_FIELDS, "aumlok_rotation_unknown_field");
     const session = await resolvePoPSession(ctx, a.env, AUMLOK_METHODS.rotate, a.actualArgs, a.nodeId);
     const s = a.actualArgs?.statement ?? {};
     const rotationSig = asHexBlob(a.actualArgs?.rotationSig, "rotationSig");
@@ -180,6 +187,7 @@ export const aumlokRotateRoot = mutation({
 export const aumlokRevokeRoot = mutation({
   args: { env: v.any(), actualArgs: v.any(), nodeId: v.string() }, // methodId hard-coded below (see aumlokGenesisMint)
   handler: async (ctx, a): Promise<any> => {
+    assertOnlyKeys(a.actualArgs, ["rootId", "keyId", "reason"], "aumlok_revoke_unknown_field");
     const session = await resolvePoPSession(ctx, a.env, AUMLOK_METHODS.revoke, a.actualArgs, a.nodeId);
     const rootId = asName(a.actualArgs?.rootId, "rootId");
     const keyId = asName(a.actualArgs?.keyId, "keyId");

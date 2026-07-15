@@ -1,5 +1,5 @@
 {
-  "source": "Generated from @noble/post-quantum ml_dsa65 with known seeds (ACVP-style format)",
+  "source": "Aukora-generated deterministic regression corpus from @noble/post-quantum ml_dsa65; not independent NIST evidence",
   "parameterSet": "ML-DSA-65",
   "keyGen": [
     {

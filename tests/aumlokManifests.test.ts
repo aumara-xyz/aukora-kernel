@@ -118,16 +118,13 @@ describe("B2.2 — manifest mint (doubly-signed; both verify before active)", ()
     await expect(mint(t, mkManifest(subjectPub), { rootSeed: ATTACKER_SEED })).rejects.toThrow("aumlok_mft_root_sig_invalid");
     await expect(mint(t, mkManifest(subjectPub), { subjectSeed: ATTACKER_SEED })).rejects.toThrow("aumlok_mft_subject_pop_invalid");
   });
-  it("an unknown unsigned field grants NOTHING (dropped before hashing+storage; sig still verifies)", async () => {
+  it("an unknown unsigned field refuses instead of being silently dropped", async () => {
     const { t, subjectPub } = await setup("m6");
     const m = mkManifest(subjectPub);
     // sign the canonical manifest; SEND it with an extra top-level field that purports to grant admin
-    const r: any = await mint(t, m, { sendManifest: { ...m, extraPermissions: [{ ring: "core", action: "admin", resource: "*" }], evil: true } });
-    expect(r.ok).toBe(true); // the extra fields are dropped by canonicalManifest, so the sig over the canonical bytes still verifies
-    const row = await mrow(t, "mft-1");
-    expect(row.extraPermissions).toBeUndefined();
-    expect(row.evil).toBeUndefined();
-    expect((await resolve(t, "mft-1", { action: "admin", resource: "*", ring: "core" })).reason).toBe("permission_denied"); // the smuggled grant is inert
+    await expect(mint(t, m, { sendManifest: { ...m, extraPermissions: [{ ring: "core", action: "admin", resource: "*" }], evil: true } }))
+      .rejects.toThrow("aumlok_mft_unknown_field");
+    expect(await mrow(t, "mft-1")).toBeNull();
   });
   it("duplicate manifestId refuses (immutable v1: amend = revoke + re-mint)", async () => {
     const { t, subjectPub } = await setup("m7");

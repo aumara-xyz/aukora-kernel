@@ -1,0 +1,11 @@
+{
+  "name": "aukora-fu",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Aukora FU - Fusion Under-the-Hood: a local, advisory-only Fusion Council runner plus observer UI. Grants no authority.",
+  "scripts": {
+    "start": "bun run server.ts",
+    "council": "bun run run-council.ts",
+    "sample": "bun run run-council.ts --sample"
+  }
+}

@@ -5,7 +5,7 @@
 
 | # | Claim | Tier | Evidence | Date |
 |---|---|---|---|---|
-| R1 | Every signature the kernel mints or verifies is **ML-DSA-65 (FIPS 204)** under the versioned signed-head format, with a required purpose-domain per signature and the algorithm bound into the signed bytes (downgrade-resistant), no fallback mode; corroborated against **NIST ACVP** pure-mode vectors. | PROVEN-LAB | `AUKORA_PQC_SPINE_EVIDENCE` | 2026-06-10 |
+| R1 | Signature authority is purpose/profile bound: portable AUMLOK promotions require **both Ed25519 and ML-DSA-65 (FIPS 204)**, portable V4 receipt heads use a distinct ML-DSA-65-only profile, and the Convex reference app retains its legacy ML-DSA-only signed head. Unknown profiles and downgrade attempts refuse. The ML-DSA-65 verification path agrees with a pinned **NIST ACVP** FIPS 204 pass/refuse subset. | PROVEN-LAB | `packages/kernel/test/authority.test.ts` / `tests/pqcVectors.test.ts` | 2026-07-14 |
 | R2 | Each receipt commits to an **RFC 6962 append-only Merkle history root** bound inside its post-quantum signed head, which the audit path recomputes from the actual receipts and re-verifies; corroborated against Certificate Transparency reference vectors. | PROVEN-LAB | `AUKORA_RECEIPT_TRANSPARENCY_EVIDENCE` | 2026-06-10 |
 | R3 | A live effect is authorized **only** through `manifest → grant → token → receipt`, flowing through the single `consumeManifestUseCore` chokepoint — no second authority path (within the kernel API surface; bypassed by direct DB writes — see Authority vs. containment in README). | PROVEN-LAB | `AUKORA_MEMORY_BOUNDARY_EVIDENCE` | 2026-06-10 |
 | R4 | The manifest consume is atomic / OCC-safe within one transaction — two concurrent same-`useSeq` writes conflict, so exactly one commits (no double-spend). | PROVEN-LAB | `AUKORA_MEMORY_BOUNDARY_EVIDENCE` | 2026-06-10 |
@@ -20,9 +20,9 @@
 
 ## Precision notes (load-bearing)
 
-- **"ACVP-corroborated" applies to R1 (ML-DSA-65 signing) only.** R6's ML-KEM-768 channel is **KAT-pinned, NOT yet full
-  FIPS-203 ACVP-conformant** — do not extend "ACVP" to the channel.
-- "Corroborated against vectors" means reproduces published NIST/CT test vectors — **not** an independent cryptographic
+- **"ACVP-corroborated" applies only to the R1 ML-DSA-65 verification path.** R6's ML-KEM-768 channel has deterministic
+  implementation-regression fixtures and is **not FIPS-203 ACVP-conformant** — do not extend "ACVP" to the channel.
+- "Corroborated against vectors" means agreeing with the pinned published NIST pass/refuse subset — **not** an independent cryptographic
   audit. No independent audit of the post-quantum dependency is claimed.
 - "cloud-LAB" ≠ production ≠ airgapped.
 - **HKDF usage is drift-pinned, not externally corroborated.** The channel's HKDF-SHA256 key derivation pins output

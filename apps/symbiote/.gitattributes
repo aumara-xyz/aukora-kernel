@@ -1,0 +1,11 @@
+# One law for line endings: LF in the repo AND in every working tree, on every OS.
+# Pinned here (not left to each machine's core.autocrlf) for two load-bearing reasons:
+#   1. bash scripts break on CRLF — Git for Windows defaults to autocrlf=true, which
+#      checked every *.sh out with CRLF on Windows ($'\r': command not found).
+#   2. the authority gate is BYTE-pinned (authority/gate/.gate-integrity.sha256);
+#      the same bytes must check out on every OS or gate integrity can never verify
+#      (CRLF even broke the pin file itself: shasum went looking for "risk.ts\r").
+* text=auto eol=lf
+
+# Windows batch files are the one place CRLF is correct.
+*.bat text eol=crlf

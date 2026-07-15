@@ -1,0 +1,153 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "version": 1,
+  "metadata": {
+    "tools": [
+      {
+        "vendor": "Aukora",
+        "name": "generate-kernel-sbom.mjs",
+        "version": "1"
+      }
+    ],
+    "component": {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40aukora%2Fkernel@0.1.0",
+      "group": "@aukora",
+      "name": "kernel",
+      "version": "0.1.0",
+      "scope": "required",
+      "purl": "pkg:npm/%40aukora%2Fkernel@0.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "AGPL-3.0-or-later"
+          }
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40noble%2Fciphers@2.2.0",
+      "group": "@noble",
+      "name": "ciphers",
+      "version": "2.2.0",
+      "scope": "required",
+      "purl": "pkg:npm/%40noble%2Fciphers@2.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "Z6pjIZ/8IJcCGzb2S/0Px5J81yij85xASuk1teLNeg75bfT07MV3a/O2Mtn1I2se43k3lkVEcFaR10N4cgQcZA=="
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40noble%2Fcurves@2.2.0",
+      "group": "@noble",
+      "name": "curves",
+      "version": "2.2.0",
+      "scope": "required",
+      "purl": "pkg:npm/%40noble%2Fcurves@2.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "T/BoHgFXirb0ENSPBquzX0rcjXeM6Lo892a2jlYJkqk83LqZx0l1Of7DzlKJ6jkpvMrkHSnAcgb5JegL8SeIkQ=="
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40noble%2Fhashes@2.2.0",
+      "group": "@noble",
+      "name": "hashes",
+      "version": "2.2.0",
+      "scope": "required",
+      "purl": "pkg:npm/%40noble%2Fhashes@2.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "IYqDGiTXab6FniAgnSdZwgWbomxpy9FtYvLKs7wCUs2a8RkITG+DFGO1DM9cr+E3/RgADRpFjrKVaJ1z6sjtEg=="
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40noble%2Fpost-quantum@0.6.1",
+      "group": "@noble",
+      "name": "post-quantum",
+      "version": "0.6.1",
+      "scope": "required",
+      "purl": "pkg:npm/%40noble%2Fpost-quantum@0.6.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "+pormrDZwjRw05U8ADK4JpHejo87+gBd+muRBB/ozztH5yhDLMDF4jHQWN3NQQAsu1zBNPWTG0ZwVI0CR29H0A=="
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:npm/%40aukora%2Fkernel@0.1.0",
+      "dependsOn": [
+        "pkg:npm/%40noble%2Fcurves@2.2.0",
+        "pkg:npm/%40noble%2Fhashes@2.2.0",
+        "pkg:npm/%40noble%2Fpost-quantum@0.6.1"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40noble%2Fciphers@2.2.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40noble%2Fcurves@2.2.0",
+      "dependsOn": [
+        "pkg:npm/%40noble%2Fhashes@2.2.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40noble%2Fhashes@2.2.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40noble%2Fpost-quantum@0.6.1",
+      "dependsOn": [
+        "pkg:npm/%40noble%2Fciphers@2.2.0",
+        "pkg:npm/%40noble%2Fcurves@2.2.0",
+        "pkg:npm/%40noble%2Fhashes@2.2.0"
+      ]
+    }
+  ]
+}

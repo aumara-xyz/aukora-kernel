@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aukora-Fu // Fusion Council</title>
+  <style>
+    :root {
+      --bg-dark: #0e1626;
+      --bg-grad-a: #101c30; --bg-grad-b: #0b1120;
+      --card-bg: rgba(24, 34, 58, 0.82);
+      --card-hi: rgba(30, 42, 70, 0.9);
+      --border-color: rgba(90, 190, 255, 0.16);
+      --accent-green: #22f0a8;
+      --accent-red: #ff5a5a;
+      --accent-blue: #38c6ff;
+      --accent-gold: #ffca3a;
+      --text-main: #eef4fb;
+      --text-muted: #8ea3bd;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(1200px 700px at 60% -10%, var(--bg-grad-a), var(--bg-grad-b)), var(--bg-dark);
+      color: var(--text-main); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column;
+    }
+    #grid-overlay { position: absolute; inset: 0; background-image: linear-gradient(rgba(90,190,255,0.028) 1px, transparent 1px), linear-gradient(90deg, rgba(90,190,255,0.028) 1px, transparent 1px); background-size: 34px 34px; pointer-events: none; z-index: 1; }
+    header { height: 72px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 40px; background: rgba(18, 26, 46, 0.72); backdrop-filter: blur(14px); z-index: 10; box-shadow: 0 4px 24px rgba(0,0,0,0.28); }
+    .logo-container h1 { font-size: 16px; font-weight: 800; letter-spacing: 3px; color: #f8fbff; }
+    .logo-container span { color: var(--accent-blue); text-shadow: 0 0 14px rgba(56,198,255,0.5); }
+    .logo-container .sub { font-size: 10px; letter-spacing: 2px; color: var(--text-muted); font-weight: 600; margin-top: 3px; }
+    .header-status { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text-muted); }
+    .pulse-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent-blue); box-shadow: 0 0 10px var(--accent-blue); animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(56,198,255,0.6);} 70% { transform: scale(1); box-shadow: 0 0 0 9px rgba(56,198,255,0);} 100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(56,198,255,0);} }
+    main { flex: 1; display: grid; grid-template-columns: 320px 1fr 400px; gap: 20px; padding: 20px 40px; overflow: hidden; z-index: 5; }
+    .dashboard-col { display: flex; flex-direction: column; gap: 18px; height: 100%; overflow: hidden; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 20px; backdrop-filter: blur(14px); display: flex; flex-direction: column; gap: 12px; box-shadow: 0 10px 34px rgba(0,0,0,0.32); position: relative; }
+    .card-title { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 9px; display: flex; justify-content: space-between; }
+    .thread-list { display: flex; flex-direction: column; gap: 9px; overflow-y: auto; flex: 1; }
+    .thread-item { background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; padding: 12px; cursor: pointer; transition: all 0.25s ease; display: flex; justify-content: space-between; align-items: center; }
+    .thread-item:hover { background: rgba(56,198,255,0.05); border-color: rgba(56,198,255,0.28); transform: translateX(2px); }
+    .thread-active { background: rgba(56,198,255,0.09) !important; border-color: var(--accent-blue) !important; box-shadow: 0 0 14px rgba(56,198,255,0.14); }
+    .thread-meta { display: flex; flex-direction: column; gap: 3px; }
+    .thread-title { font-size: 12px; font-weight: 700; }
+    .thread-sub { font-size: 10px; color: var(--text-muted); }
+    .thread-badge { font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; }
+    #consensus-banner { padding: 18px; border-radius: 12px; text-align: center; font-weight: 800; letter-spacing: 1.5px; font-size: 18px; }
+    #consensus-reason { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: -6px; }
+    .banner-green { background: rgba(34,240,168,0.10); border: 1px solid rgba(34,240,168,0.28); color: var(--accent-green); }
+    .banner-yellow { background: rgba(255,202,58,0.10); border: 1px solid rgba(255,202,58,0.28); color: var(--accent-gold); }
+    .banner-red { background: rgba(255,90,90,0.10); border: 1px solid rgba(255,90,90,0.28); color: var(--accent-red); }
+    .banner-muted { background: rgba(142,163,189,0.08); border: 1px solid rgba(142,163,189,0.22); color: var(--text-muted); }
+    .hint { font-size: 10px; color: var(--text-muted); text-align: center; letter-spacing: 0.5px; }
+    .model-list { display: flex; flex-direction: column; gap: 11px; overflow-y: auto; flex: 1; }
+    .model-row { background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.03); border-radius: 9px; padding: 12px; display: flex; flex-direction: column; gap: 7px; cursor: pointer; transition: all 0.2s ease; }
+    .model-row:hover { background: rgba(56,198,255,0.05); border-color: rgba(56,198,255,0.25); }
+    .model-row.contrarian { border-color: rgba(255,202,58,0.4); box-shadow: 0 0 12px rgba(255,202,58,0.1); }
+    .model-row.selected { border-color: var(--accent-blue); box-shadow: 0 0 14px rgba(56,198,255,0.18); }
+    .model-meta-row { display: flex; justify-content: space-between; align-items: center; }
+    .model-name { font-size: 13px; font-weight: 700; color: #b7c6dc; }
+    .model-vote-tag { font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 4px; }
+    .model-distribution-bar { display: flex; height: 6px; border-radius: 3px; overflow: hidden; background: rgba(255,255,255,0.05); }
+    .bar-segment { height: 100%; transition: width 0.5s ease; }
+    #visualizer-card { flex: 1; position: relative; padding: 0; overflow: hidden; }
+    #resonator-canvas { width: 100%; height: 100%; display: block; cursor: pointer; }
+    /* node detail overlay */
+    #node-detail { position: absolute; top: 16px; right: 16px; width: 300px; background: var(--card-hi); border: 1px solid var(--accent-blue); border-radius: 12px; padding: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.5); z-index: 20; display: none; }
+    #node-detail.show { display: flex; flex-direction: column; gap: 10px; }
+    #node-detail .nd-title { font-size: 13px; font-weight: 800; color: #eaf3ff; display: flex; justify-content: space-between; align-items: center; }
+    #node-detail .nd-close { cursor: pointer; color: var(--text-muted); font-size: 16px; line-height: 1; }
+    #node-detail .nd-row { font-size: 11px; color: #cdd9ea; display: flex; justify-content: space-between; }
+    #node-detail .nd-finding { font-size: 11px; color: var(--text-muted); line-height: 1.5; max-height: 130px; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px; }
+    .divbar { display: flex; align-items: center; gap: 8px; font-size: 10px; font-family: monospace; }
+    .divbar .track { flex: 1; height: 5px; border-radius: 3px; background: rgba(255,255,255,0.06); overflow: hidden; }
+    .divbar .fill { height: 100%; }
+    .architecture-explain { background: rgba(18,26,46,0.5); border: 1px solid rgba(56,198,255,0.08); border-radius: 12px; padding: 18px; font-size: 13px; line-height: 1.55; color: #b7c6dc; display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; }
+    .explain-title { font-size: 11px; color: var(--accent-blue); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+    .gov-line { font-family: ui-monospace, monospace; font-size: 12px; color: #d7e2f0; }
+    footer { height: 78px; border-top: 1px solid var(--border-color); background: rgba(18,26,46,0.72); backdrop-filter: blur(14px); display: flex; align-items: center; justify-content: center; gap: 14px; padding: 0 40px; z-index: 10; }
+    .btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: var(--text-main); padding: 11px 20px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.25s ease; display: flex; align-items: center; gap: 6px; }
+    .btn:hover { background: rgba(255,255,255,0.06); border-color: rgba(56,198,255,0.35); transform: translateY(-1px); }
+    .btn-green:hover { border-color: var(--accent-green); box-shadow: 0 0 12px rgba(34,240,168,0.16); }
+    .btn-red:hover { border-color: var(--accent-red); box-shadow: 0 0 12px rgba(255,90,90,0.16); }
+  </style>
+</head>
+<body>
+  <div id="grid-overlay"></div>
+
+  <header>
+    <div class="logo-container">
+      <h1>AUKORA-FU // <span>FUSION COUNCIL</span></h1>
+      <div class="sub">MULTI-MODEL ADVERSARIAL REVIEW · OBSERVER-ONLY</div>
+    </div>
+    <div class="header-status">
+      <div class="pulse-dot"></div>
+      <span id="status-line">Connecting to Fusion observer…</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- LEFT: consensus + threads (scrollable) -->
+    <div class="dashboard-col">
+      <div id="consensus-banner" class="banner-muted">CONSENSUS // —</div>
+      <div id="consensus-reason"></div>
+      <div class="card" style="flex:1;">
+        <div class="card-title">Recent Council Runs <span id="run-count">—</span></div>
+        <div class="thread-list" id="thread-list-container"></div>
+        <div class="hint">click a node → per-model detail</div>
+      </div>
+    </div>
+
+    <!-- CENTER: node graph + governance -->
+    <div class="dashboard-col">
+      <div class="card" id="visualizer-card">
+        <canvas id="resonator-canvas"></canvas>
+        <div id="node-detail"></div>
+      </div>
+      <div class="architecture-explain" id="explain-card">
+        <div class="explain-title">Governance Report // advisory only · grants no authority</div>
+        <div id="gov-lines"><div>The council reviews; it never authorizes. Fire a run: <code>cd core &amp;&amp; bun run run-council.ts</code></div></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: model verdicts -->
+    <div class="dashboard-col">
+      <div class="card" style="flex:1;">
+        <div class="card-title">Model Verdicts + Confidence <span id="council-count">—</span></div>
+        <div class="model-list" id="model-telemetry-list"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <button class="btn btn-green" onclick="loadDemo('green')"><span>Demo: Clear Consensus</span></button>
+    <button class="btn btn-red" onclick="loadDemo('red')"><span>Demo: Security Pinch</span></button>
+    <button class="btn" onclick="loadDemo('outage')"><span>Demo: Model Outage</span></button>
+    <button class="btn" onclick="refresh()"><span>↻ Reload Live</span></button>
+  </footer>
+
+  <script>
+    const canvas = document.getElementById('resonator-canvas');
+    const ctx = canvas.getContext('2d');
+    const telemetryList = document.getElementById('model-telemetry-list');
+    const threadListContainer = document.getElementById('thread-list-container');
+    const consensusBanner = document.getElementById('consensus-banner');
+    const consensusReason = document.getElementById('consensus-reason');
+    const statusLine = document.getElementById('status-line');
+    const govLines = document.getElementById('gov-lines');
+    const councilCount = document.getElementById('council-count');
+    const runCount = document.getElementById('run-count');
+    const nodeDetail = document.getElementById('node-detail');
+
+    let time = 0;
+    const state = { current: null, threads: [], models: [], activeId: null, selected: null };
+
+    const KNOWN = { 'claude': 'CLD', 'opus': 'CLD', 'glm': 'GLM', 'kimi': 'KIM', 'deepseek': 'DSK', 'qwen': 'QWN', 'mistral': 'MST', 'gemini': 'GEM', 'grok': 'GRK', 'gpt': 'GPT' };
+    function shortId(slug) { const s = String(slug).toLowerCase(); for (const k in KNOWN) if (s.includes(k)) return KNOWN[k]; const t = s.split('/').pop().replace(/[^a-z0-9]/g, ''); return (t.slice(0, 3) || '???').toUpperCase(); }
+    function hexFor(v) { if (v === 'GREEN') return '#22f0a8'; if (v === 'YELLOW') return '#ffca3a'; if (v === 'RED') return '#ff5a5a'; return '#64748b'; }
+    function voteLabel(v, nonVote) { return (nonVote || v === 'non_vote') ? 'NON-VOTE' : v; }
+    function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function bannerClass(s) { if (!s) return 'banner-muted'; if (s.startsWith('GREEN')) return 'banner-green'; if (s.startsWith('YELLOW')) return 'banner-yellow'; if (s.startsWith('RED')) return 'banner-red'; return 'banner-muted'; }
+    async function fetchJSON(u) { try { const r = await fetch(u, { cache: 'no-store' }); if (!r.ok) return null; return await r.json(); } catch { return null; } }
+
+    function toDisplayModels(a) {
+      return (a.council || []).map(slug => {
+        const m = (a.models || []).find(x => x.model === slug) || {};
+        const nonVote = (m.respondedShards || 0) === 0;
+        return { id: shortId(slug), slug, name: slug, dist: m.dist || { g: 1/3, y: 1/3, r: 1/3 }, vote: nonVote ? 'non_vote' : (m.overallVote || 'non_vote'), nonVote, meanDivergence: m.meanDivergence, isContrarian: !!m.isContrarian, conf: m.meanConfidence, x: 0, y: 0, r: 0 };
+      });
+    }
+
+    function renderBanner(a) { const s = a.quorum ? a.quorum.status : '—'; consensusBanner.className = bannerClass(s); consensusBanner.innerText = `CONSENSUS // ${s}`; consensusReason.innerText = a.quorum ? a.quorum.reason : ''; }
+
+    function renderThreads() {
+      runCount.innerText = state.threads.length ? `${state.threads.length}` : '';
+      threadListContainer.innerHTML = '';
+      if (!state.threads.length) { threadListContainer.innerHTML = '<div class="thread-sub" style="padding:8px;">No live runs yet — demo mode. Fire the council to populate.</div>'; return; }
+      state.threads.forEach(t => {
+        const st = t.quorum || 'DEMO';
+        const col = st.startsWith('GREEN') ? 'var(--accent-green)' : st.startsWith('RED') ? 'var(--accent-red)' : st.startsWith('YELLOW') ? 'var(--accent-gold)' : 'var(--text-muted)';
+        const item = document.createElement('div');
+        item.className = `thread-item ${t.runId === state.activeId ? 'thread-active' : ''}`;
+        item.onclick = () => selectThread(t.runId);
+        const when = (t.createdAt || '').replace('T', ' ').slice(0, 19);
+        item.innerHTML = `<div class="thread-meta"><span class="thread-title">${escapeHtml(t.runId.replace('run-','').slice(0,19))}</span><span class="thread-sub">${escapeHtml((t.target||'').slice(0,34))} · ${escapeHtml(when)}</span></div><span class="thread-badge" style="color:${col};border:1px solid ${col}44;background:rgba(255,255,255,0.02);">${escapeHtml(st.replace('_QUORUM',''))}</span>`;
+        threadListContainer.appendChild(item);
+      });
+    }
+
+    function renderTelemetry() {
+      councilCount.innerText = `${state.models.filter(m => !m.nonVote).length}/${state.models.length} responded`;
+      telemetryList.innerHTML = '';
+      state.models.forEach(m => {
+        const col = hexFor(m.vote);
+        const row = document.createElement('div');
+        row.className = 'model-row' + (m.isContrarian ? ' contrarian' : '') + (state.selected === m.slug ? ' selected' : '');
+        row.onclick = () => openDetail(m.slug);
+        const divTxt = (typeof m.meanDivergence === 'number' && m.meanDivergence >= 0) ? `div ${m.meanDivergence.toFixed(2)}` : '';
+        row.innerHTML = `
+          <div class="model-meta-row"><span class="model-name">${escapeHtml(m.name)} ${m.isContrarian ? '<span style="color:var(--accent-gold);">★</span>' : ''}</span>
+          <span class="model-vote-tag" style="color:${col};border:1px solid ${col}44;background:rgba(255,255,255,0.02);">${escapeHtml(voteLabel(m.vote, m.nonVote))}</span></div>
+          <div class="model-distribution-bar"><div class="bar-segment" style="width:${m.dist.g*100}%;background:var(--accent-green)"></div><div class="bar-segment" style="width:${m.dist.y*100}%;background:var(--accent-gold)"></div><div class="bar-segment" style="width:${m.dist.r*100}%;background:var(--accent-red)"></div></div>
+          <div class="model-meta-row" style="font-size:10px;color:var(--text-muted);font-family:monospace;"><span>G ${(m.dist.g*100).toFixed(0)}%</span><span>Y ${(m.dist.y*100).toFixed(0)}%</span><span>R ${(m.dist.r*100).toFixed(0)}%</span><span>${divTxt}</span></div>`;
+        telemetryList.appendChild(row);
+      });
+    }
+
+    function openDetail(slug) {
+      const a = state.current; if (!a) return;
+      state.selected = slug;
+      const mi = state.models.findIndex(m => m.slug === slug);
+      const m = state.models[mi]; if (!m) return;
+      const col = hexFor(m.vote);
+      const js = (a.divergenceMatrix && a.divergenceMatrix.js) || [];
+      const cell = (a.cells || []).filter(c => c.model === slug);
+      const findings = cell.filter(c => c.vote === 'YELLOW' || c.vote === 'RED').map(c => `<b style="color:${hexFor(c.vote)}">${escapeHtml(c.vote)}</b> · ${escapeHtml(c.shard.split(':')[1] || c.shard)}: ${escapeHtml(c.findingSummary)}`).join('<br><br>') || escapeHtml(cell[0]?.findingSummary || 'no findings');
+      let pairs = '';
+      state.models.forEach((o, j) => { if (o.slug === slug) return; const v = js[mi] ? js[mi][j] : -1; const pv = (v == null || v < 0) ? null : v; const c = pv == null ? 'var(--text-muted)' : pv > 0.4 ? 'var(--accent-red)' : pv > 0.1 ? 'var(--accent-gold)' : 'var(--accent-green)'; pairs += `<div class="divbar"><span style="width:34px;color:var(--text-muted)">${o.id}</span><div class="track"><div class="fill" style="width:${pv == null ? 0 : Math.min(100, pv*100)}%;background:${c}"></div></div><span style="color:${c};width:34px;text-align:right">${pv == null ? 'N/A' : pv.toFixed(2)}</span></div>`; });
+      nodeDetail.className = 'show';
+      nodeDetail.innerHTML = `
+        <div class="nd-title"><span style="color:${col}">${escapeHtml(m.name)} ${m.isContrarian ? '★' : ''}</span><span class="nd-close" onclick="closeDetail()">✕</span></div>
+        <div class="nd-row"><span>verdict</span><span style="color:${col};font-weight:700">${escapeHtml(voteLabel(m.vote, m.nonVote))}</span></div>
+        <div class="nd-row"><span>confidence</span><span>${m.conf != null ? (m.conf*100).toFixed(0)+'%' : '—'}</span></div>
+        <div class="nd-row"><span>mean divergence</span><span>${typeof m.meanDivergence==='number' && m.meanDivergence>=0 ? m.meanDivergence.toFixed(2) : 'N/A'}</span></div>
+        <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px;">divergence vs others</div>
+        ${pairs}
+        <div class="nd-finding">${findings}</div>`;
+      renderTelemetry();
+    }
+    function closeDetail() { state.selected = null; nodeDetail.className = ''; renderTelemetry(); }
+
+    function renderGovernance(a) {
+      const lines = a.governanceLines || [];
+      const contra = a.contrarian ? `<div class="gov-line" style="color:var(--accent-gold);">contrarian: ${escapeHtml(a.contrarian.model)} (mean divergence ${a.contrarian.meanDivergence.toFixed(2)})</div>` : '';
+      const shards = (a.perShard || []).map(s => `<div class="gov-line">shard ${escapeHtml(s.shard.split(':')[0] || s.shard)}: consensus ${(s.consensusStrength*100).toFixed(0)}% · dominant ${escapeHtml(s.dominant)}</div>`).join('');
+      govLines.innerHTML = lines.map(l => `<div class="gov-line">${escapeHtml(l)}</div>`).join('') + contra + shards;
+    }
+
+    function loadArtifact(a) { state.current = a; state.activeId = a.runId || 'demo'; state.models = toDisplayModels(a); state.selected = null; nodeDetail.className = ''; renderBanner(a); renderTelemetry(); renderGovernance(a); renderThreads(); }
+    async function selectThread(runId) { const a = await fetchJSON('/api/run/' + encodeURIComponent(runId)); if (a) loadArtifact(a); }
+    async function refresh() {
+      const runs = await fetchJSON('/api/runs'); const latest = await fetchJSON('/api/run/latest');
+      if (latest) { state.threads = runs || []; statusLine.innerText = `live · ${state.threads.length} run(s) · observer-only`; loadArtifact(latest); }
+      else { statusLine.innerText = 'no live runs yet — demo mode'; state.threads = []; loadDemo('green'); }
+    }
+
+    function demoArtifact(kind) {
+      const council = ['anthropic/claude-opus-4.8','z-ai/glm-5.2','moonshotai/kimi-k2.7-code','deepseek/deepseek-v4-pro','qwen/qwen3.7-max','openai/gpt-5.5','mistralai/mistral-large-2512'];
+      const D = (g,y,r)=>({g,y,r}); let models, quorum, contrarian=null;
+      if (kind==='red') {
+        models = [
+          {model:council[0],overallVote:'GREEN',dist:D(0.85,0.12,0.03),meanConfidence:0.85,meanDivergence:0.28,respondedShards:2,isContrarian:false},
+          {model:council[1],overallVote:'RED',dist:D(0.05,0.05,0.90),meanConfidence:0.9,meanDivergence:0.63,respondedShards:2,isContrarian:true},
+          {model:council[2],overallVote:'YELLOW',dist:D(0.35,0.55,0.10),meanConfidence:0.6,meanDivergence:0.31,respondedShards:2,isContrarian:false},
+          {model:council[3],overallVote:'GREEN',dist:D(0.82,0.15,0.03),meanConfidence:0.82,meanDivergence:0.29,respondedShards:2,isContrarian:false},
+          {model:council[4],overallVote:'YELLOW',dist:D(0.5,0.4,0.1),meanConfidence:0.55,meanDivergence:0.34,respondedShards:2,isContrarian:false},
+          {model:council[5],overallVote:'GREEN',dist:D(0.8,0.16,0.04),meanConfidence:0.8,meanDivergence:0.3,respondedShards:2,isContrarian:false},
+          {model:council[6],overallVote:'YELLOW',dist:D(0.45,0.45,0.1),meanConfidence:0.5,meanDivergence:0.33,respondedShards:2,isContrarian:false} ];
+        quorum={status:'RED_QUORUM',reason:'1 completed model returned RED (0 non-votes excluded)',greenVotes:3,yellowVotes:3,redVotes:1,nonVotes:0,completedVotes:7}; contrarian={model:council[1],meanDivergence:0.63};
+      } else if (kind==='outage') {
+        models = council.map((slug,i)=>({model:slug,overallVote:(i===1||i===5)?'non_vote':'GREEN',dist:(i===1||i===5)?D(1/3,1/3,1/3):D(0.86,0.11,0.03),meanConfidence:(i===1||i===5)?0:0.86,meanDivergence:(i===1||i===5)?-1:0.15,respondedShards:(i===1||i===5)?0:2,isContrarian:false}));
+        quorum={status:'GREEN_QUORUM',reason:'5/7 completed — strong quorum (2 non-votes, never counted as RED)',greenVotes:5,yellowVotes:0,redVotes:0,nonVotes:2,completedVotes:5};
+      } else {
+        models = council.map((slug,i)=>({model:slug,overallVote:'GREEN',dist:D(0.88+ (i%3)*0.01,0.09,0.03),meanConfidence:0.9,meanDivergence:0.05+i*0.008,respondedShards:2,isContrarian:false}));
+        quorum={status:'GREEN_QUORUM',reason:'7/7 completed — strong quorum (0 non-votes)',greenVotes:7,yellowVotes:0,redVotes:0,nonVotes:0,completedVotes:7};
+      }
+      const jsDiv=(a,b)=>{const e=1e-9;const p=[a.g,a.y,a.r],q=[b.g,b.y,b.r];const m=p.map((_,i)=>(p[i]+q[i])/2);const kl=(x,y)=>x.reduce((s,xi,i)=>s+(xi+e)*Math.log2((xi+e)/(y[i]+e)),0);return Math.max(0,Math.min(1,0.5*kl(p,m)+0.5*kl(q,m)));};
+      const js=models.map((mi,i)=>models.map((mj,j)=>(i===j?0:(mi.respondedShards===0||mj.respondedShards===0?-1:jsDiv(mi.dist,mj.dist)))));
+      return {schema:'fusion-run-v1',advisoryOnly:true,grantsAuthority:false,runId:'demo-'+kind,createdAt:'',target:'DEMO — '+kind,council,shards:['authority_gate','memory_boundary'],quorum,models,divergenceMatrix:{models:council,js},contrarian,perShard:[{shard:'authority_gate',consensusStrength:kind==='red'?0.55:0.9,dominant:kind==='red'?'RED':'GREEN'},{shard:'memory_boundary',consensusStrength:0.8,dominant:'GREEN'}],cells:models.map(m=>({model:m.model,shard:'authority_gate',vote:m.overallVote,findingSummary:'(demo finding)'})),governanceLines:[`council (${council.length}): ${council.join(', ')}`,`verdict: ${quorum.status} — green=${quorum.greenVotes} yellow=${quorum.yellowVotes} red=${quorum.redVotes} nonVotes=${quorum.nonVotes}`,'changed because of Fusion: (demo)']};
+    }
+    function loadDemo(kind){ state.threads=[]; loadArtifact(demoArtifact(kind)); statusLine.innerText=`demo mode · ${kind}`; }
+
+    // ── canvas node graph (bigger + sci-fi) ──
+    function resizeCanvas(){ const dpr=window.devicePixelRatio||1; canvas.width=canvas.offsetWidth*dpr; canvas.height=canvas.offsetHeight*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
+    window.addEventListener('resize', resizeCanvas); resizeCanvas();
+    function W(){ return canvas.offsetWidth; } function H(){ return canvas.offsetHeight; }
+    function layout(cx,cy){ const rad=Math.min(W(),H())*0.36; state.models.forEach((m,i)=>{ const a=(i/Math.max(1,state.models.length))*Math.PI*2 - Math.PI/2; m.x=cx+Math.cos(a)*rad; m.y=cy+Math.sin(a)*rad; m.r=26; }); }
+    canvas.addEventListener('click', (e)=>{ const rect=canvas.getBoundingClientRect(); const x=e.clientX-rect.left, y=e.clientY-rect.top; let hit=null; state.models.forEach(m=>{ if(Math.hypot(x-m.x,y-m.y)<=m.r+4) hit=m; }); if(hit) openDetail(hit.slug); else closeDetail(); });
+
+    function draw(){
+      ctx.clearRect(0,0,W(),H()); time+=0.018;
+      const cx=W()/2, cy=H()/2; layout(cx,cy);
+      const status = state.current&&state.current.quorum ? state.current.quorum.status : '';
+      const cc = status.startsWith('RED')?'#ff5a5a':status.startsWith('YELLOW')?'#ffca3a':'#38c6ff';
+      // rotating dashed orbit
+      ctx.save(); ctx.translate(cx,cy); ctx.rotate(time*0.15); ctx.strokeStyle=cc+'22'; ctx.setLineDash([6,10]); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.arc(0,0,Math.min(W(),H())*0.36,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+      // links + travelling pulses
+      state.models.forEach(m=>{ if(m.nonVote) return; let lc='rgba(56,198,255,0.16)'; if(m.vote==='RED')lc='rgba(255,90,90,0.4)'; if(m.vote==='YELLOW')lc='rgba(255,202,58,0.28)';
+        ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(m.x,m.y); ctx.strokeStyle=lc; ctx.lineWidth=m.vote==='RED'?2.5:1.4; ctx.stroke();
+        const tp=(time*0.5+ (m.x%1))%1.0, px=m.x+(cx-m.x)*tp, py=m.y+(cy-m.y)*tp; const pc=hexFor(m.vote);
+        ctx.beginPath(); ctx.arc(px,py,m.vote==='RED'?4.5:3.2,0,Math.PI*2); ctx.fillStyle=pc; ctx.shadowBlur=10; ctx.shadowColor=pc; ctx.fill(); ctx.shadowBlur=0; });
+      // core
+      ctx.strokeStyle=cc+'33'; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.arc(cx,cy,66+Math.sin(time*3)*7,0,Math.PI*2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx,cy,54+Math.cos(time*2)*5,0,Math.PI*2); ctx.stroke();
+      const g=ctx.createRadialGradient(cx,cy,4,cx,cy,42); g.addColorStop(0,'#fff'); g.addColorStop(0.35,cc); g.addColorStop(1,cc+'22');
+      ctx.beginPath(); ctx.arc(cx,cy,40,0,Math.PI*2); ctx.fillStyle=g; ctx.shadowBlur=28; ctx.shadowColor=cc; ctx.fill(); ctx.shadowBlur=0;
+      ctx.fillStyle='#0b1120'; ctx.font='800 12px ui-monospace, monospace'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('AUKORA',cx,cy);
+      // nodes
+      state.models.forEach(m=>{ const nc=m.nonVote?'#3b475e':hexFor(m.vote); const sel=state.selected===m.slug;
+        if(!m.nonVote){ ctx.beginPath(); ctx.arc(m.x,m.y,m.r+8+ (sel?4:0),0,Math.PI*2); ctx.strokeStyle=nc+'2e'; ctx.lineWidth=1.5; ctx.stroke(); }
+        const ng=ctx.createRadialGradient(m.x,m.y,2,m.x,m.y,m.r); ng.addColorStop(0, m.nonVote?'#26324a':'#ffffff'); ng.addColorStop(0.5, m.nonVote?'#1e293b':nc); ng.addColorStop(1, m.nonVote?'#141d2e':nc+'cc');
+        ctx.beginPath(); ctx.arc(m.x,m.y,m.r,0,Math.PI*2); ctx.fillStyle=ng; if(!m.nonVote){ctx.shadowBlur=sel?22:13; ctx.shadowColor=nc;} ctx.fill(); ctx.shadowBlur=0;
+        ctx.fillStyle=m.nonVote?'#8ea3bd':'#0b1120'; ctx.font='800 12px ui-monospace, monospace'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(m.id,m.x,m.y);
+        if(m.isContrarian){ ctx.strokeStyle='#ffca3a'; ctx.lineWidth=2; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.arc(m.x,m.y,m.r+13,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]); }
+        if(sel){ ctx.strokeStyle='#38c6ff'; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(m.x,m.y,m.r+16,0,Math.PI*2); ctx.stroke(); }
+      });
+    }
+    function tick(){ draw(); requestAnimationFrame(tick); }
+
+    function connect(){ refresh(); try{ const es=new EventSource('/api/stream'); es.addEventListener('update',()=>refresh()); }catch(e){} setInterval(refresh, 20000); }
+    connect(); tick();
+  </script>
+</body>
+</html>

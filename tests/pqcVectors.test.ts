@@ -1,17 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (c) 2026 Peter Viviani
 /**
- * B1.3c — INDEPENDENT CORROBORATION of the PQC primitive (decision record §6 graduation tests #2 and #4, §7.1
- * standing mitigation). @noble/post-quantum has no independent third-party audit; these tests check the exact
- * primitive the kernel chokepoint wraps against NIST's official ACVP known-answer vectors (FIPS 204, final), inside
- * THIS suite's edge-runtime environment:
- *   - keyGen: NIST seed -> our keygen must produce NIST's pk AND sk
- *   - sigGen (deterministic, external interface = pure ML-DSA with context): NIST {sk, message, context} -> our
- *     deterministic signature must be byte-identical to NIST's
- *   - sigVer: NIST {pk, message, context, signature} -> our verify must agree with NIST's verdict, INCLUDING the
- *     negative cases (corrupted material must refuse)
- * Vectors: tests/vectors/acvp-ml-dsa-65.json — a curated ML-DSA-65 subset vendored from usnistgov/ACVP-Server with
- * recorded source hashes and retrieval date (data files only; no NIST code executed).
+ * B1.3c — PQC regression and independent verification corroboration.
+ *
+ * `acvp-ml-dsa-65.json` is an Aukora-generated deterministic regression corpus.
+ * It is deliberately NOT represented as independent NIST evidence. The separate
+ * `nist-acvp-ml-dsa-65-sigver.json` fixture is mechanically extracted from a
+ * pinned NIST ACVP-Server commit with complete-file hashes and includes one
+ * accepting and one refusing ML-DSA-65 verification case.
  *
  * Plus the MUTATED-HINT MALLEABILITY NEGATIVE (§6 test #2): FIPS 204's final HintBitUnpack requires canonical
  * (strictly ascending, zero-padded) hint encoding — the IPD draft omitted this and a verifier without the check
@@ -22,10 +18,11 @@ import { describe, it, expect } from "vitest";
 import { ml_dsa65 } from "@noble/post-quantum/ml-dsa.js";
 import { hexToBytes, bytesToHex } from "@noble/hashes/utils.js";
 import vectors from "./vectors/acvp-ml-dsa-65.json";
+import nistSigVer from "./vectors/nist-acvp-ml-dsa-65-sigver.json";
 import { pqcVerify, mlDsa65PublicKeyFromSeed, pqcSign, PQC_SIZES } from "../convex/aukoraPqcSigner";
 
-describe("NIST ACVP ML-DSA-65 known-answer vectors (FIPS 204 final, external interface)", () => {
-  it(`keyGen: NIST seeds produce NIST's exact keypairs (${vectors.keyGen.length} cases)`, () => {
+describe("ML-DSA-65 deterministic implementation regression corpus", () => {
+  it(`keyGen: pinned seeds reproduce pinned keypairs (${vectors.keyGen.length} cases)`, () => {
     for (const tc of vectors.keyGen) {
       const { publicKey, secretKey } = ml_dsa65.keygen(hexToBytes(tc.seed));
       expect(bytesToHex(publicKey), `tc${tc.tcId} pk`).toBe(tc.pk.toLowerCase());
@@ -33,22 +30,33 @@ describe("NIST ACVP ML-DSA-65 known-answer vectors (FIPS 204 final, external int
     }
   });
 
-  it(`sigGen deterministic: NIST {sk, message, context} produce NIST's exact signatures (${vectors.sigGen.length} cases)`, () => {
+  it(`sigGen deterministic: pinned inputs reproduce pinned signatures (${vectors.sigGen.length} cases)`, () => {
     for (const tc of vectors.sigGen) {
       const sig = ml_dsa65.sign(hexToBytes(tc.message), hexToBytes(tc.sk), {
-        extraEntropy: false, // ACVP deterministic groups: rnd = 32 zero bytes — exactly the kernel's signing mode
+        extraEntropy: false,
         context: hexToBytes(tc.context),
       });
       expect(bytesToHex(sig), `tg${tc.tgId} tc${tc.tcId}`).toBe(tc.signature.toLowerCase());
     }
   });
 
-  it(`sigVer: our verify agrees with NIST's verdict on every case, negatives included (${vectors.sigVer.length} cases)`, () => {
+  it(`sigVer: pinned positives and derived negatives remain stable (${vectors.sigVer.length} cases)`, () => {
     for (const tc of vectors.sigVer) {
       const ok = ml_dsa65.verify(hexToBytes(tc.signature), hexToBytes(tc.message), hexToBytes(tc.pk), {
         context: hexToBytes(tc.context),
       });
       expect(ok, `tg${tc.tgId} tc${tc.tcId} expected testPassed=${tc.testPassed}`).toBe(tc.testPassed);
+    }
+  });
+});
+
+describe("NIST ACVP ML-DSA-65 signature-verification corroboration", () => {
+  it(`agrees with the pinned FIPS 204 ACVP verdicts (${nistSigVer.cases.length} cases)`, () => {
+    for (const tc of nistSigVer.cases) {
+      const ok = ml_dsa65.verify(hexToBytes(tc.signature), hexToBytes(tc.message), hexToBytes(tc.pk), {
+        context: hexToBytes(tc.context),
+      });
+      expect(ok, `tg${tc.tgId} tc${tc.tcId}`).toBe(tc.testPassed);
     }
   });
 });

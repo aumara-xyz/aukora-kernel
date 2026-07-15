@@ -7,6 +7,7 @@ import { resolveChainSigningSeed } from "./aukoraSignedHead";
 import { mlDsa65PublicKeyFromSeed } from "./aukoraPqcSigner";
 import { deriveChannelKeypair, signChannelBinding, channelDecapsulate, channelTranscript, sealFrame, openFrame, CHANNEL_DIR_I2R } from "./aukoraChannel";
 import { utf8ToBytes } from "@noble/hashes/utils.js";
+import { requireHeadKeyId, requireNodeId } from "./runtimeConfig";
 
 // Cross-node transport + demo driver. Both nodes deploy these; only the relevant node's data is meaningful.
 //
@@ -52,44 +53,44 @@ http.route({ path: "/export-harvest", method: "GET", handler: gated(WITNESS, asy
 // The node's signing pubkey is published read-only at GET /node-pubkey; session seeding is no longer a public surface.
 http.route({ path: "/emit", method: "POST", handler: gated(DEMO, async (ctx, req) => {
   const b = await req.json();
-  return json(await ctx.runMutation(api.nodeA.emit, { env: b.env, chainKey: b.chainKey, action: b.action, resource: b.resource }));
+  return json(await ctx.runMutation(internal.nodeA.emit, { env: b.env, chainKey: b.chainKey, action: b.action, resource: b.resource }));
 }) });
 http.route({ path: "/revoke", method: "POST", handler: gated(DEMO, async (ctx, req) => {
   const b = await req.json();
-  return json(await ctx.runMutation(api.nodeA.revoke, { env: b.env, delegationId: b.delegationId, chainKey: b.chainKey }));
+  return json(await ctx.runMutation(internal.nodeA.revoke, { env: b.env, delegationId: b.delegationId, chainKey: b.chainKey }));
 }) });
-// Provision the operator trust root. SAFE: takes NO caller-supplied key — the server DERIVES + pins the one legitimate
-// operator pubkey, idempotently, and an active key is IMMUTABLE. So this cannot be used to hijack the gate (unlike the
-// removed caller-supplied-pubkey variant). See CORE_POP_WIRING_EVIDENCE.md.
+// Provision the operator trust root through an internal mutation. The route is
+// demo-flag-gated and fails closed unless AUMA_OPERATOR_SEED is explicitly
+// configured; no caller-supplied key is accepted.
 http.route({ path: "/provision-operator", method: "POST", handler: gated(DEMO, async (ctx) => {
-  return json(await ctx.runMutation(api.popResolver.seedOperatorKey, {}));
+  return json(await ctx.runMutation(internal.popResolver.seedOperatorKey, {}));
 }) });
 
 // ── Orchestrators ──
 // A→B demo (run on Node B): Node B verifies Node A's receipt.
 http.route({ path: "/run-demo", method: "POST", handler: gated(DEMO, async (ctx) => {
-  return json(await ctx.runAction(api.nodeB.runDemo, {}));
+  return json(await ctx.runAction(internal.nodeB.runDemo, {}));
 }) });
 // Two-way handshake (run on Node A): Node A verifies a Node B–minted receipt (reverse direction).
 http.route({ path: "/run-handshake", method: "POST", handler: gated(DEMO, async (ctx) => {
-  return json(await ctx.runAction(api.nodeB.runHandshake, {}));
+  return json(await ctx.runAction(internal.nodeB.runHandshake, {}));
 }) });
 // Capability scope (run on Node A): proves the kernel governs which actions are allowed + the Aukora Capability Ledger.
 http.route({ path: "/run-capability", method: "POST", handler: gated(DEMO, async (ctx) => {
-  return json(await ctx.runMutation(api.nodeA.runCapability, {}));
+  return json(await ctx.runMutation(internal.nodeA.runCapability, {}));
 }) });
 
 // ── Ceremony rehearsal (carbon -> silicon identity) ──
 // Node A: run the full ceremony rehearsal.
 http.route({ path: "/run-ceremony", method: "POST", handler: gated(DEMO, async (ctx) => {
-  return json(await ctx.runAction(api.ceremony.runCeremony, {}));
+  return json(await ctx.runAction(internal.ceremony.runCeremony, {}));
 }) });
 // Read-only: a node publishes its OWN signing pubkey (non-secret) so a peer can PULL + pin it from a configured URL.
 // Replaces the removed anonymous POST /pin (caller-supplied key) — there is no public way to SET another node's key.
 http.route({ path: "/node-pubkey", method: "GET", handler: gated(WITNESS, async () => {
   const seed = resolveChainSigningSeed();
   const publicKey = seed ? await mlDsa65PublicKeyFromSeed(seed) : null;
-  return json({ sourceNodeId: process.env.AUMA_NODE_ID ?? "aukora-node-a-demo", headKeyId: process.env.AUMA_HEAD_KEY_ID ?? "demo-key-1", publicKey });
+  return json({ sourceNodeId: requireNodeId(), headKeyId: requireHeadKeyId(), publicKey });
 }) });
 // ── B3.4 ML-KEM channel routes (gated AUKORA_B3_CHANNEL_ENABLED, default OFF; DORMANT until Peter's go) ──
 // Publish this node's SIGNED channel-key binding for its current epoch (PUBLIC material only — KEM public key + epoch +
@@ -101,7 +102,7 @@ http.route({ path: "/channel-binding", method: "GET", handler: gated(CHANNEL, as
   const epoch = await ctx.runQuery(api.aukoraWitness.channelSelfEpoch, {});
   const kp = deriveChannelKeypair(seed, epoch);
   try {
-    const { binding, sig } = await signChannelBinding(seed, { nodeId: process.env.AUMA_NODE_ID ?? "aukora-node-a-demo", headKeyId: process.env.AUMA_HEAD_KEY_ID ?? "demo-key-1", epoch, channelPublicKeyHex: kp.publicKeyHex });
+    const { binding, sig } = await signChannelBinding(seed, { nodeId: requireNodeId(), headKeyId: requireHeadKeyId(), epoch, channelPublicKeyHex: kp.publicKeyHex });
     return json({ binding, sig });
   } finally { kp.secretKey.fill(0); }
 }) });
@@ -123,7 +124,7 @@ http.route({ path: "/channel-export", method: "POST", handler: gated(CHANNEL, as
     let ss: Uint8Array;
     try { ss = channelDecapsulate(secretKey, ctHex); } catch { return json({ error: "bad_ciphertext" }); } // wrong-LENGTH ct (structural)
     try {
-      const transcript = channelTranscript({ nodeId: process.env.AUMA_NODE_ID ?? "aukora-node-a-demo", headKeyId: process.env.AUMA_HEAD_KEY_ID ?? "demo-key-1", epoch, channelPublicKeyHex: publicKeyHex, ctHex });
+      const transcript = channelTranscript({ nodeId: requireNodeId(), headKeyId: requireHeadKeyId(), epoch, channelPublicKeyHex: publicKeyHex, ctHex });
       // B3.5c — OPEN the sealed i2r request to recover the chainKey (uniform channel_refused on any failure; no oracle).
       let chainKey: string;
       try { const reqBody = JSON.parse(new TextDecoder().decode(openFrame(ss, transcript, requestFrame, CHANNEL_DIR_I2R))); chainKey = reqBody?.chainKey; } catch { return json({ error: "channel_refused" }); }
@@ -170,23 +171,23 @@ http.route({ path: "/import-revocation-view", method: "POST", handler: gated(MES
 }) });
 // Memory boundary (run on Node A): silicon mirror memory under a carbon root, scoped + receipt-coupled.
 http.route({ path: "/run-memory", method: "POST", handler: gated(DEMO, async (ctx) => {
-  return json(await ctx.runMutation(api.memory.runMemory, {}));
+  return json(await ctx.runMutation(internal.memory.runMemory, {}));
 }) });
 http.route({ path: "/audit", method: "GET", handler: gated(DEMO, async (ctx) => {
   return json({ ok: true, surface: "audit" });
 }) });
 // Brick 6 — AUMLOK proof-of-possession resolver live proof: fires happy + 9 named attacks through the deployed resolver.
 http.route({ path: "/run-pop-crash", method: "POST", handler: gated(DEMO, async (ctx) => {
-  return json(await ctx.runAction(api.popResolver.runPopCrash, {}));
+  return json(await ctx.runAction(internal.popResolver.runPopCrash, {}));
 }) });
 // Brick 7 — key rotation/versioning lifecycle proof (old active -> rotate -> new active, old retired grandfathered, revoked dead).
 http.route({ path: "/run-key-rotation", method: "POST", handler: gated(DEMO, async (ctx) => {
-  return json(await ctx.runAction(api.popResolver.runKeyRotation, {}));
+  return json(await ctx.runAction(internal.popResolver.runKeyRotation, {}));
 }) });
 // Code attestation — release-manifest provenance attack matrix (body may pass {gitSHA, bundleHash} from compute-bundle-hash.sh).
 http.route({ path: "/run-code-attestation", method: "POST", handler: gated(DEMO, async (ctx, req) => {
   const b = await req.json().catch(() => ({}));
-  return json(await ctx.runAction(api.codeAttestation.runCodeAttestation, { gitSHA: b.gitSHA, bundleHash: b.bundleHash }));
+  return json(await ctx.runAction(internal.codeAttestation.runCodeAttestation, { gitSHA: b.gitSHA, bundleHash: b.bundleHash }));
 }) });
 
 export default http;

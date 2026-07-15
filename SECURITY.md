@@ -4,9 +4,10 @@
 > kernel does **not** defend against — read "Honest residuals" before relying on anything here.
 
 ## Scope
-This policy covers the Aukora authorization-and-receipt kernel as shipped in this repository: the signing spine,
-the receipt/Merkle history, the manifest→grant→token→receipt authority path, the witness, the optional confidential
-channel, and the HTTP route surface. It does **not** cover any deployment you build on top of it.
+This policy covers both deliberately separated layers in this repository: the portable `@aukora/kernel` verifier/reducer
+and the broader PROVEN-LAB Convex reference application. Signing, persistence, witness, transport, custody experiments,
+and HTTP routes belong to the reference application, not the portable package contract. This policy does **not** cover
+any deployment you build on top of either layer.
 
 ## Trust model (assumptions)
 - **Pinned public keys, no TOFU.** A peer is trusted only by an explicit, operator-installed key pin. The kernel never
@@ -41,17 +42,36 @@ channel, and the HTTP route surface. It does **not** cover any deployment you bu
 - **Single-key custody.** Authority concentrates in one operator key; there is no built-in N-of-M / threshold custody.
 - **No side-channel / constant-time guarantee**, and **no independent cryptographic audit** of the post-quantum
   dependency. "Corroborated against NIST/CT vectors" means it reproduces published test vectors — not an audit.
-- **Demo-only operator seed.** The PoP resolver defaults to a hardcoded seed (`"77"x32`) when `AUMA_OPERATOR_SEED` is
-  unset; a production deployment MUST set this env var — the default is insecure by design (demo-only).
-- **Demo session resolver.** Operator mutations (issueGrant, revokeGrant, setKillSwitch) route through a plaintext
-  session-token lookup (`sessionResolver.ts`) — the PoP resolver covers the emit path only; the session seam is a
-  demo artifact, not a production auth boundary.
+- **Demo operator seed is explicit.** The PoP resolver fails closed when `AUMA_OPERATOR_SEED` is unset or malformed,
+  and operator-key provisioning is internal-only. The test suite injects a documented disposable seed; it is never a
+  deployment default and must not be reused.
+- **Demo session resolver.** Some internal reference-app mutations still route
+  through the bearer-session lookup in `sessionResolver.ts`. The resolver and
+  its internal seed functions fail closed unless `AUKORA_DEMO_SESSIONS_ENABLED`
+  is explicit, and tokens are bounded before lookup. It remains a lab artifact,
+  not a production authentication boundary.
 - **Test-seam env guard.** The channel's `saltOverride` gate uses a runtime `NODE_ENV`/`VITEST` check; a compromised
   operator who controls env vars could enable it — production should use a build-time dead-code flag.
 
 ## Out of scope (never claimed)
 Anonymity, unlinkability, metadata- or traffic-analysis resistance; consensus, global finality, or a
 public-transparency network; trusted global time; health-data / PHI handling. See [`LIMITATIONS.md`](LIMITATIONS.md).
+
+## Convex callable and authority-seam inventories
+
+HTTP route flags do not control direct Convex client calls. The complete
+generated inventory of exported public `query`, `mutation`, and `action`
+functions is frozen in `security/convex-public-surface.json`.
+Plain exported helpers are not direct Convex callables but can still decide who
+is trusted. Those dependencies, their callers, exports, environment inputs, and
+`v.any()` counts are frozen separately in
+`security/convex-authority-seams.json`. `npm run verify:convex-surface` checks
+both artifacts and rejects ambient deployment-identifier fallbacks or embedded
+deterministic seed literals in Convex source. Inventory inclusion is not a
+security approval; each endpoint still requires its own authorization and
+demo/production classification. Initialization, demo-write, and network-driver
+functions are additionally pinned internal-only so regenerating the inventory
+cannot accidentally approve their return to the public API.
 
 ## Reporting a vulnerability
 Please do **not** open public issues for security vulnerabilities. Report privately via

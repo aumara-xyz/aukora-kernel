@@ -1,0 +1,22 @@
+{
+  "name": "aukora-symbiote-root",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "description": "Root workspace workspace for the Aukora Symbiote core nervous system",
+  "workspaces": [
+    "core",
+    "convex",
+    "dashboard/fu",
+    "memory/embedder"
+  ],
+  "scripts": {
+    "start": "bun scripts/start-node.ts",
+    "stop": "bun scripts/stop-node.ts",
+    "brain": "bun scripts/brain-setup.ts",
+    "test": "npm run test --workspaces",
+    "doctor": "bun scripts/doctor.ts",
+    "release-export": "bun scripts/releaseExport.ts",
+    "license-audit": "bun scripts/depLicenseAudit.ts",
+    "release-check": "bun scripts/releaseReadiness.ts"
+  }
+}

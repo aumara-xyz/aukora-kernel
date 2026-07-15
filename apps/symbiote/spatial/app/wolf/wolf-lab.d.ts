@@ -1,0 +1,14 @@
+export const STUDY_DISCLAIMER: string;
+export const LAB_TAPE_TICKS: number;
+export const TRAIN_SPLIT: number;
+export const SIGNALS: Readonly<Record<string, unknown>>;
+export const SIZE_GRID: ReadonlyArray<number>;
+export const PACK_NOTE_SCHEMA: string;
+export function precomputeRegimes(...args: any[]): any;
+export function backtest(...args: any[]): any;
+export function runStudy(...args: any[]): any;
+export function buildPackNote(...args: any[]): any;
+export function verifyPackNote(...args: any[]): any;
+export function packDisagreement(...args: any[]): any;
+export function tapeFacts(...args: any[]): any;
+export function composeDossier(...args: any[]): any;

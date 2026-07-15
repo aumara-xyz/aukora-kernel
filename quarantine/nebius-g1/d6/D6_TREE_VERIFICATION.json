@@ -1,0 +1,16 @@
+{
+  "d6_commit": "72173be9e491fe6a0c41007a1e6209ebd230dffb",
+  "d6_tree_object": "d3f572aed5b9c0ade3858fee36aac928f796ad21",
+  "d6_full_tracked_tree_ls_sha256": "8c37bc4937688e26246d18b5063f25aa7edc1e1ed8f5b574851a0d823ce31f92",
+  "d6_tracked_entry_count": 38,
+  "vendored_evidence_sha256": {
+    "d6/evidence/canonical.ts": "c48a7b9cbfcf338237602dd44cc3fd414221137f0863d1aabb6b1f03ad0febf6",
+    "d6/evidence/catalogue.ts": "718f02edeeed1405c17182be8d1d5ddc9915b9fdfa5e513bf96d0bb57595f872",
+    "d6/evidence/digest.ts": "ffac6387355fe7189f5bef288e66c7a626784c2edf326647792a34866ca67869",
+    "d6/evidence/framing.ts": "ee4a9316fe43ff0e8ba01c87de7c9f4761423b14078e2586d3856634dbab7109",
+    "d6/evidence/index.ts": "02ba4c6d89b4e9f44defb92f29d107ad48ff04cf8f172f926f9932c4491f0b39",
+    "d6/evidence/types.ts": "006c8a8186325cdc85114f60078ad8f01e2e3ad8be028abcb3aa03dec223d0d1",
+    "d6/evidence/validate.ts": "b21f272440519d00881feb2555d3167297ae62abf4a6f3a94da1035f4f8ef617"
+  },
+  "source": "aukora-fu public repo (already public); vendored, not modified"
+}

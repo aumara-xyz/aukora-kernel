@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // Copyright (c) 2026 Peter Viviani
-import { mutation, query } from "./_generated/server";
+import { internalMutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { submitIntentCore } from "./aukoraRuntime";
 import { verifyAndConsumeDecisionToken } from "./aukoraToken";
@@ -8,12 +8,13 @@ import { writeReceiptRow } from "./aukoraReceipts";
 import { buildReceiptChainHash } from "./aukoraCore";
 import { signChainHeadV3, resolveChainSigningSeed } from "./aukoraSignedHead";
 import { resolvePoPSession } from "./popResolver";
+import { requireHeadKeyId, requireNodeId } from "./runtimeConfig";
 
-const NODE_ID = process.env.AUMA_NODE_ID ?? "aukora-node-a-demo";
-const HEAD_KEY_ID = process.env.AUMA_HEAD_KEY_ID ?? "demo-key-1";
+const NODE_ID = requireNodeId();
+const HEAD_KEY_ID = requireHeadKeyId();
 
 // Node A: emit ONE governed action through the REAL kernel path -> a real signed receipt.
-export const emit = mutation({
+export const emit = internalMutation({
   args: { env: v.any(), chainKey: v.string(), action: v.string(), resource: v.string() },
   handler: async (ctx, args) => {
     // CORE OPERATOR AUTH is cryptographic PoP (ULTRON: session seam retired on the core path). emit requires a
@@ -55,7 +56,7 @@ export const exportEnvelope = query({
 });
 
 // Node A: revoke a delegation -> a SIGNED revocation event (for Node B) + revoke the actor's active grants locally.
-export const revoke = mutation({
+export const revoke = internalMutation({
   args: { env: v.any(), delegationId: v.string(), chainKey: v.string() },
   handler: async (ctx, args) => {
     // Core operator auth = cryptographic PoP (session seam retired). Requires a founder/operator capability + reqSig.
@@ -79,7 +80,7 @@ export const revoke = mutation({
 // Aukora Capability Ledger + ceiling wall. Node-A-local; unique per-run + per-case delegations -> reproducible,
 // no cross-case grant contamination.
 type CapRing = "observe" | "local-write" | "external" | "self-modify";
-export const runCapability = mutation({
+export const runCapability = internalMutation({
   args: {},
   handler: async (ctx): Promise<any> => {
     const run = crypto.randomUUID().slice(0, 8);

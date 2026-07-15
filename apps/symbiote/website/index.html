@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aukora — Sovereign AI Operating Membrane</title>
+  
+  <!-- Premium Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
+  <style>
+    /* Premium Future-Forward Design System */
+    :root {
+      --bg: #050508;
+      --surface: #0a0a0f;
+      --surface-elevated: #11111a;
+      
+      --border: rgba(255, 255, 255, 0.05);
+      --border-hover: rgba(255, 255, 255, 0.12);
+      --border-glow: rgba(99, 102, 241, 0.25);
+      
+      /* Subtle, high-class color tokens */
+      --glow-cyan: #06b6d4;
+      --glow-indigo: #6366f1;
+      --glow-gold: #eab308;
+      --glow-green: #10b981;
+      
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #4b5563;
+      
+      --font-sans: 'Outfit', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient Space Glow */
+    .ambient-glow {
+      position: absolute;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.03) 0%, rgba(5, 5, 8, 0) 70%);
+      top: -300px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Layout Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Navigation */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      border-bottom: 1px solid var(--border);
+      background: rgba(5, 5, 8, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .nav-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 72px;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--text-primary);
+      transform: rotate(45deg);
+      position: relative;
+    }
+
+    .logo-mark::after {
+      content: '';
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: var(--glow-indigo);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+    }
+
+    nav {
+      display: flex;
+      gap: 32px;
+    }
+
+    nav a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    nav a:hover {
+      color: var(--text-primary);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding-top: 180px;
+      padding-bottom: 120px;
+      position: relative;
+      text-align: center;
+    }
+
+    .hero-meta {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--glow-indigo);
+      margin-bottom: 24px;
+    }
+
+    .hero-title {
+      font-size: clamp(40px, 7vw, 76px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 32px;
+      background: linear-gradient(180deg, #ffffff 0%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: clamp(16px, 2.2vw, 20px);
+      color: var(--text-secondary);
+      max-width: 720px;
+      margin: 0 auto 48px;
+      font-weight: 300;
+    }
+
+    .cta-row {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .btn {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 14px 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-primary {
+      background: var(--text-primary);
+      color: var(--bg);
+      border: 1px solid var(--text-primary);
+    }
+
+    .btn-primary:hover {
+      background: transparent;
+      color: var(--text-primary);
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--border-hover);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Grid Layouts & Sections */
+    section {
+      padding: 100px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .section-header {
+      margin-bottom: 64px;
+      max-width: 600px;
+    }
+
+    .section-header h2 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    .section-header p {
+      color: var(--text-secondary);
+      font-size: 16px;
+      font-weight: 300;
+    }
+
+    /* Node System & Architecture Section */
+    .arch-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    /* Live-style Terminal View */
+    .terminal-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .terminal-header {
+      background: rgba(255,255,255,0.02);
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .terminal-dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border-hover);
+    }
+
+    .terminal-body {
+      padding: 20px;
+      color: var(--text-secondary);
+      height: 340px;
+      overflow-y: auto;
+      line-height: 1.5;
+    }
+
+    .code-comment { color: var(--text-muted); }
+    .code-keyword { color: var(--glow-indigo); }
+    .code-string { color: var(--glow-green); }
+    .code-var { color: var(--text-primary); }
+
+    /* Technical Explanation Column */
+    .tech-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .tech-step {
+      display: flex;
+      gap: 24px;
+    }
+
+    .step-num {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--glow-indigo);
+      border: 1px solid var(--border-glow);
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .step-content h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .step-content p {
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 300;
+    }
+
+    /* Visual Diagram Section */
+    .membrane-visual {
+      background: radial-gradient(circle at center, rgba(99, 102, 241, 0.05) 0%, rgba(5,5,8,0) 80%);
+      padding: 60px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      position: relative;
+    }
+
+    .membrane-node {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      text-align: center;
+      z-index: 2;
+      transition: var(--transition);
+    }
+
+    .membrane-node:hover {
+      border-color: var(--glow-indigo);
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+    }
+
+    .membrane-node.gate {
+      border-color: var(--glow-indigo);
+      background: rgba(99, 102, 241, 0.02);
+      position: relative;
+    }
+
+    .membrane-node.gate::after {
+      content: 'AUTHORITY CORE';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      background: var(--glow-indigo);
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 10px;
+      letter-spacing: 0.1em;
+    }
+
+    .membrane-node h4 {
+      font-size: 16px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .membrane-node p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 300;
+    }
+
+    /* Tri Hita Karana (The Regenerative Loop) */
+    .karana-section {
+      background: linear-gradient(180deg, var(--bg) 0%, var(--surface) 100%);
+    }
+
+    .karana-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .karana-graphic {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    /* SVG Triangle Flow */
+    .triangle-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Alignment & Citizenship (Classy & Minimal) */
+    .alignment-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .alignment-card {
+      border: 1px solid var(--border);
+      padding: 40px;
+      border-radius: 8px;
+      transition: var(--transition);
+    }
+
+    .alignment-card:hover {
+      border-color: var(--border-hover);
+      background: rgba(255,255,255,0.01);
+    }
+
+    .alignment-card h3 {
+      font-size: 20px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .alignment-card p {
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 300;
+      margin-bottom: 24px;
+      min-height: 80px;
+    }
+
+    .alignment-meta {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 80px 0 40px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .footer-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+      color: var(--text-primary);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ambient-glow"></div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container nav-wrap">
+      <a href="#" class="logo-container">
+        <div class="logo-mark"></div>
+        <span class="logo-text">AUKORA</span>
+      </a>
+      <nav>
+        <a href="#architecture">Architecture</a>
+        <a href="#membrane">The Membrane</a>
+        <a href="#regeneration">Regeneration</a>
+        <a href="#verification">Verification</a>
+        <a href="#sovereignty">Sovereignty</a>
+      </nav>
+      <a href="#sovereignty" class="btn btn-outline" style="padding: 8px 16px;">Access Kernel</a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-meta">SOVEREIGN AI OPERATING MEMBRANE</div>
+      <h1 class="hero-title">An IDE That Governs <br>Untrusted Intelligence</h1>
+      <p class="hero-desc">
+        Aukora is a local, sandboxed development kernel. It wraps external neural architectures inside a strict cryptographic boundary, ensuring models can propose changes, but never execute them unverified.
+      </p>
+      <div class="cta-row">
+        <a href="https://github.com/aumara-xyz/aukora-symbiote" class="btn btn-primary" target="_blank">Clone Kernel</a>
+        <a href="#architecture" class="btn btn-outline">Read Architecture</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE (How the tech works) -->
+  <section id="architecture">
+    <div class="container">
+      <div class="section-header">
+        <h2>System Architecture</h2>
+        <p>The core structural mechanics separating execution from intelligence.</p>
+      </div>
+
+      <div class="arch-grid">
+        <!-- Terminal Simulation -->
+        <div class="terminal-container">
+          <div class="terminal-header">
+            <div class="terminal-dots"><span></span><span></span><span></span></div>
+            <div style="font-size: 11px; color: var(--text-muted);">illustrative pseudocode — the shape of the real gate, not a literal source file</div>
+          </div>
+          <div class="terminal-body">
+            <span class="code-comment">// The Authority Chokepoint (P3-S1 Specification)</span><br>
+            <span class="code-keyword">import</span> { verifyAumlok } <span class="code-keyword">from</span> <span class="code-string">"authority/aumlok"</span>;<br>
+            <span class="code-keyword">import</span> { ReceiptChainer } <span class="code-keyword">from</span> <span class="code-string">"authority/receipts"</span>;<br><br>
+            
+            <span class="code-keyword">export async function</span> <span class="code-var">aukoraGate</span>(proposedIntent) {<br>
+            &nbsp;&nbsp;<span class="code-comment">// 1. Isolate the untrusted AI proposal</span><br>
+            &nbsp;&nbsp;<span class="code-keyword">const</span> rawProposal = await parseSandbox(proposedIntent);<br><br>
+            
+            &nbsp;&nbsp;<span class="code-comment">// 2. Wait for human authority key signature (Aumlok)</span><br>
+            &nbsp;&nbsp;<span class="code-keyword">const</span> authorization = await verifyAumlok(rawProposal);<br><br>
+            
+            &nbsp;&nbsp;<span class="code-keyword">if</span> (!authorization.valid) {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;throw new <span class="code-keyword">SecurityError</span>(<span class="code-string">"Authority verification failed."</span>);<br>
+            &nbsp;&nbsp;}<br><br>
+            
+            &nbsp;&nbsp;<span class="code-comment">// 3. Commit effect and chain Post-Quantum receipt</span><br>
+            &nbsp;&nbsp;<span class="code-keyword">const</span> receipt = await ReceiptChainer.commit({<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;intentHash: rawProposal.hash,<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;signature: authorization.sig,<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;signer: <span class="code-string">"ML-DSA-65"</span><br>
+            &nbsp;&nbsp;});<br>
+            &nbsp;&nbsp;<span class="code-keyword">return</span> applyLocalEffect(rawProposal);<br>
+            }
+          </div>
+        </div>
+
+        <!-- Tech Cards -->
+        <div class="tech-cards">
+          <div class="tech-step">
+            <div class="step-num">01</div>
+            <div class="step-content">
+              <h3>The Proposer/Authority Split</h3>
+              <p>Aukora segregates the workspace into two distinct spaces: an isolated, sandboxed Proposer Layer (where the AI model runs and suggests changes) and the Authority Kernel. An agent can never execute files directly.</p>
+            </div>
+          </div>
+          <div class="tech-step">
+            <div class="step-num">02</div>
+            <div class="step-content">
+              <h3>The Aumlok Signature Barrier</h3>
+              <p>No action can pass the chokepoint unless it is cryptographically signed by your local Aumlok Ed25519 key — a real algorithm, human-held, generated and kept in your own terminal (not production hardware/HSM custody today). The user holds absolute command over local file writes and terminal invocations.</p>
+            </div>
+          </div>
+          <div class="tech-step">
+            <div class="step-num">03</div>
+            <div class="step-content">
+              <h3>Hash-Chained Receipts</h3>
+              <p>Workbench and kernel actions commit a hash-chained receipt record. This builds an append-only, tamper-evident history of the code changes, so silent or undetected drift is always visible after the fact.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE MEMBRANE (Visual Flow Diagram) -->
+  <section id="membrane">
+    <div class="container">
+      <div class="section-header" style="text-align: center; margin: 0 auto 80px;">
+        <h2>The Boundary Membrane</h2>
+        <p>A look at the security membrane wrapping your local filesystem.</p>
+      </div>
+
+      <div class="membrane-visual">
+        <div class="membrane-node">
+          <h4>1. Proposer Workspace</h4>
+          <p>Unrestricted agent playground. Edits, tool requests, and structural commands are safely generated here.</p>
+        </div>
+        <div class="membrane-node gate">
+          <h4>2. The Chokepoint</h4>
+          <p>Verifies context integrity, scans for malicious network egress, and requests Aumlok authorization.</p>
+        </div>
+        <div class="membrane-node">
+          <h4>3. Local System</h4>
+          <p>The validated intent executes. A hash-chained receipt is logged to disk, authorized by your Ed25519 signature — the only cryptography live actions are signed with today.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRI HITA KARANA -->
+  <section class="karana-section" id="regeneration">
+    <div class="container karana-layout">
+      <div>
+        <div class="section-header" style="margin-bottom: 32px;">
+          <h2>Tri Hita Karana</h2>
+          <p>Ecology as a fundamental protocol architecture.</p>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 15px; margin-bottom: 24px; font-weight: 300;">
+          Ecosystem resource balance is modeled directly after the Balinese philosophy of Tri Hita Karana—harmony between humans, nature, and the source. 
+        </p>
+        <p style="color: var(--text-secondary); font-size: 15px; margin-bottom: 24px; font-weight: 300;">
+          All incoming network licensing and Citizen support flows directly through a smart treasury protocol: a baseline royalty goes back to the creator to fund strategic direction and system maintenance, while the majority goes directly to local agricultural regeneration.
+        </p>
+        <p style="color: var(--text-secondary); font-size: 15px; font-weight: 300;">
+          Our first environmental target is localized regenerative farming—investing directly in soil restoration systems that grow food for local populations.
+        </p>
+      </div>
+
+      <div class="karana-graphic">
+        <svg class="triangle-svg" viewBox="0 0 400 400">
+          <defs>
+            <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#6366f1" />
+              <stop offset="100%" stop-color="#10b981" />
+            </linearGradient>
+          </defs>
+          <!-- Triangle Lines -->
+          <polygon points="200,60 340,300 60,300" fill="none" stroke="url(#lineGrad)" stroke-width="2.5" stroke-dasharray="6,4" />
+          
+          <!-- Nodes -->
+          <circle cx="200" cy="60" r="12" fill="#050508" stroke="#6366f1" stroke-width="3" />
+          <circle cx="340" cy="300" r="12" fill="#050508" stroke="#10b981" stroke-width="3" />
+          <circle cx="60" cy="300" r="12" fill="#050508" stroke="#eab308" stroke-width="3" />
+
+          <!-- Labels -->
+          <text x="200" y="36" fill="#f3f4f6" font-family="Outfit" font-size="12" font-weight="700" text-anchor="middle">CREATOR (SOURCE)</text>
+          <text x="360" y="318" fill="#f3f4f6" font-family="Outfit" font-size="12" font-weight="700" text-anchor="start">NATURE (PALMAH)</text>
+          <text x="40" y="318" fill="#f3f4f6" font-family="Outfit" font-size="12" font-weight="700" text-anchor="end">HUMANS (PAWONGAN)</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SWARM VERIFICATION & FORESIGHT LEDGER -->
+  <section id="verification" style="background: rgba(5, 5, 8, 0.5);">
+    <div class="container">
+      <div class="section-header">
+        <div style="font-family: var(--font-mono); font-size: 11px; color: var(--glow-gold); letter-spacing: 0.15em; margin-bottom: 12px; font-weight: 600;">ACTIVE CORE SWARM AUDIT</div>
+        <h2>Sovereign Verification & Foresight Ledger</h2>
+        <p>Before writing future economics, we put our specifications through our own Multi-Model Fusion Council. Below are the verified warnings and strict code invariants we are implementing to prevent systemic exploit.</p>
+      </div>
+
+      <!-- Quorum Status Card -->
+      <div style="background: var(--surface); border: 1px solid var(--border-glow); padding: 32px; border-radius: 8px; margin-bottom: 48px; position: relative;">
+        <div style="position: absolute; top: -12px; right: 24px; font-family: var(--font-mono); font-size: 10px; background: rgba(234, 179, 8, 0.1); color: var(--glow-gold); border: 1px solid rgba(234, 179, 8, 0.2); padding: 4px 12px; border-radius: 12px; font-weight: 500;">
+          SWARM QUORUM: ACTIVE ADVISORY
+        </div>
+        <div style="display: flex; gap: 40px; align-items: center; flex-wrap: wrap;">
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">CONSTITUTIONAL AUDIT LEVEL</div>
+            <div style="font-size: 28px; font-weight: 800; color: #fff;">FUSION SWARM V1.8</div>
+          </div>
+          <div style="height: 40px; width: 1px; background: var(--border); display: none; md: block;"></div>
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">CONVERSATIONAL VERDICT</div>
+            <div style="font-size: 20px; font-weight: 700; color: #ef4444; display: flex; align-items: center; gap: 8px;">
+              <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #ef4444;"></span>
+              RED_QUORUM (4 RED / 2 YELLOW)
+            </div>
+          </div>
+        </div>
+        <p style="margin-top: 24px; color: var(--text-secondary); font-size: 14px; font-weight: 300;">
+          <span style="font-weight: 600; color: var(--text-primary);">Kernel Guardrail Alert:</span> The current active kernel is verified <span style="font-family: var(--font-mono); font-size: 12px; color: var(--glow-green);">HEADLESS_READY</span> (79 files / 1,087 unit tests passing). However, the Fusion Council has flagged the planned V1.8 economics as un-built and vulnerable until the corresponding cryptographic invariants are written into the compiler.
+        </p>
+      </div>
+
+      <!-- Audit Breakdown Grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px; margin-bottom: 48px; flex-wrap: wrap;">
+        
+        <!-- PR-PoC Card -->
+        <div style="background: var(--surface); border: 1px solid var(--border); padding: 32px; border-radius: 8px;">
+          <div style="font-family: var(--font-mono); font-size: 11px; color: #ef4444; margin-bottom: 16px; font-weight: 600;">VECTOR 01 // RED-TEAM COLLUSION</div>
+          <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px;">PR-PoC Sybil Farming</h3>
+          <p style="font-size: 13px; color: var(--text-secondary); font-weight: 300; line-height: 1.6; margin-bottom: 20px;">
+            If model review rings or paid bot cartels generate fake approvals, they could bypass promotion checks to insert malicious code changes.
+          </p>
+          <div style="border-top: 1px solid var(--border); padding-top: 16px;">
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Required Invariants:</div>
+            <ul style="font-size: 12px; color: var(--text-secondary); list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px; font-weight: 300;">
+              <li>• Never count a self-review as witness evidence</li>
+              <li>• Impose reviewer-ring cooldowns</li>
+              <li>• Hard-lock review checks as advisory-only</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ZK-Telemetry Card -->
+        <div style="background: var(--surface); border: 1px solid var(--border); padding: 32px; border-radius: 8px;">
+          <div style="font-family: var(--font-mono); font-size: 11px; color: #ef4444; margin-bottom: 16px; font-weight: 600;">VECTOR 02 // BILLING EEVASION</div>
+          <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px;">ZK-Telemetry Tampering</h3>
+          <p style="font-size: 13px; color: var(--text-secondary); font-weight: 300; line-height: 1.6; margin-bottom: 20px;">
+            If the corporate client controls both the resource meter and the prover, they can generate valid ZK-proofs of fake under-reporting.
+          </p>
+          <div style="border-top: 1px solid var(--border); padding-top: 16px;">
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Required Invariants:</div>
+            <ul style="font-size: 12px; color: var(--text-secondary); list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px; font-weight: 300;">
+              <li>• Bind ZK generation to hardware enclaves</li>
+              <li>• Enforce epoch nonces to block replay</li>
+              <li>• Decouple billing proofs from authority</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Fork Card -->
+        <div style="background: var(--surface); border: 1px solid var(--border); padding: 32px; border-radius: 8px;">
+          <div style="font-family: var(--font-mono); font-size: 11px; color: #ef4444; margin-bottom: 16px; font-weight: 600;">VECTOR 03 // SPLIT-BRAIN DEADLOCK</div>
+          <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 12px;">Constitutional Split-Brain</h3>
+          <p style="font-size: 13px; color: var(--text-secondary); font-weight: 300; line-height: 1.6; margin-bottom: 20px;">
+            Compromise of Originator keys during a fork could split the consensus, leaving conflicting receipt-chain histories with no rollback path.
+          </p>
+          <div style="border-top: 1px solid var(--border); padding-top: 16px;">
+            <div style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Required Invariants:</div>
+            <ul style="font-size: 12px; color: var(--text-secondary); list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px; font-weight: 300;">
+              <li>• Write snapshot rollback primitives first</li>
+              <li>• Freeze promotion lane during partitions</li>
+              <li>• Require threshold notary-key multi-sig</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SOVEREIGNTY / CITIZENSHIP -->
+  <section id="sovereignty">
+    <div class="container">
+      <div class="section-header" style="text-align: center; margin: 0 auto 80px;">
+        <h2>Ecosystem Citizenship</h2>
+        <p>A transparent breakdown of system access and network alignment.</p>
+      </div>
+
+      <div class="alignment-grid">
+        <!-- Tourist Card -->
+        <div class="alignment-card">
+          <h3>Tourist</h3>
+          <p>Clone the open-source codebase. Integrate your own private API keys to power local model interactions. No registry profile required.</p>
+          <div class="alignment-meta">LOCAL / FREE / UNSIGNED</div>
+        </div>
+
+        <!-- Citizen Card -->
+        <div class="alignment-card" style="border-color: var(--glow-indigo);">
+          <h3>Citizen <span style="font-size: 11px; font-weight: 400; color: var(--text-muted);">(planned — not yet built, not currently for sale)</span></h3>
+          <p>Gain access to the secure Hive network for a flat $11/mo minimum. Contribution is receipted on the governed chain — witness evidence, never a token, score, or balance.</p>
+          <div class="alignment-meta">ROADMAP / NOT LIVE</div>
+        </div>
+
+        <!-- Sovera Card -->
+        <div class="alignment-card">
+          <h3>Sovera B2B</h3>
+          <p>For organizations deploying white-label kernels, custom physical QR validation frameworks, and dedicated network nodes.</p>
+          <div class="alignment-meta">ENTERPRISE / PRIVATE INSTANCE</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-wrap">
+      <div>
+        Aukora OS. Seeded in the Aumara Ecosystem.
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/aumara-xyz/aukora-symbiote" target="_blank">GitHub</a>
+        <a href="http://aukora.org" target="_blank">Aukora.org</a>
+        <a href="http://aukora.xyz" target="_blank">Aukora.xyz</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

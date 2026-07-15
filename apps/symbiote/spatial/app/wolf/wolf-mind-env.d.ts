@@ -1,0 +1,11 @@
+export const WOLF_MODE_LABEL: string;
+export const WOLF_ACTION_MEANING: Readonly<Record<string, string>>;
+export const BUY_SMALL_FRAC: number;
+export const BUY_BIG_FRAC: number;
+export const MIN_ORDER_DOLLARS: number;
+export const WOLF_MIND_SYSTEM_PROMPT: string;
+export function replayAt(n: number): string;
+export function createWolfMindEnv(opts?: Record<string, unknown>): any;
+export function sparkline(values: number[]): string;
+export function renderWolfFrame(snapshot: any, previous: any): { text: string; changedCount: number };
+export function checkWolfExpectation(expectation: string, previous: any, next: any): any;

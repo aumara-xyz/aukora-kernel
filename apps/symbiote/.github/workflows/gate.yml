@@ -1,0 +1,60 @@
+name: gate
+
+# The headless truth-gate, run on main and PRs — the same checks scripts/test.sh runs locally, plus the
+# gate byte-pin (tamper-evidence over the live-apply enforcement closure) and the TIER-1 secret-leak scan.
+# Added with the state/brain + env protection brick so the Ring-0 apply fence is verified on every push.
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "docs/mesh/handoff/**"
+  pull_request:
+    paths-ignore:
+      - "docs/mesh/handoff/**"
+
+# A newer commit makes an older run obsolete. This keeps a fast-moving lane from spending minutes and
+# mailing the owner about stale failures while preserving one authoritative run per PR or main tip.
+concurrency:
+  group: gate-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  headless-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Several tests create throwaway git repos (via `git init`/`git clone`) and commit into them; a clone
+      # inherits no user identity and a bare CI runner has no global one, so those commits fail. Give the runner
+      # a global identity (tests that need a specific author still set their own per-repo config).
+      - name: Configure git identity (for tests that spin up temp repos)
+        run: |
+          git config --global user.email "ci@aukora.local"
+          git config --global user.name "Aukora CI"
+          git config --global init.defaultBranch main
+
+      - name: Install core deps
+        run: cd core && bun install --frozen-lockfile || (cd "$GITHUB_WORKSPACE/core" && bun install)
+
+      - name: Headless gate (core typecheck + spatial typecheck + vitest behavior suite)
+        run: bash scripts/test.sh
+
+      - name: Gate byte-pin (tamper-evidence over the live-apply enforcement closure)
+        run: cd authority/gate && shasum -a 256 -c .gate-integrity.sha256
+
+      - name: TIER-1 secret-leak scan
+        run: bash scripts/scan-secrets.sh

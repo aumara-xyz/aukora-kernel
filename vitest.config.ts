@@ -10,6 +10,7 @@ export default defineConfig({
   test: {
     environment: "edge-runtime",
     include: ["tests/**/*.test.ts"],
+    exclude: ["tests/fu/**/*.test.ts"],
     // B1.3b: ML-DSA-65 head signing costs more per receipt than the retired Ed25519 (a real, accepted PQC cost —
     // see the decision record's DoS-risk entry). Some tests mint many signed heads per run,
     // so the default 5s budget no longer fits; 30s keeps the suite honest without weakening the signing path.
@@ -19,7 +20,16 @@ export default defineConfig({
       // Throwaway test values ONLY — never real secrets. The signing seed is a documented disposable 64-hex seed.
       AUKORA_TOKEN_SECRET: "slice-itest-secret-do-not-use-in-prod",
       AUKORA_CHAIN_SIGNING_SEED: "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff",
+      AUMA_OPERATOR_SEED: "77".repeat(32),
       AUMA_NODE_ID: "aukora-node-a-demo",
+      AUMA_HEAD_KEY_ID: "demo-key-1",
+      AUKORA_DEMO_RELEASE_SEED: "33".repeat(32),
+      AUKORA_DEMO_ATTACKER_RELEASE_SEED: "44".repeat(32),
+      AUKORA_DEMO_SESSIONS_ENABLED: "1",
+      AUKORA_DEMO_FOUNDER_SEED: "dd".repeat(32),
+      AUKORA_DEMO_ATTACKER_SEED: "ee".repeat(32),
+      AUKORA_DEMO_ROTATION_OLD_SEED: "11".repeat(32),
+      AUKORA_DEMO_ROTATION_NEW_SEED: "22".repeat(32),
     },
   },
 });

@@ -23,7 +23,7 @@ async function setup() {
   const now = Date.now();
   const cav = (over: any = {}) => ({ v: 1, capId: `cap-emit-${over.capId ?? "x"}`, founderUserId: AUTH, founderKeyId: "op-1", nodeId: NODE, methods: ["emit", "revoke"], ring: "local-write", action: "studio.write", resource: "studio_surface:knvs", principalId: "demo.operator", roles: ["operator"], notBefore: now - 1000, expiresAt: now + POP_FRESHNESS_MS, maxUses: 1, ...over });
   const env = (cav: any, opts: any = {}) => buildPoPEnvelope(opts.seed ?? OP, cav, { methodId: opts.methodId ?? "emit", actualArgs: opts.actualArgs ?? { chainKey: "ck", action: "studio.write", resource: "studio_surface:knvs" }, timestamp: opts.timestamp ?? Date.now(), nonce: opts.nonce ?? `n-${cav.capId}` });
-  const emit = (t: any, e: any, args: any = {}) => t.mutation(api.nodeA.emit, { env: e, chainKey: "ck", action: "studio.write", resource: "studio_surface:knvs", ...args });
+  const emit = (t: any, e: any, args: any = {}) => t.mutation(internal.nodeA.emit, { env: e, chainKey: "ck", action: "studio.write", resource: "studio_surface:knvs", ...args });
   return { t, cav, env, emit };
 }
 

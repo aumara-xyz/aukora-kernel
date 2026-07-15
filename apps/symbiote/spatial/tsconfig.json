@@ -1,0 +1,17 @@
+{
+  "comment": "Issue #68: gate the spatial door code that core/tsconfig never typechecks. A minimal Bun shim (bun-env.d.ts) covers the Bun globals so this catches real identifier/import/arg bugs (which bit twice in chat-serve.ts) without the full @types/bun dependency.",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": ["../core/node_modules/@types"],
+    "types": ["node"]
+  },
+  "include": ["**/*.ts"]
+}
