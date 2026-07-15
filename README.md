@@ -4,7 +4,9 @@
 
 ## Repository status
 
-This repository now has two deliberately separate layers:
+This private Round-23 checkpoint also contains the wider Aukora organism under explicit namespaces. Start with [`ORGANISM.md`](ORGANISM.md) for the authority map, donor provenance, implemented-vs-design status, quarantine boundary, and consolidation rules. [`PUBLICATION_BLOCKERS.md`](PUBLICATION_BLOCKERS.md) is intentionally open; this tree is not yet approved for public release.
+
+The Kernel itself has two deliberately separate layers:
 
 - `packages/kernel` is the portable `@aukora/kernel` verifier/reducer. It has
   no Convex, filesystem, network, environment, ambient-clock, custody, signing,

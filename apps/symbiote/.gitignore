@@ -1,0 +1,64 @@
+# --- never commit: secrets, state, caches, history, build, lab-only ---
+node_modules/
+dist/
+build/
+*.log
+.DS_Store
+.turbo/
+.cache/
+# Local Python venvs (e.g. the voice sidecar's spatial/voice/.venv — thousands of third-party files,
+# incl. SymPy docs whose prose uses the word "convex"). Never tracked; keeps the zero-cloud probe +
+# secret scan clean. (Codex feedback, 2026-07-05.)
+.venv/
+**/.venv/
+# secrets + live state (the organism's keys/receipts/session live OUTSIDE git)
+.env
+.env.*
+*.pem
+*.key
+auth.json
+aumlok-dev.json
+# owner-private leak vectors (real names, host paths, prod slugs) — the scanner's detection list, kept out of git
+scripts/scan-vectors.local.sh
+models/
+/state/
+~/.aukora-symbiote/
+# lab-only: benchmarks, LoCoMo, raw fusion JSON, snapshot artifacts — source-of-organs, never shipped
+/lab_only/
+# private cloud/skunkworks ops plans — local lane only, never shipped in the seed
+/docs/NEBIUS_SHADOW_NODE_PLAN.md
+# local chat transcript dumps (private lane / personal paths; never ship in the seed)
+/GHP_full_chat_transcript.md
+# graphify self-map (regenerate with: graphify update .)
+/graphify-out/
+.graphify_python
+# fusion council advisory artifacts (generated; external model outputs — regenerable local state)
+/core/evidence/
+# lab-only council runner (raw detailed-audit dump — never ship in the seed; core/run-council.ts is canonical)
+core/run-detailed-council.ts
+# stray scratch/dev files (never ship)
+core/scratch-*.ts
+scratch-*.ts
+
+# Aukora FU — generated council run artifacts (local output, not committed)
+/dashboard/fu/runs/*.json
+
+# Owner's raw external-tech drops (zips of donor/reference projects, e.g. Hermes) — 67MB, and at least
+# one zip contains real credential-shaped files (.envrc, credential_*) invisible to the grep-based
+# secret scanner (it doesn't unzip binaries). Never let a stray `git add -A` reach this. (Fable re-entry
+# audit, 2026-07-02.)
+/imported tech (github etc)/
+
+# Claude Code local config (launch.json etc.) — never shipped
+.claude/
+
+# Root lockfile is environment/install state — regenerated per node by `bun install`.
+# Committing it broke the policyKernel floor (oracle NaN) and collided across worktrees.
+/bun.lock
+
+# --- Eagle Eye: lander visitor data is real PII — never commit to the shared/code repo (#86) ---
+# Live chats + waitlist are written to a SEPARATE private data target at runtime, never here.
+# Only explicitly-synthetic *.example.json fixtures are tracked.
+/lander/data/chats/*
+!/lander/data/chats/*.example.json
+/lander/data/waitlist.jsonl

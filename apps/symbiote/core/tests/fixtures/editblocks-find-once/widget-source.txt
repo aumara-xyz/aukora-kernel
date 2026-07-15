@@ -1,0 +1,13 @@
+// LOCAL_TEST_FIXTURE — editblocks find-once rail. NOT production code. Read-only anchor for
+// core/tests/nativeToolCallingEngineEditsFindOnce.test.ts: the return-an-object-literal snippet
+// appears exactly TWICE below (ambiguous on purpose); the alpha kind line is the ONE unique anchor.
+function alpha() {
+  return {
+    kind: 'alpha',
+  };
+}
+function beta() {
+  return {
+    kind: 'beta',
+  };
+}

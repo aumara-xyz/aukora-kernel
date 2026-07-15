@@ -1,0 +1,116 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Aukora Spatial node</title>
+  <desc id="desc">A stylized screenshot of the Aukora Spatial interface: chat on the left, AUMLOK gate in the center, apps and systems on the right.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#04070B"/>
+      <stop offset="0.45" stop-color="#071116"/>
+      <stop offset="1" stop-color="#020308"/>
+    </linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#66FFD0"/>
+      <stop offset="1" stop-color="#4A8CFF"/>
+    </linearGradient>
+    <linearGradient id="violet" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#C59BFF"/>
+      <stop offset="1" stop-color="#5F7CFF"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.30 0 0 0 0 1.00 0 0 0 0 0.82 0 0 0 0.70 0"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <style>
+      .panel{fill:rgba(8,16,22,.82);stroke:rgba(130,255,220,.22);stroke-width:1.5}
+      .panel2{fill:rgba(12,13,24,.78);stroke:rgba(165,145,255,.20);stroke-width:1.5}
+      .hair{stroke:rgba(120,255,214,.22);stroke-width:1}
+      .copy{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+      .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+      .tiny{font-size:18px;fill:#8BA6A7}
+      .small{font-size:22px;fill:#D7FDF3}
+      .body{font-size:28px;fill:#E9FFF9}
+      .title{font-size:54px;font-weight:760;fill:#F4FFFC}
+      .sub{font-size:24px;fill:#8FB7B6}
+      .label{font-size:18px;text-transform:uppercase;letter-spacing:2px;fill:#63FFD0}
+      .chip{fill:rgba(84,224,198,.12);stroke:rgba(84,224,198,.35);stroke-width:1}
+      .warn{fill:rgba(255,198,109,.10);stroke:rgba(255,198,109,.38);stroke-width:1}
+      .red{fill:rgba(255,109,129,.11);stroke:rgba(255,109,129,.35);stroke-width:1}
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#bg)"/>
+
+  <path d="M0 112 C220 80 326 132 484 104 C720 62 846 56 1026 96 C1232 142 1392 98 1600 58" stroke="rgba(84,224,198,.16)" stroke-width="2"/>
+  <path d="M0 760 C248 682 430 744 612 716 C842 680 986 730 1164 696 C1350 660 1478 690 1600 632" stroke="rgba(149,128,255,.14)" stroke-width="2"/>
+
+  <rect x="52" y="52" width="1496" height="796" rx="28" fill="rgba(2,6,10,.62)" stroke="rgba(120,255,214,.28)" stroke-width="1.5"/>
+
+  <text x="92" y="118" class="copy title">Aukora Symbiote</text>
+  <text x="94" y="154" class="copy sub">local-first AI OS · governed memory · self-modifying under AUMLOK</text>
+  <rect x="1192" y="82" width="284" height="44" rx="22" class="chip"/>
+  <text x="1218" y="111" class="copy small">LOCAL NODE · LOOPBACK</text>
+
+  <rect x="92" y="190" width="372" height="600" rx="22" class="panel"/>
+  <text x="122" y="240" class="copy label">left lane</text>
+  <text x="122" y="280" class="copy body">DEV · Canvas</text>
+  <text x="122" y="314" class="copy tiny">you talk · the center changes</text>
+
+  <rect x="122" y="360" width="284" height="74" rx="16" fill="rgba(84,224,198,.10)" stroke="rgba(84,224,198,.28)"/>
+  <text x="144" y="389" class="copy tiny">you</text>
+  <text x="144" y="418" class="copy small">make a living gate UI</text>
+
+  <rect x="152" y="462" width="282" height="118" rx="18" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.10)"/>
+  <text x="174" y="496" class="copy tiny">Auma</text>
+  <text x="174" y="528" class="copy small">drafting proposal intent...</text>
+  <text x="174" y="558" class="mono tiny">sandbox · fusion · receipt</text>
+
+  <rect x="122" y="648" width="292" height="54" rx="27" fill="url(#teal)" opacity=".92"/>
+  <text x="164" y="683" class="copy small" fill="#001313">submit to AUMLOK</text>
+
+  <rect x="504" y="190" width="592" height="600" rx="24" class="panel2"/>
+  <text x="542" y="240" class="copy label">center organ</text>
+  <text x="542" y="292" class="copy title" font-size="48">AUMLOK</text>
+  <text x="544" y="330" class="copy sub">owner signature surface</text>
+
+  <g filter="url(#glow)">
+    <path d="M690 404 L800 344 L910 404 L910 532 L800 592 L690 532 Z" stroke="url(#teal)" stroke-width="3" fill="rgba(84,224,198,.05)"/>
+    <path d="M800 344 L800 592" stroke="rgba(84,224,198,.34)" stroke-width="2"/>
+    <path d="M690 404 L910 532" stroke="rgba(84,224,198,.24)" stroke-width="2"/>
+    <path d="M910 404 L690 532" stroke="rgba(84,224,198,.24)" stroke-width="2"/>
+    <circle cx="800" cy="468" r="50" fill="rgba(84,224,198,.10)" stroke="rgba(84,224,198,.55)" stroke-width="2"/>
+  </g>
+
+  <rect x="568" y="632" width="464" height="54" rx="16" class="chip"/>
+  <text x="594" y="667" class="copy small">proposal · phrase · signature</text>
+  <rect x="568" y="704" width="464" height="50" rx="14" class="warn"/>
+  <text x="594" y="736" class="copy tiny" fill="#FFDCA0">warnings stay visible before approval</text>
+
+  <rect x="1136" y="190" width="372" height="600" rx="22" class="panel"/>
+  <text x="1166" y="240" class="copy label">right lane</text>
+  <text x="1166" y="280" class="copy body">Apps / System</text>
+  <text x="1166" y="314" class="copy tiny">organs mounted into one shell</text>
+
+  <g class="copy">
+    <rect x="1166" y="364" width="292" height="46" rx="13" fill="rgba(84,224,198,.12)" stroke="rgba(84,224,198,.25)"/>
+    <text x="1188" y="394" class="small">Canvas</text>
+    <rect x="1166" y="424" width="292" height="46" rx="13" fill="rgba(255,255,255,.045)" stroke="rgba(255,255,255,.10)"/>
+    <text x="1188" y="454" class="small">Kira Memory</text>
+    <rect x="1166" y="484" width="292" height="46" rx="13" fill="rgba(255,255,255,.045)" stroke="rgba(255,255,255,.10)"/>
+    <text x="1188" y="514" class="small">Fusion Council</text>
+    <rect x="1166" y="544" width="292" height="46" rx="13" fill="rgba(255,255,255,.045)" stroke="rgba(255,255,255,.10)"/>
+    <text x="1188" y="574" class="small">AURA</text>
+    <rect x="1166" y="604" width="292" height="46" rx="13" fill="rgba(255,255,255,.045)" stroke="rgba(255,255,255,.10)"/>
+    <text x="1188" y="634" class="small">Local Convex Brain</text>
+  </g>
+
+  <path d="M456 674 C526 656 536 640 582 626" class="hair"/>
+  <path d="M1018 666 C1080 640 1100 600 1144 566" class="hair"/>
+  <path d="M800 592 C800 624 800 634 800 632" class="hair"/>
+
+  <rect x="92" y="820" width="1416" height="1" fill="rgba(120,255,214,.22)"/>
+  <text x="92" y="856" class="mono tiny">propose - rehearse - review - sign - apply - receipt - rollback</text>
+  <text x="1164" y="856" class="mono tiny">private state never leaves ~/.aukora-symbiote</text>
+</svg>

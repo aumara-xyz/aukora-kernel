@@ -10,6 +10,7 @@ export default defineConfig({
   test: {
     environment: "edge-runtime",
     include: ["tests/**/*.test.ts"],
+    exclude: ["tests/fu/**/*.test.ts"],
     // B1.3b: ML-DSA-65 head signing costs more per receipt than the retired Ed25519 (a real, accepted PQC cost —
     // see the decision record's DoS-risk entry). Some tests mint many signed heads per run,
     // so the default 5s budget no longer fits; 30s keeps the suite honest without weakening the signing path.

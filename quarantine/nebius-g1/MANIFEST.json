@@ -1,0 +1,49 @@
+{
+  "bundle": "aukora-g1-bundle",
+  "version": "v0-2026-07-15",
+  "mode": "LOCAL/PRIVATE \u2014 prepared for Codex audit; NOT deployed, NOT published",
+  "d6": {
+    "commit": "72173be9e491fe6a0c41007a1e6209ebd230dffb",
+    "tree": "d3f572aed5b9c0ade3858fee36aac928f796ad21",
+    "full_tracked_tree_ls_sha256": "8c37bc4937688e26246d18b5063f25aa7edc1e1ed8f5b574851a0d823ce31f92",
+    "tracked_entries": 38,
+    "source": "aukora-fu public repo (already public)"
+  },
+  "verification": {
+    "tsc_noEmit": "exit 0",
+    "tests": "26/26 pass (test/negativeControls.test.ts)",
+    "runtime": "Node v22.23.0 + vitest 2.1.8",
+    "verified_by": "Local Opus (this bundle author), read-only"
+  },
+  "sealed_bundle_digest_sha256": "3d70472f81a2ae839bca1e6472a807f7faa57564d2b50711c16c5ee93972912f",
+  "file_count": 27,
+  "files_sha256": {
+    "README.md": "c711e6e4329271f68a2e5301b1d02eabd07962094c5eb4e1ff738842bd26e55a",
+    "bun.lock": "a7689a719c3439cf8e7ab79579a11cb001f9323306d4774590c120c605b158f6",
+    "d6/D6_TREE_VERIFICATION.json": "ae4144780fb3328a7ddf52bcfecb2bb99b3f63b3f6dacc794956db61cc337eda",
+    "d6/evidence/canonical.ts": "c48a7b9cbfcf338237602dd44cc3fd414221137f0863d1aabb6b1f03ad0febf6",
+    "d6/evidence/catalogue.ts": "718f02edeeed1405c17182be8d1d5ddc9915b9fdfa5e513bf96d0bb57595f872",
+    "d6/evidence/digest.ts": "ffac6387355fe7189f5bef288e66c7a626784c2edf326647792a34866ca67869",
+    "d6/evidence/framing.ts": "ee4a9316fe43ff0e8ba01c87de7c9f4761423b14078e2586d3856634dbab7109",
+    "d6/evidence/index.ts": "02ba4c6d89b4e9f44defb92f29d107ad48ff04cf8f172f926f9932c4491f0b39",
+    "d6/evidence/types.ts": "006c8a8186325cdc85114f60078ad8f01e2e3ad8be028abcb3aa03dec223d0d1",
+    "d6/evidence/validate.ts": "b21f272440519d00881feb2555d3167297ae62abf4a6f3a94da1035f4f8ef617",
+    "deploy/deploy-allowlist.json": "4e3f1aaa3a65ab20fffa5a003d1f5bff12cfab36efce9fd9796f936ff817c135",
+    "deploy/seal.sh": "ac936333ec9a4378a7cfe5626de31b0b62ea350107aede22341d042e447b00ef",
+    "deploy/vm-policy.md": "0b49bb12d3b09488b851ad6a7f50c6a1b30fb5f048720d2d63cd38a62f108f2b",
+    "package.json": "d70b47124fe11af3c49831e5d90922807ef686e6c129b0dccc872367f10ddbfb",
+    "src/allowlist.ts": "787e1cfaad643bfcc2874a9e94b338b47f1f575d476853aab103b1029b21ee65",
+    "src/containment.ts": "9ed6fc130114b3c237d86b8d767d79ea6eb9fa2b1d1691abedb6145f00e898f1",
+    "src/controller.ts": "9ed1fdd4c566b6b187166d82df2334c13582972cddefbdb5d28d73a068304822",
+    "src/d6selfcheck.ts": "004a77854cb1bd0a5f0db15c0a4adad791a6b8d07ef2d7c994ceebf898e8e5a2",
+    "src/evaluator.ts": "ea72e388a8b9d5a8e31b1ebe5e85898a5521fc8d268e6c3ef30b740d817237a8",
+    "src/evidence.ts": "bd00df6740c809c0f7228cdaf2b241245ef69a10cfa827001a263f02e3bcd10a",
+    "src/genome.ts": "82b6d33d70f3a2eb694de7ff0ebbb487a318a34a3b4bc2cef5d078aa24bb2b10",
+    "src/lineage.ts": "5d159154f6a0462b12a3c00c4691c63d15a8e8597b04379382a707248f2a9335",
+    "src/prng.ts": "ab7de0f90d5e0747b06bad8efdbb85461318b61373599abe4f55f27cb15d1ddd",
+    "src/safety.ts": "c754f13b60730d2e0a7adec230cb17834c6b6b4c75b61529dda6ed9e80adda8f",
+    "src/teardown.ts": "a7616450d919a3232115c7b1d7458ba7f70bd105744cd651f278d5f469338190",
+    "test/negativeControls.test.ts": "ef972e77874ae4d29de6e3719241e448f3cfb11e245b431a42a11dc175d56c90",
+    "tsconfig.json": "db0daf8f999009f55a71466cfa95b6afc4f33dcde15f120998c54b88b7ef09ae"
+  }
+}

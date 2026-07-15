@@ -1,0 +1,2 @@
+# Generated Fusion Council run artifacts (fusion-run-v1) land here at runtime and are gitignored.
+# The observer server watches this dir read-only. Do not commit raw live council output.

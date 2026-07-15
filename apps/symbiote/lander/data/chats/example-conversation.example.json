@@ -1,0 +1,8 @@
+{
+  "convId": "example-synthetic-not-real",
+  "updatedAt": "2026-01-01T00:00:00.000Z",
+  "messages": [
+    { "role": "user", "content": "This is a synthetic example. No real visitor data lives in this repo." },
+    { "role": "assistant", "content": "Correct — live visitor chats are written to a SEPARATE private data target, never here." }
+  ]
+}

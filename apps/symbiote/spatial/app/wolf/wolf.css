@@ -1,0 +1,181 @@
+/* SPDX-License-Identifier: AGPL-3.0-or-later
+   THE WOLF — paper trading, loudly. Scoped .wolf-*; house glass. */
+
+.wolf { position: absolute; inset: 0; overflow-y: auto; padding: 22px 24px 40px; scrollbar-width: thin; }
+
+.wolf-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 44px; }
+.wolf-totem { width: 92px; height: 92px; flex: none; filter: drop-shadow(0 0 14px rgba(255,200,90,0.22)); }
+.wolf-head-text { flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.wolf-paper { display: inline-flex; align-items: center; font-size: 11px; font-weight: 800; letter-spacing: 0.18em; padding: 6px 14px; border-radius: 999px;
+  color: #0b0d16; background: linear-gradient(100deg, #ffd76a, #ffb14a); border: 1px solid rgba(255,220,120,0.8);
+  animation: wolf-breathe 3.2s ease-in-out infinite; }
+@keyframes wolf-breathe { 0%,100% { box-shadow: 0 0 0 0 rgba(255,200,90,0.35); } 50% { box-shadow: 0 0 18px 2px rgba(255,200,90,0.25); } }
+.wolf-sub { font-size: 11.5px; color: var(--faint); }
+.wolf-head { margin-bottom: 16px; }
+
+/* positions as portal cards — the house telescoping pattern */
+.wolf-port { margin-bottom: 8px; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(255,255,255,0.02); overflow: hidden; }
+.wolf-port.open { border-color: rgba(255,215,106,0.35); }
+.wolf-port-bar { display: flex; align-items: center; gap: 11px; width: 100%; text-align: left; padding: 11px 13px;
+  cursor: pointer; border: none; background: transparent; font-size: 12px; color: var(--dim); font-variant-numeric: tabular-nums; }
+.wolf-port-bar b { color: #fff; letter-spacing: 0.05em; font-size: 13px; }
+.wolf-port-meta { color: var(--faint); }
+.wolf-port-val { margin-left: auto; color: #fff; }
+.wolf-chev { flex: none; color: rgba(255,215,106,0.9); font-size: 15px; transition: transform .22s ease; }
+.wolf-port.open .wolf-chev, .wolf-about.open .wolf-chev { transform: rotate(90deg); }
+.wolf-port-body { padding: 3px 13px 11px 37px; border-top: 1px solid rgba(255,255,255,0.05); }
+.wolf-port-sum { display: flex; gap: 16px; flex-wrap: wrap; font-size: 11px; color: var(--dim); padding: 8px 0; font-variant-numeric: tabular-nums; }
+.wolf-port-fill { display: flex; gap: 10px; align-items: baseline; font-size: 11px; color: var(--dim);
+  padding: 4px 0; border-top: 1px solid rgba(255,255,255,0.035); font-variant-numeric: tabular-nums; }
+.wolf-port-fill.kind-buy span:nth-child(2) { color: rgb(150,190,255); }
+.wolf-port-fill.kind-sell span:nth-child(2) { color: rgb(129,212,180); }
+.wolf-port-fill .wolf-tl-prov { margin-left: auto; }
+
+/* the den */
+.wolf-den-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.wolf-den-run { font-size: 11.5px; font-weight: 700; padding: 8px 18px; border-radius: 999px; cursor: pointer;
+  color: #0b0d16; background: linear-gradient(100deg, #ffd76a, #ffb14a); border: 1px solid rgba(255,220,120,0.8); }
+.wolf-den-run:hover:not(:disabled) { filter: brightness(1.08); }
+.wolf-den-run:disabled { opacity: 0.6; cursor: default; }
+.wolf-den-note { font-size: 11px; color: var(--faint); flex: 1; min-width: 200px; }
+.wolf-study .wolf-port-meta { font-style: italic; }
+.wolf-study-spark { width: 100%; height: 38px; margin: 8px 0 4px; }
+.wolf-study-disc { font-size: 10px; font-family: ui-monospace, monospace; color: #ffd76a; opacity: 0.75; margin-top: 6px; }
+
+/* the pack */
+.wolf-pack-in { flex: 1; min-width: 220px; font-size: 11px; padding: 8px 12px; border-radius: 10px;
+  color: #fff; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.14); font-family: ui-monospace, monospace; }
+.wolf-pack-note { border: 1px solid rgba(150,190,255,0.22); border-radius: 12px; padding: 11px 13px; margin-bottom: 8px; background: rgba(150,190,255,0.04); }
+.wolf-pack-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; font-size: 12px; }
+.wolf-pack-head b { color: #fff; letter-spacing: 0.05em; }
+.wolf-pack-verified { font-size: 10px; font-weight: 700; color: rgb(129,212,180); border: 1px solid rgba(129,212,180,0.4); border-radius: 999px; padding: 1px 8px; }
+.wolf-pack-humans { font-size: 11.5px; color: var(--dim); font-style: italic; margin-top: 6px; }
+.wolf-pack-humans.mine { color: #ffd76a; }
+.wolf-pack-dis { font-size: 11px; color: rgb(150,190,255); margin-top: 7px; padding: 7px 10px; border-radius: 9px; background: rgba(150,190,255,0.07); }
+.wolf-human { display: flex; gap: 8px; margin-top: 8px; }
+.wolf-human-in { flex: 1; font-size: 11px; padding: 7px 11px; border-radius: 9px;
+  color: #fff; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.13); }
+.wolf-pack-copy { font-size: 10.5px; padding: 6px 12px; border-radius: 999px; cursor: pointer;
+  color: rgb(150,190,255); background: transparent; border: 1px solid rgba(150,190,255,0.4); white-space: nowrap; }
+.wolf-pack-copy:hover { background: rgba(150,190,255,0.08); }
+
+/* the honest tour */
+.wolf-about { margin-top: 10px; border: 1px solid rgba(255,215,106,0.22); border-radius: 13px; background: rgba(255,215,106,0.04); overflow: hidden; }
+.wolf-about-bar { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 13px 15px;
+  cursor: pointer; border: none; background: transparent; font-size: 12.5px; font-weight: 700; color: #ffd76a; letter-spacing: 0.02em; }
+.wolf-about-body { display: none; padding: 2px 16px 14px 40px; }
+.wolf-about.open .wolf-about-body { display: block; }
+.wolf-about-block { margin: 10px 0; font-size: 12px; line-height: 1.65; color: var(--dim); }
+.wolf-about-block b { display: block; color: #fff; font-size: 12px; margin-bottom: 2px; }
+
+.wolf-strip { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+.wolf-stat { flex: 1; min-width: 130px; padding: 12px 14px; border-radius: 13px;
+  border: 1px solid rgba(255,255,255,0.09); background: rgba(255,255,255,0.03); }
+.wolf-stat b { display: block; font-size: 19px; color: #fff; font-variant-numeric: tabular-nums; }
+.wolf-stat b.up { color: rgb(129,212,180); }
+.wolf-stat b.down { color: #ff9a9a; }
+.wolf-stat span { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--faint); }
+
+.wolf-rail { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.wolf-card { padding: 13px 14px 12px; border-radius: 14px; border: 1px solid rgba(var(--whue), 0.22);
+  background: rgba(var(--whue), 0.04); transition: border-color .2s ease; }
+.wolf-card:hover { border-color: rgba(var(--whue), 0.45); }
+.wolf-card-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.wolf-id b { font-size: 14px; letter-spacing: 0.06em; color: #fff; }
+.wolf-id span { display: block; font-size: 10px; color: var(--faint); margin-top: 1px; }
+.wolf-px { text-align: right; }
+.wolf-px b { font-size: 15px; color: #fff; font-variant-numeric: tabular-nums; }
+.wolf-delta { display: block; font-size: 10.5px; font-variant-numeric: tabular-nums; }
+.wolf-delta.up { color: rgb(129,212,180); }
+.wolf-delta.down { color: #ff9a9a; }
+.wolf-spark { width: 100%; height: 46px; margin: 8px 0 9px; }
+.wolf-act { display: flex; gap: 6px; }
+.wolf-buy { flex: 1; font-size: 11.5px; font-weight: 700; padding: 7px 0; border-radius: 9px; cursor: pointer;
+  color: #0b0d16; background: rgba(var(--whue), 0.85); border: 1px solid rgba(var(--whue), 0.9); }
+.wolf-buy:hover { filter: brightness(1.1); }
+.wolf-sell { font-size: 11px; padding: 7px 10px; border-radius: 9px; cursor: pointer;
+  color: var(--dim); background: transparent; border: 1px solid rgba(255,255,255,0.16); }
+.wolf-sell:hover:not(:disabled) { border-color: rgba(255,255,255,0.4); color: #fff; }
+.wolf-sell:disabled { opacity: 0.35; cursor: default; }
+.wolf-held { font-size: 10px; color: var(--faint); margin-top: 7px; min-height: 12px; font-variant-numeric: tabular-nums; }
+
+.wolf-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 16px 0 4px; }
+.wolf-chips { display: flex; align-items: center; gap: 6px; }
+.wolf-chips-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--faint); margin-right: 3px; }
+.wolf-chip { font-size: 11px; padding: 5px 12px; border-radius: 999px; cursor: pointer;
+  color: var(--dim); background: transparent; border: 1px solid rgba(255,255,255,0.16); }
+.wolf-chip.on { color: #fff; border-color: rgba(255,215,106,0.7); background: rgba(255,215,106,0.1); }
+.wolf-note { font-size: 11px; flex: 1; min-width: 140px; }
+.wolf-note.ok { color: rgb(129,212,180); }
+.wolf-note.err { color: #ff9a9a; }
+.wolf-audit { font-size: 11px; padding: 6px 13px; border-radius: 999px; cursor: pointer;
+  color: #ffd76a; background: transparent; border: 1px solid rgba(255,215,106,0.4); }
+.wolf-audit:hover { background: rgba(255,215,106,0.08); }
+.wolf-reset { font-size: 11px; padding: 6px 13px; border-radius: 999px; cursor: pointer;
+  color: #ff9a9a; background: transparent; border: 1px solid rgba(255,120,120,0.35); }
+.wolf-reset:hover { background: rgba(255,90,90,0.08); }
+
+.wolf-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--faint); margin: 20px 2px 8px; }
+.wolf-pos-row { display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; padding: 9px 12px;
+  border: 1px solid rgba(255,255,255,0.07); border-radius: 11px; margin-bottom: 6px;
+  font-size: 12px; color: var(--dim); font-variant-numeric: tabular-nums; }
+.wolf-pos-row b { color: #fff; letter-spacing: 0.05em; }
+.wolf-empty { font-size: 11.5px; color: var(--faint); padding: 6px 2px; }
+
+.wolf-tl-row { display: flex; gap: 10px; align-items: baseline; padding: 6px 2px; font-size: 11.5px;
+  border-bottom: 1px solid rgba(255,255,255,0.04); }
+.wolf-tl-when { flex: none; font-family: ui-monospace, monospace; font-size: 10px; color: var(--faint); }
+.wolf-tl-text { color: var(--dim); }
+.kind-buy .wolf-tl-text { color: rgb(150,190,255); }
+.kind-sell .wolf-tl-text { color: rgb(129,212,180); }
+.kind-reset .wolf-tl-text, .kind-genesis .wolf-tl-text { color: #ffd76a; }
+.wolf-tl-prov { margin-left: auto; flex: none; font-family: ui-monospace, monospace; font-size: 9.5px; color: var(--faint); }
+
+.wolf-prov { margin-top: 18px; font-size: 10px; font-family: ui-monospace, monospace; color: var(--faint); }
+
+/* THE MIND — a session retold from receipts */
+.wolf-mind-in { flex: 1; min-width: 220px; font-size: 10.5px; padding: 8px 12px; border-radius: 10px; resize: vertical;
+  color: #fff; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.14); font-family: ui-monospace, monospace; }
+.wolf-mind-story { border: 1px solid rgba(212,175,55,0.3); border-radius: 14px; padding: 13px 15px; margin-top: 10px; background: rgba(212,175,55,0.05); }
+.wolf-mind-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; font-size: 13px; }
+.wolf-mind-head b { color: #fff; letter-spacing: 0.06em; }
+.wolf-mind-state { font-size: 10px; font-weight: 700; color: rgb(129,212,180); border: 1px solid rgba(129,212,180,0.4); border-radius: 999px; padding: 1px 8px; }
+.wolf-mind-state.bad { color: rgb(255,138,128); border-color: rgba(255,138,128,0.45); }
+.wolf-mind-verdict { font-size: 12.5px; color: rgba(255,222,140,0.95); margin: 7px 0 3px; }
+.wolf-mind-eq { width: 100%; height: 46px; display: block; margin: 8px 0 4px; }
+.wolf-mind-beats { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; }
+.wolf-mind-ride { font-size: 11px; color: var(--dim); padding: 5px 10px; border-left: 2px solid rgba(212,175,55,0.35); }
+.wolf-mind-ride.broke { color: rgba(255,190,150,0.95); border-left-color: rgba(255,138,128,0.6); }
+.wolf-mind-turn { border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; background: rgba(255,255,255,0.025); }
+.wolf-mind-turn-bar { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; padding: 8px 11px;
+  background: none; border: none; cursor: pointer; color: #fff; font-size: 12px; }
+.wolf-mind-turn.open .wolf-chev { transform: rotate(90deg); }
+.wolf-mind-act { font-weight: 700; letter-spacing: 0.04em; color: rgba(255,222,140,0.95); flex: none; }
+.wolf-mind-turn-body { display: none; padding: 2px 13px 11px 32px; }
+.wolf-mind-turn.open .wolf-mind-turn-body { display: block; }
+.wolf-mind-say { font-size: 11.5px; color: var(--dim); margin-top: 5px; line-height: 1.5; }
+.wolf-mind-say b { color: rgba(255,222,140,0.85); font-weight: 700; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; margin-right: 7px; }
+.wolf-mind-honest { font-size: 10.5px; color: var(--dim); font-style: italic; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; }
+.wolf-mind-sametape { font-size: 9px; font-weight: 700; color: rgb(255,190,150); border: 1px solid rgba(255,190,150,0.4); border-radius: 999px; padding: 1px 7px; flex: none; }
+
+/* THE LIVE TAPE — real public prices, read-only */
+.wolf-live-card { border-color: rgba(247,147,26,0.35); }
+.wolf-live-witness { font-size: 10.5px; color: var(--dim); margin: 4px 0 2px; }
+.wolf-live-witness.ok { color: rgb(129,212,180); }
+.wolf-live-witness.warn { color: rgb(255,154,154); font-weight: 700; }
+.wolf-live-prov { font-size: 9.5px; font-family: ui-monospace, monospace; color: var(--faint); margin-top: 6px; }
+
+@media (max-width: 680px) {
+  .wolf { padding: 14px 12px 32px; }
+  .wolf-head { margin-top: 88px; }
+  .wolf-totem { width: 72px; height: 72px; }
+  .wolf-about-body { padding-left: 16px; }
+  .wolf-port-body { padding-left: 13px; }
+  .wolf-rail { grid-template-columns: 1fr 1fr; }
+  .wolf-strip { gap: 7px; }
+  .wolf-stat { min-width: 42%; }
+}
+@media (max-width: 430px) {
+  .wolf-rail { grid-template-columns: 1fr; }
+}

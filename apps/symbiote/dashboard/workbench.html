@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Aukora Symbiote — Workbench</title>
+<style>
+:root{--bg:#0d1117;--panel:#161b22;--edge:#21262d;--ink:#c9d1d9;--dim:#8b949e;--grn:#3fb950;--acc:#58a6ff;--red:#f85149;--amber:#d29922}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.55 -apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);height:100vh;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:12px;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--edge)}
+header h1{font-size:15px;margin:0;font-weight:600}
+.pill{font-size:11px;padding:2px 9px;border-radius:20px;background:#1f2937;color:var(--dim);border:1px solid var(--edge)}
+.legacy{margin-left:auto;font-size:11px;color:var(--dim);text-decoration:none;border:1px solid var(--edge);border-radius:6px;padding:3px 8px}
+.legacy:hover{color:var(--ink)}
+main{flex:1;display:flex;min-height:0}
+.left{flex:1.4;display:flex;flex-direction:column;border-right:1px solid var(--edge);min-width:0}
+.right{flex:1;display:flex;flex-direction:column;min-width:320px;background:#010409}
+.paneHead{padding:9px 16px;background:var(--panel);border-bottom:1px solid var(--edge);font-size:12px;color:var(--dim);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+#transcript{flex:1;overflow:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.entry{max-width:100%;font-size:13px}
+.entry.command{color:var(--ink);background:#1c2128;border-radius:8px;padding:8px 12px;white-space:pre-wrap;font-family:ui-monospace,monospace}
+.entry.tool_call{color:var(--acc);font-family:ui-monospace,monospace;font-size:12px}
+.entry.tool_result{color:var(--dim);font-family:ui-monospace,monospace;font-size:12px;white-space:pre-wrap;word-break:break-word;background:#0a0d12;border:1px solid var(--edge);border-radius:6px;padding:8px 10px}
+.entry.tool_result.ok{border-color:rgba(63,185,80,.35)}
+.entry.tool_result.refused{border-color:rgba(248,81,73,.35)}
+.entry.info{color:var(--dim);white-space:pre-wrap;font-size:12.5px}
+.entry.error{color:var(--red);font-size:12.5px}
+form{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--edge);background:var(--panel)}
+textarea{flex:1;resize:vertical;min-height:38px;max-height:220px;background:#010409;color:var(--ink);border:1px solid var(--edge);border-radius:8px;padding:9px 11px;font:13px/1.4 ui-monospace,monospace}
+textarea:focus{outline:none;border-color:var(--acc)}
+button{background:var(--acc);color:#04101f;border:0;border-radius:8px;padding:0 18px;font-weight:600;cursor:pointer}
+button:hover{filter:brightness(1.08)}
+button:disabled{opacity:.5;cursor:default}
+.aumlok{padding:14px 16px;display:flex;flex-direction:column;gap:14px;overflow:auto}
+.row{border:1px solid var(--edge);border-radius:8px;padding:10px 12px;background:#0a0d12}
+.row .k{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.row .v{font-size:13.5px}
+.state-ok{color:var(--grn)}
+.state-warn{color:var(--amber)}
+.state-locked{color:var(--dim)}
+.refresh{align-self:flex-start;font-size:11px;color:var(--dim);background:transparent;border:1px solid var(--edge);border-radius:6px;padding:4px 10px}
+.refresh:hover{color:var(--ink)}
+.note{font-size:11.5px;color:var(--dim);line-height:1.5}
+</style>
+</head>
+<body>
+<header>
+  <h1>🌱 Aukora Symbiote — Workbench</h1>
+  <span class="pill" id="headPill">round 1+2</span>
+  <a class="legacy" href="/console" target="_blank" rel="noreferrer">docs / legacy console</a>
+</header>
+<main>
+  <section class="left">
+    <div class="paneHead">Chat / Workbench — every action below goes through Aukora's own native tool dispatcher</div>
+    <div id="transcript"></div>
+    <form id="form">
+      <textarea id="input" placeholder='Type "help" for commands, or: status / map yourself / read file README.md / search Aukora / propose patch ... / run typecheck'></textarea>
+      <button id="send" type="submit">Send</button>
+    </form>
+  </section>
+  <section class="right">
+    <div class="paneHead">AUMLOK — honest state, four separate things</div>
+    <div class="aumlok" id="aumlok">loading…</div>
+  </section>
+</main>
+<script>
+var transcript = document.getElementById('transcript');
+var form = document.getElementById('form');
+var input = document.getElementById('input');
+var sendBtn = document.getElementById('send');
+var localPostToken = __AUKORA_LOCAL_POST_TOKEN_JSON__;
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderEntries(entries){
+  entries.forEach(function(e){
+    var div = document.createElement('div');
+    div.className = 'entry ' + e.kind;
+    if (e.kind === 'tool_result' && e.result) {
+      div.className += ' ' + (e.result.ok ? 'ok' : 'refused');
+      div.textContent = (e.result.ok ? 'OK  ' : 'REFUSED  ') + e.text;
+    } else {
+      div.textContent = e.text;
+    }
+    transcript.appendChild(div);
+  });
+  transcript.scrollTop = transcript.scrollHeight;
+}
+
+form.addEventListener('submit', function(ev){
+  ev.preventDefault();
+  var text = input.value;
+  if (!text.trim()) return;
+  input.value = '';
+  sendBtn.disabled = true;
+  fetch('/api/workbench/chat', {
+    method: 'POST',
+    headers: localPostToken
+      ? {'content-type':'application/json', 'x-aukora-csrf': localPostToken}
+      : {'content-type':'application/json'},
+    body: JSON.stringify({ input: text })
+  }).then(function(r){ return r.json(); }).then(function(data){
+    renderEntries(data.entries || [{kind:'error', text:'no response'}]);
+  }).catch(function(err){
+    renderEntries([{kind:'error', text: 'request failed: ' + err}]);
+  }).finally(function(){ sendBtn.disabled = false; input.focus(); });
+});
+
+input.addEventListener('keydown', function(ev){
+  if (ev.key === 'Enter' && !ev.shiftKey) { ev.preventDefault(); form.requestSubmit(); }
+});
+
+function row(k, v, cls){
+  return '<div class="row"><div class="k">' + esc(k) + '</div><div class="v ' + (cls||'') + '">' + v + '</div></div>';
+}
+
+function loadAumlok(){
+  fetch('/api/workbench/aumlok-status').then(function(r){ return r.json(); }).then(function(s){
+    var html = '';
+    html += row('1 · Session / phrase boundary', 'Advisory ceremony only — never authority (unrelated to key status below).', '');
+    html += row('2 · Cryptographic root',
+      s.keyPresent
+        ? (s.publicRootPinned
+            ? '<span class="state-ok">pinned</span> — keyId ' + esc(s.keyId||'') + (s.publicRootRevoked ? ' <span class="state-warn">(REVOKED)</span>' : '')
+            : '<span class="state-warn">key exists but no manifest pinned yet</span>')
+        : '<span class="state-locked">not generated</span> — run <code>scripts/aumlok-authority.sh keygen</code> in your own terminal',
+      '');
+    html += row('3 · Signed proposal / rehearsal state',
+      (s.rehearsalReceiptCount > 0
+        ? s.rehearsalReceiptCount + ' rehearsal receipt(s) on file' + (s.latestRehearsalReceipt ? ' — latest verifier result: ' + (s.latestRehearsalReceipt.verifierValid ? '<span class="state-ok">valid</span>' : '<span class="state-warn">invalid</span>') : '')
+        : '<span class="state-locked">no rehearsal receipts yet</span>')
+      + '<br>' + s.appliedProposalCount + ' proposal(s) actually live-applied so far',
+      '');
+    html += row('4 · Live apply status',
+      (s.livePromotionUnlocked
+        ? '<span class="state-warn">UNLOCKED</span>'
+        : '<span class="state-locked">no standing/blanket unlock exists</span>')
+      + '<br>Per-proposal signed apply lane: <span class="state-ok">built</span> — each apply still requires a fresh signature over that exact proposal, checked before anything is written.',
+      '');
+    var orHtml = '';
+    if (s.providerKeyPresent) {
+      orHtml = '<span class="state-ok">configured</span>';
+    } else {
+      orHtml = '<span class="state-warn">NOT configured</span><br>'
+        + '<div style="margin-top:8px;display:flex;gap:6px">'
+        + '<input id="orKeyInput" type="password" placeholder="sk-or-v1-..." style="flex:1;background:#010409;border:1px solid var(--edge);border-radius:4px;padding:3px 6px;color:var(--ink);font-size:12px">'
+        + '<button onclick="saveOrKey()" style="font-size:11px;padding:3px 8px;border-radius:4px;background:var(--acc);color:#04101f;border:0;cursor:pointer">Save</button>'
+        + '</div>';
+    }
+    html += row('5 · OpenRouter API Key', orHtml, '');
+    html += '<div class="note">Signer/verifier code split: ' + (s.signerVerifierSplitIntact ? '<span class="state-ok">intact</span>' : '<span class="state-warn">could not verify</span>') + '. This panel never reads your private key file\'s contents — only whether it exists.</div>';
+    html += '<button class="refresh" onclick="loadAumlok()">refresh</button>';
+    document.getElementById('aumlok').innerHTML = html;
+  }).catch(function(){
+    document.getElementById('aumlok').innerHTML = '<div class="note">status unavailable</div>';
+  });
+}
+window.saveOrKey = function() {
+  var input = document.getElementById('orKeyInput');
+  var key = input ? input.value.trim() : '';
+  if (!key) return;
+  fetch('/api/workbench/save-provider-key', {
+    method: 'POST',
+    headers: localPostToken
+      ? {'content-type':'application/json', 'x-aukora-csrf': localPostToken}
+      : {'content-type':'application/json'},
+    body: JSON.stringify({ key: key })
+  }).then(function(r){ return r.json(); }).then(function(data){
+    if (data.ok) {
+      loadAumlok();
+    } else {
+      alert('Error: ' + (data.error || 'failed to save key'));
+    }
+  }).catch(function(err){
+    alert('Request failed: ' + err);
+  });
+};
+
+renderEntries([{kind:'info', text:'Type "help" for the command list. Every action stays sandboxed unless you explicitly sign a proposal yourself and type "apply signed proposal" — that is the one real path to the live repository, and nothing here can do it without your signature.'}]);
+loadAumlok();
+input.focus();
+</script>
+</body>
+</html>

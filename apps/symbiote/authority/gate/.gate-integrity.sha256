@@ -1,0 +1,14 @@
+7add9dcf09089f891723a4f42a601a42463a368d55b75c2f37b310af915e8004  risk.ts
+bb07863f0f8fd8c56e79c4eceef0ea4e19825b4d59e511dd464e1ad7ab52af16  aukoraGate.ts
+c3c000407a066c42a84dfefa2a187c76304a6b516445a94aad5df032980c8cbd  opencodeAskBridge.ts
+c087a4ca744bf6b5452ff6f9a7513add141cfa6db1486846976b52c5392b7923  governedToolBoundary.ts
+5c2d27fe58faf1c4aa00de789278595b269bda25d3eb01fa05532c92cf89911a  types.ts
+979e46c27a2bd602e858c06035de9a633e0f68660491e472cf930c7d8d8bd2b3  risk-vectors.json
+08b72ba097327c950e042b474e67f8575554a06ac9183ac0368828ea086c9576  sensitivePolicy.ts
+f4abc62dc423328fe8f2221ccc399fdae4ba53c2b42f57e871fe363515b9fc80  ../../core/src/nativeLiveApply.ts
+04627bda747af3a6202a66445db9eb03ea0689dd224c88d15c8e806a71bbfae6  ../../core/src/kernelActionClassifier.ts
+e3af8dd3f2ae598ac5c94a6c44b62a0984806ac6eb223d8871dff051532ed1d9  ../../core/src/appliedProposalLedger.ts
+29470792f7070d48a1a16df57743c7de1eeabd4f2484b1321620b70c34efad88  ../../core/src/policyKernel.ts
+4b8bbf20f442bae6a737e23ade3adaca92599fe19b05a46d5347ed5f82a7bfef  ../../core/src/proposalHash.ts
+4742bdad8c44f591ceaee354b842f85fcc86e0c30bff89f828b6f79edece18c0  ../../core/src/aumlokAuthorityRoot.ts
+39528f65bb1d9f1dcdc1b6c204e5ced6b01e3bd25a3262fd0924bca5ddb9ac91  ../../core/src/sandboxApply.ts

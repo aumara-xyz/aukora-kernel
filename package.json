@@ -13,6 +13,10 @@
     "dev": "convex dev",
     "deploy": "convex deploy",
     "test": "vitest run",
+    "test:fu": "node scripts/check-canonical-boundary.mjs --src src/evidence && node scripts/check-canonical-boundary.mjs --src src/council && vitest run --config vitest.fu.config.ts",
+    "test:fu-app": "cd apps/fu && bun install --frozen-lockfile && bun run check:boundary && bun run typecheck && bunx vitest run --config ../../vitest.fu-app.config.ts",
+    "verify:organism-sources": "node scripts/verify-organism-sources.mjs",
+    "check:public-ready": "node scripts/check-publication-boundary.mjs",
     "test:portable-boundary": "node scripts/verify-portable-boundary.mjs",
     "typecheck:kernel": "tsc -p packages/kernel/tsconfig.json",
     "build:kernel": "tsc -p packages/kernel/tsconfig.build.json",
@@ -25,7 +29,7 @@
     "generate:convex-surface": "node scripts/generate-convex-public-surface.mjs --write",
     "generate:nist-acvp-mldsa": "node scripts/generate-nist-acvp-mldsa.mjs",
     "test:kernel": "npm run test:portable-boundary && npm run typecheck:kernel && npm test --workspace @aukora/kernel && npm run build:kernel && npm run verify:kernel-compatibility && npm run verify:kernel-sbom && npm run verify:kernel-runtimes && npm run verify:kernel-package",
-    "test:release": "npm run test:kernel && npm run verify:convex-surface && npm test -- --reporter=dot"
+    "test:release": "npm run test:kernel && npm run test:fu && npm run test:fu-app && npm run verify:organism-sources && npm run verify:convex-surface && npm test -- --reporter=dot"
   },
   "dependencies": {
     "@noble/ciphers": "2.2.0",

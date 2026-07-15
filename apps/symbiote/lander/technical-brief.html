@@ -1,0 +1,212 @@
+<!doctype html>
+<!-- aukora.xyz/technical-brief — for serious technical evaluators. Grounded in the
+     real system; honest about what is working vs designed. No invented specifics. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0d18" />
+  <title>Aukora — Technical Brief</title>
+  <meta name="description" content="How Aukora gates AI agent effects: an authority kernel, scoped one-time authority, and signed hash-chained receipts anyone can verify." />
+  <meta property="og:title" content="Aukora — Technical Brief" />
+  <meta property="og:description" content="Model output is intent, not authority. A separate kernel decides, scopes a one-time permission, and writes a signed receipt." />
+  <meta property="og:image" content="https://aukora.xyz/assets/aukora-icon.png" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://aukora.xyz/technical-brief" />
+  <link rel="icon" href="/assets/aukora-icon-512.png" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <nav id="nav">
+    <a class="nav-brand" href="/">
+      <img src="/assets/aukora-icon-512.png" alt="" />
+      <span class="wordmark-inline">aukora</span>
+    </a>
+    <div class="nav-links">
+      <a href="/#loop">how it works</a>
+      <a href="/#status">status</a>
+      <a href="/">← home</a>
+      <a class="nav-gh" href="https://github.com/aumara-xyz/aukora-symbiote" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </nav>
+
+  <main class="doc">
+
+    <header class="doc-head">
+      <p class="micro-label hue-c-text">Technical brief</p>
+      <h1 class="doc-h1">Model output is <span class="grad">intent</span>, not authority.</h1>
+      <p class="doc-lead">
+        Aukora is a cryptographic authority and receipt layer for AI agents. A model may propose an
+        action; a separate kernel decides whether it happens, scopes the permission to a single use,
+        and records the outcome — allowed or refused — as a signed, hash-chained receipt anyone can
+        verify. This brief is for people evaluating the system, so it states plainly what is working
+        today and what is still designed.
+      </p>
+      <p class="hero-invariant">The model proposes. The kernel decides. The receipt proves.</p>
+    </header>
+
+    <!-- ARCHITECTURE -->
+    <section class="doc-sec">
+      <h2 class="doc-h2">1 · Architecture</h2>
+      <p>Aukora separates three planes that most agent stacks fuse together:</p>
+      <div class="doc-cards">
+        <div class="doc-card"><b>The kernel</b><p>A small policy layer that classifies every proposed effect and decides allow / refuse. It is deliberately not the model, not the editor, and not the tool — it is the checkpoint they all pass through.</p></div>
+        <div class="doc-card"><b>Authority</b><p>Permission to cause a specific effect. It is scoped to that effect, consumed exactly once, and never held ambiently by the model. No standing or blanket grants.</p></div>
+        <div class="doc-card"><b>The receipt chain</b><p>An append-only, hash-chained log where each entry names the one before it by hash and is signed. It is the trust object — not a dashboard, not the model's prose.</p></div>
+      </div>
+      <p class="doc-fine">
+        Because the boundary lives at the one line where <em>any</em> agent reaches for a tool, the host —
+        an IDE, an API, an MCP server, a workflow, an agent runtime — stays swappable. Aukora attaches to
+        the host's action surface rather than replacing it.
+      </p>
+    </section>
+
+    <!-- INVARIANTS -->
+    <section class="doc-sec">
+      <h2 class="doc-h2">2 · Core invariants</h2>
+      <p>These are the load-bearing rules. They hold regardless of which model, engine, or tool is in play.</p>
+      <ol class="doc-list">
+        <li><b>Model output is intent, not authority.</b> A model can propose, draft, rehearse, and argue for an action. It can never be the thing that authorizes it.</li>
+        <li><b>A separate kernel decides.</b> The component that judges an action is not the component that produced it. Advice — even unanimous multi-model advice — is evidence, never a grant.</li>
+        <li><b>Authority is scoped and consumed once.</b> A permission authorizes one specific effect and cannot be replayed for another.</li>
+        <li><b>Every protected effect leaves a receipt — and so does every refusal.</b> A blocked action is recorded, not silent.</li>
+        <li><b>High-risk effects require a human signature.</b> They are bound to proof that a person approved the exact scope, made deliberately, every time — no silent self-authorization.</li>
+        <li><b>Evidence is portable.</b> The receipt chain can be verified by a second party without trusting the model's claims or the machine that produced them.</li>
+      </ol>
+    </section>
+
+    <!-- AUTHORITY FLOW -->
+    <section class="doc-sec">
+      <h2 class="doc-h2">3 · The authority flow</h2>
+      <p>End to end, a protected action moves through the same path:</p>
+      <div class="doc-flow">
+        <code>intent</code><i>→</i><code>classify (ring / risk)</code><i>→</i><code>gate: allow / refuse</code><i>→</i><code>scoped one-time token</code><i>→</i><code>mediated effect</code><i>→</i><code>signed receipt</code><i>→</i><code>independent verify</code>
+      </div>
+      <p class="doc-fine">
+        Low-risk reads and drafts flow freely. The moment an action would change your world — write a
+        file, call a tool, touch data, reach outside the machine — it is classified, gated, and (if
+        allowed) executed only through a permission minted for that one effect. Refusals short-circuit
+        before any effect and are themselves receipted.
+      </p>
+      <div class="ba-compare" style="margin-top:22px">
+        <div class="ba-col ba-without">
+          <span class="ba-k">Typical agent stack</span>
+          <div class="ba-flow"><code>model</code><i>→</i><code>tool</code><i>→</i><code>effect</code></div>
+          <p class="ba-note">Output becomes an action directly. No authority boundary, no record.</p>
+        </div>
+        <div class="ba-col ba-with">
+          <span class="ba-k">Aukora-wrapped</span>
+          <div class="ba-flow"><code>model</code><i>→</i><code>intent</code><i>→</i><code>gate</code><i>→</i><code>token</code><i>→</i><code>mediated&nbsp;tool</code><i>→</i><code>receipt</code><i>→</i><code>verifier</code></div>
+          <p class="ba-note">The effect happens only through a scoped, one-time token — and it's provable afterward.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECEIPTS -->
+    <section class="doc-sec">
+      <h2 class="doc-h2">4 · The receipt</h2>
+      <p>
+        A receipt is the atom of evidence. Each one records what was authorized and what happened (or
+        was refused), names the receipt before it by hash, and is signed — so rewriting recorded history
+        breaks the chain and shows. From that single object several proofs can be derived without
+        trusting the model:
+      </p>
+      <div class="proof-grid" style="margin-top:22px">
+        <div class="proof-cell"><b>Authority</b><span>who allowed this</span></div>
+        <div class="proof-cell"><b>Action</b><span>what actually happened</span></div>
+        <div class="proof-cell"><b>Refusal</b><span>what was blocked</span></div>
+        <div class="proof-cell"><b>Provenance</b><span>where a memory, datum, or output came from</span></div>
+        <div class="proof-cell"><b>Usage</b><span>what billable action or compute occurred</span></div>
+        <div class="proof-cell"><b>Audit</b><span>a second party can re-verify the chain</span></div>
+        <div class="proof-cell"><b>Training</b><span>outcomes trustworthy enough to be a label</span></div>
+        <div class="proof-cell"><b>Attribution</b><span>which model or agent actually produced it</span></div>
+      </div>
+      <p class="doc-fine">
+        Signatures are Ed25519. Content can be erased on request (right-to-be-forgotten) while the chain
+        still proves the erasure occurred. The exact on-disk record format is being stabilized ahead of
+        public release; treat field-level specifics as not-yet-final.
+      </p>
+    </section>
+
+    <!-- STATUS -->
+    <section class="doc-sec">
+      <h2 class="doc-h2">5 · What is working vs designed</h2>
+      <p>Conservative on purpose. "Lab" means proven in the working tree with a large real test suite; "dev-real" means running but still hardening; "research lab" means running live in the experimental lane, not yet merged into the core; "designed" means specced, not yet built; "research · direction" means a direction being explored — nothing built yet.</p>
+      <div class="status-table" style="margin-top:20px">
+        <div class="st-row st-head"><span>Layer</span><span>Status</span></div>
+        <div class="st-row"><span>Authority kernel · scoped consumed authority</span><span class="st-b st-work">working · lab</span></div>
+        <div class="st-row"><span>Signed, hash-chained receipts</span><span class="st-b st-work">working · lab</span></div>
+        <div class="st-row"><span>Local governed coding loop</span><span class="st-b st-work">working · lab</span></div>
+        <div class="st-row"><span>Human approval gate (AUMLOK)</span><span class="st-b st-dev">dev-real · hardening</span></div>
+        <div class="st-row"><span>Cross-node verification</span><span class="st-b st-work">working · expanding</span></div>
+        <div class="st-row"><span>Model-portable identity (substrate swap)</span><span class="st-b st-work">working · lab</span></div>
+        <div class="st-row"><span>Time-anchored records (drand beacon)</span><span class="st-b st-lab">research lab · live</span></div>
+        <div class="st-row"><span>4D Gaussian memory field</span><span class="st-b st-dir">research · direction</span></div>
+        <div class="st-row"><span>Tool / MCP gateway</span><span class="st-b st-des">designed · expanding</span></div>
+        <div class="st-row"><span>Receipt-certified training</span><span class="st-b st-des">designed · partial</span></div>
+        <div class="st-row"><span>Finance / enterprise adapters</span><span class="st-b st-fut">future · partnership path</span></div>
+        <div class="st-row"><span>Public open-source release</span><span class="st-b st-fut">sequenced with release plan</span></div>
+      </div>
+    </section>
+
+    <!-- INTEGRATION -->
+    <section class="doc-sec">
+      <h2 class="doc-h2">6 · Integrating a tool</h2>
+      <p>Adoption is at the effect boundary, not a rewrite. Conceptually:</p>
+      <ol class="doc-list">
+        <li>Identify the effect you want governed (a shell call, an API request, a broker order).</li>
+        <li>Route that call through the gate: the agent submits it as <em>intent</em>, not a direct call.</li>
+        <li>The kernel classifies and decides. If allowed, it mints a one-time token scoped to that effect.</li>
+        <li>The effect executes only with that token, then a signed receipt is written.</li>
+        <li>Any party can later verify the receipt chain independently.</li>
+      </ol>
+      <p class="doc-fine">
+        Aukora can also help generate adapters for a new host, but a generated adapter gains no authority
+        automatically. New adapters must be approved, scoped, tested, and activated through the gate —
+        the same rule as any other effect.
+      </p>
+    </section>
+
+    <!-- LIMITATIONS -->
+    <section class="doc-sec">
+      <h2 class="doc-h2">7 · Limitations — what it does not claim</h2>
+      <ul class="doc-list doc-limits">
+        <li>It authorizes and records the AI's <em>actions</em>. It does not replace formal model validation, and it is not a certification (HIPAA, SR&nbsp;11-7, etc.).</li>
+        <li>It closes the physical / tokenizer-level covert channel (invisible-Unicode, homoglyph'd authority words). Semantic steganography — a payload hidden in ordinary wording — remains unsolved industry-wide; we don't claim otherwise.</li>
+        <li>The human key is, today, the whole authority. Lose it and there is no reset; whoever holds it can act as you. Additional proofs (starting with voice) are being built, not shipped.</li>
+        <li>It is a young, actively-built project. The receipt chain would expose an overclaim, so we don't make them.</li>
+      </ul>
+    </section>
+
+    <div class="doc-cta">
+      <a class="btn btn-solid" href="/#loop">See the loop</a>
+      <a class="btn btn-ghost" href="https://github.com/aumara-xyz/aukora-symbiote" target="_blank" rel="noopener">Release status ↗</a>
+      <a class="btn btn-ghost" href="/#industries">For partners &amp; enterprises</a>
+    </div>
+
+  </main>
+
+  <footer class="doc-footer">
+    <img src="/assets/aukora-icon-512.png" alt="" class="footer-icon" />
+    <p class="footer-line">The model proposes. The kernel decides. The receipt proves.</p>
+    <span class="wordmark">aukora</span>
+  </footer>
+
+  <!-- public-release notify modal (gates the GitHub links; the repo is private today) -->
+  <div id="soon-backdrop" hidden></div>
+  <div id="soon-modal" role="dialog" aria-label="Public release notification" aria-modal="true" hidden>
+    <button id="soon-close" type="button" aria-label="Close">×</button>
+    <p class="micro-label hue-c-text">Public release coming soon</p>
+    <h3>The code isn’t public yet.</h3>
+    <p class="soon-sub">Leave your email and we’ll let you know the moment the repo opens up.</p>
+    <form id="soon-form">
+      <input id="soon-email" type="email" required placeholder="you@example.com" autocomplete="email" aria-label="Email address" />
+      <button type="submit" id="soon-send">Notify me</button>
+    </form>
+    <p id="soon-status" role="status" aria-live="polite"></p>
+  </div>
+
+  <script src="/main.js" type="module"></script>
+</body>
+</html>

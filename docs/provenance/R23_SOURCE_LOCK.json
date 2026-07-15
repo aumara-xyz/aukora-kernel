@@ -1,0 +1,47 @@
+{
+  "schema": "aukora-private-organism-source-lock-v1",
+  "checkpointDate": "2026-07-15",
+  "advisoryOnly": true,
+  "grantsAuthority": false,
+  "kernel": {
+    "foundationCommit": "54a31266a7dcbd21ce6302f5647f62f57606abd5",
+    "foundationTree": "e872a32687f7717e4d82b209b1e1658cd5d83342",
+    "internalMemoRemovalCommit": "4b6ee91fef43aa8852e0b24a89a6fb332bfe65f2",
+    "internalMemoRemovalTree": "0cb555e08896d31f1e320a7b3206abb9c989134a"
+  },
+  "fu": {
+    "portalCommit": "bc5427bae664651bcc7b6e548142436fb29aeb01",
+    "portalTree": "7a7c914f9a770d8bdf94f2c252d1e9c49d16dca3",
+    "d6Commit": "72173be9e491fe6a0c41007a1e6209ebd230dffb",
+    "d6Tree": "d3f572aed5b9c0ade3858fee36aac928f796ad21",
+    "snapshotPath": "apps/fu",
+    "snapshotFiles": 50,
+    "snapshotManifestSha256": "fc7c58546de9208b54449304f5be98a03f4b0f8f7e649e8c0fa6ee49f7a7bedb"
+  },
+  "symbiote": {
+    "sourceCommit": "41707f910d10696482c28ee80346c252a55e9d41",
+    "sourceTree": "7020cc0230fad3dd793d7ae6a50ddf05f6e3eac4",
+    "releaseManifestSha256": "e1dd6819d1baf14c213735d9933745354c3880f415bca7df39ea1a5140e2c376",
+    "freshExportCommit": "15572302b3f963262af97a8443a04a215f289ce7",
+    "freshExportTree": "bfc8176da3d7bbd2ddeceecfea216b2a59fbc83e",
+    "snapshotPath": "apps/symbiote",
+    "snapshotFiles": 1057,
+    "snapshotManifestSha256": "1a57994d88648466672c0276636dcae0f017c710b7ae809c2987b48a81249650",
+    "publicationStatus": "private-only-pending-semantic-exclusion-hardening"
+  },
+  "g1": {
+    "claimedBundleDigest": "3d70472f81a2ae839bca1e6472a807f7faa57564d2b50711c16c5ee93972912f",
+    "manifestSha256": "dce66710181391c596e27255e5fa790b74a87b112b4105fd671093203f47cf09",
+    "snapshotPath": "quarantine/nebius-g1",
+    "snapshotFiles": 31,
+    "snapshotManifestSha256": "242e7268d5e33af21fca6a299379be688af8df2ce26c57dd16c42e530ded8142",
+    "status": "quarantined-blocked-do-not-deploy"
+  },
+  "research": {
+    "digitalMetabolismSha256": "4a5f6e40ab6507056f646f54e9cc4ac71d0f314bf7e36b3b1f601364e840ee31",
+    "borromeanBridgeSha256": "ee775fe6d75edba167cb50bfae364c90ad6d48fd611162a24aa3da6898cddb72",
+    "resourceGovernorSha256": "bcd817b8f85323f651bc0d2d8d2ff04437a1f2026e8d6b86faccb98ed38b2596",
+    "status": "design-and-research-not-implemented"
+  }
+}
+

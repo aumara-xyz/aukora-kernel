@@ -1,0 +1,159 @@
+<!doctype html>
+<!-- Aukora Spatial — trinity shell. Advisory surface: everything on this page is
+     read-only; the AUMLOK signature ceremony is the only write authority. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#111520" />
+  <title>Aukora Spatial</title>
+  <link rel="icon" href="/assets/aumara-icon-96.png" />
+  <link rel="stylesheet" href="/app/style.css" />
+</head>
+<body>
+  <main id="shell">
+
+    <section id="lane-threads" class="lane lane-l" aria-label="Chats lane">
+      <button class="corner corner-tl hue-l" id="corner-chat-back" hidden
+              title="Back to chats" aria-label="Back to chats"></button>
+      <button class="corner corner-tr hue-l" id="corner-threads"
+              title="Push chats out a third" aria-label="Push chats out a third"></button>
+      <div class="lane-inner">
+        <div class="chat-view" id="chat-list-view">
+          <header class="lane-head chat-toolbar">
+            <button class="tool-btn" id="btn-new" title="New chat" aria-label="New chat">
+              <svg viewBox="0 0 16 16"><path d="M8 3v10M3 8h10"/></svg>
+            </button>
+            <div class="toolbar-filters" id="toolbar-filters">
+              <button class="tool-btn filter-btn" data-filter="pin" title="Pinned" aria-label="Filter pinned">
+                <svg viewBox="0 0 16 16"><path d="M9.5 1.5 14.5 6.5 11 8l-1.5 4.5L4 7 8.5 5.5Z"/><path d="M5 11l-3 3"/></svg>
+              </button>
+              <button class="tool-btn filter-btn" data-filter="unread" title="Unread" aria-label="Filter unread">
+                <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4.6"/></svg>
+              </button>
+              <button class="tool-btn filter-btn" data-filter="archive" title="Archived" aria-label="Filter archived">
+                <svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="3.4" rx="0.8"/><path d="M3.4 6.4V13h9.2V6.4"/><path d="M6.4 9h3.2"/></svg>
+              </button>
+            </div>
+            <div class="new-chat-bar" id="new-chat-bar" hidden>
+              <button class="aukora-pill" id="btn-new-aukora" type="button">
+                <img src="/assets/aumara-icon-96.png" alt="" />Aukora
+              </button>
+              <input class="person-search" placeholder="Search a person… (soon)" disabled aria-label="Search a person (coming soon)" />
+            </div>
+          </header>
+          <div class="lane-body" id="thread-list"></div>
+        </div>
+        <div class="chat-view" id="chat-open-view" hidden>
+          <header class="lane-head chat-open-head">
+            <img src="/assets/aumara-icon-96.png" class="chat-avatar" alt="" />
+            <span class="chat-title" id="chat-title">Aukora</span>
+            <input class="rename-input" id="rename-input" hidden aria-label="Rename thread" />
+            <div class="open-tools">
+              <button class="tool-btn" id="btn-rename" title="Rename" aria-label="Rename thread">
+                <svg viewBox="0 0 16 16"><path d="M3 13l0.9-3.2 7.3-7.3 2.3 2.3-7.3 7.3Z"/></svg>
+              </button>
+              <button class="tool-btn" id="btn-pin" title="Pin" aria-label="Pin thread">
+                <svg viewBox="0 0 16 16"><path d="M9.5 1.5 14.5 6.5 11 8l-1.5 4.5L4 7 8.5 5.5Z"/><path d="M5 11l-3 3"/></svg>
+              </button>
+              <button class="tool-btn" id="btn-unread" title="Mark unread" aria-label="Mark unread">
+                <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="4.6"/></svg>
+              </button>
+              <button class="tool-btn" id="btn-archive" title="Archive" aria-label="Archive thread">
+                <svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="3.4" rx="0.8"/><path d="M3.4 6.4V13h9.2V6.4"/><path d="M6.4 9h3.2"/></svg>
+              </button>
+            </div>
+          </header>
+          <div class="chat-messages" id="chat-messages"></div>
+          <form class="composer" id="composer">
+            <div class="attach-row" id="attach-row" hidden></div>
+            <div class="compose-line">
+              <textarea id="composer-input" rows="1" autocomplete="off"
+                        placeholder="Say what's alive for you…" aria-label="Message Aukora"></textarea>
+              <div class="compose-controls">
+                <div class="attach-menu">
+                  <button type="button" class="tool-btn" id="btn-attach" title="Attach" aria-label="Attach file or image"
+                          aria-haspopup="menu" aria-expanded="false">
+                    <svg viewBox="0 0 16 16"><path d="M8 3v10M3 8h10"/></svg>
+                  </button>
+                  <div class="attach-pop" id="attach-pop" hidden role="menu" aria-label="Attachment options">
+                    <button type="button" id="btn-attach-file" role="menuitem">File</button>
+                    <button type="button" id="btn-attach-image" role="menuitem">Image</button>
+                  </div>
+                </div>
+                <div class="voice-row">
+                  <button type="button" class="voice-pill" id="voice-pill"
+                          aria-haspopup="listbox" aria-expanded="false" title="Her voice — click to switch models">
+                    <span class="voice-dot" id="voice-dot"></span>
+                    <span class="voice-name" id="voice-name">voice…</span>
+                    <svg class="voice-eye" id="voice-eye" viewBox="0 0 16 16" hidden aria-label="can see images">
+                      <path d="M1.5 8s2.4-4.2 6.5-4.2S14.5 8 14.5 8s-2.4 4.2-6.5 4.2S1.5 8 14.5 8Z"/><circle cx="8" cy="8" r="1.9"/>
+                    </svg>
+                    <svg class="voice-caret" viewBox="0 0 16 16"><path d="M4 9.5 8 5.8l4 3.7"/></svg>
+                  </button>
+                  <div class="voice-pop" id="voice-pop" hidden role="listbox" aria-label="Choose her voice model"></div>
+                </div>
+                <button id="composer-send" type="submit" aria-label="Send" disabled>↑</button>
+              </div>
+            </div>
+            <input type="file" id="file-input" multiple hidden />
+            <input type="file" id="image-input" accept="image/*" multiple hidden />
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="lane-canvas" class="lane lane-c" aria-label="Canvas lane">
+      <button class="corner corner-tl hue-c" id="corner-canvas-l"
+              title="Grow the canvas leftward" aria-label="Grow the canvas leftward"></button>
+      <button class="corner corner-tr hue-c" id="corner-canvas-r"
+              title="Grow the canvas rightward" aria-label="Grow the canvas rightward"></button>
+      <div class="lane-inner">
+        <div id="organ-host">
+          <!-- organs mount here; the map organ is the default -->
+        </div>
+        <div class="organ-chip" id="organ-chip">
+          <span class="micro-label hue-c-text" id="organ-title">Spatial Map</span>
+          <span class="faint" id="organ-sub"></span>
+          <span class="chip-status"><span class="pill pill-faint" id="engine-pill">engine…</span></span>
+        </div>
+        <div class="wordmark">aukora</div>
+      </div>
+    </section>
+
+    <section id="lane-menu" class="lane lane-r" aria-label="Menu lane">
+      <button class="corner corner-tl hue-r" id="corner-menu"
+              title="Push menu out a third" aria-label="Push menu out a third"></button>
+      <div class="lane-inner">
+        <header class="lane-head lane-head-right">
+          <span class="micro-label hue-r-text" id="menu-micro">Apps</span>
+          <nav class="menu-tabs" aria-label="Menu tabs">
+            <button class="tab-btn active" data-tab="organs" title="Apps — what she grew" aria-label="Apps tab">
+              <svg viewBox="0 0 16 16" class="tab-shape"><path d="M8 2.2 14 13H2Z"/></svg>
+            </button>
+            <button class="tab-btn" data-tab="system" title="System — the engine, gate &amp; identity" aria-label="System tab">
+              <svg viewBox="0 0 16 16" class="tab-shape"><rect x="2.6" y="2.6" width="10.8" height="10.8" rx="1.4"/></svg>
+            </button>
+            <button class="tab-btn" data-tab="yours" title="Yours — grow your own" aria-label="Yours tab">
+              <svg viewBox="0 0 16 16" class="tab-shape"><circle cx="8" cy="8" r="5.6"/></svg>
+            </button>
+          </nav>
+        </header>
+        <div class="lane-body" id="menu-list"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="edge-sliver sliver-l" id="sliver-l" aria-hidden="true"></div>
+  <div class="edge-sliver sliver-r" id="sliver-r" aria-hidden="true"></div>
+
+  <div class="hint-card" id="hint-card">
+    <span><strong>Corners size · nodes open.</strong></span>
+    <span class="hint-keys"><kbd>[</kbd><kbd>]</kbd><kbd>,</kbd><kbd>.</kbd></span>
+    <button id="hint-dismiss">Got it</button>
+  </div>
+
+  <script type="module" src="/app/shell.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+Aukora Fu
+Copyright (c) 2026 Aukora
+
+This software is licensed under the GNU Affero General Public License v3.0 or later
+(AGPL-3.0-or-later). See LICENSE.
+
+Third-party packages retain their own licenses:
+
+- TypeScript — Apache-2.0
+- Vitest and its transitive runtime dependencies — see the locked package metadata
+- Bun — used as a development/runtime tool under Bun's own license terms
+
+Dependency versions are pinned in bun.lock. No model weights or model-provider SDK is
+part of the canonical offline core.
+
+No warranty. This is a research/engineering artifact, not a production authorization
+system. See CLAIMS.md and LIMITATIONS.md.

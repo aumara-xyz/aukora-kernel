@@ -1,0 +1,8 @@
+{
+  "version": "phase1-20260629",
+  "entries": [
+    { "label": "node", "sha256": "cc61696726abdfe8392297ecd75aa9863cd9b6435b202c0dc2266039f493da10", "envAllowlist": ["PATH","HOME","TMPDIR","LANG","LC_ALL"], "cwdPolicy": "workspace" },
+    { "label": "git", "sha256": "4970a8c688841ce9726a217c549b29e5f34bfdb53abfe221a06d78c903a05368", "envAllowlist": ["PATH","HOME","TMPDIR","LANG","LC_ALL"], "cwdPolicy": "workspace" },
+    { "label": "bun", "sha256": "e0c90ec15d33363e6b70713d56bc3b2c7585c17f40a0fe0f8fd9305901d4e233", "envAllowlist": ["PATH","HOME","TMPDIR","LANG","LC_ALL"], "cwdPolicy": "workspace" }
+  ]
+}
