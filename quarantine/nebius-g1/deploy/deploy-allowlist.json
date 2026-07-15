@@ -12,9 +12,20 @@
     "src/**",
     "test/**",
     "package.json",
+    "package-lock.json",
+    "bun.lock",
     "tsconfig.json",
+    "vitest.config.ts",
     "deploy/**",
-    "MANIFEST.json"
+    "MANIFEST.json",
+    "README.md",
+    "G1_READY_FOR_CODEX_AUDIT.md",
+    "IMPORT_BLOCKERS_R23.md"
+  ],
+  "requiredClosure": [
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json"
   ],
   "deny": [
     "**/*.key",

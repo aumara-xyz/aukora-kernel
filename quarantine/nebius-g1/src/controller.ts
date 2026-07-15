@@ -23,12 +23,14 @@ import { buildArtifact, verifyArtifact, fixtureCouncil, type SealedArtifact } fr
 import {
   advanceGuard,
   candidateDigest,
+  persistGenerationRecord,
   type AdvanceDecision,
   type EvaluatedCandidate,
   type Generation,
 } from './lineage';
-import { resolveContained } from './containment';
+import { writeContainedAtomic } from './containment';
 import { verifyD6 } from './d6selfcheck';
+import type { HardStop } from './teardown';
 
 export class D6VerificationError extends Error {
   constructor(bundleRoot: string) {
@@ -66,6 +68,13 @@ export const SEED_GENOME: GenomeV0 = {
 export interface RunOptions {
   readonly bundleRoot?: string;
   readonly outDir?: string;
+  /**
+   * Optional hard-stop the controller loop consults BEFORE each generation (R23 blocker 4 — hard stop wired
+   * into the controller). Once shouldStop(now) is true the loop stops advancing and reports stoppedByDeadline.
+   */
+  readonly hardStop?: HardStop;
+  /** Monotonic clock for the hard-stop check (injectable for tests). Defaults to performance.now/Date.now. */
+  readonly now?: () => number;
 }
 
 export interface GenerationResult {
@@ -132,10 +141,10 @@ export function runGeneration(
     fixtureCouncilVerdict: verdict,
   });
 
-  // Persist through the containment resolver (no path escape, no symlink escape).
+  // Persist through the containment ATOMIC writer: contained, no-follow (final-component symlink refused),
+  // fsync + rename ⇒ durable + all-or-nothing (R23 blockers 1 + 8).
   fs.mkdirSync(outDir, { recursive: true });
-  const artifactPath = resolveContained(outDir, `gen-${generation}.artifact.json`);
-  fs.writeFileSync(artifactPath, JSON.stringify(artifact, null, 2));
+  const artifactPath = writeContainedAtomic(outDir, `gen-${generation}.artifact.json`, JSON.stringify(artifact, null, 2));
 
   // Sanity: the artifact must verify before we even consider advancing.
   if (!verifyArtifact(artifact)) {
@@ -208,19 +217,46 @@ function refusedResult(
 export interface RunSummary {
   readonly finalParent: GenomeV0;
   readonly generations: GenerationResult[];
+  /** True iff the loop stopped early because the hard-stop deadline was reached before `count` generations. */
+  readonly stoppedByDeadline: boolean;
+  /** How many generations actually ran (<= count). */
+  readonly generationsRun: number;
+  /** Directory holding the durable per-generation lineage records (contained under outDir). */
+  readonly lineageDir: string;
 }
 
-/** Deterministic multi-generation driver starting from SEED_GENOME. */
+/**
+ * Deterministic multi-generation driver starting from SEED_GENOME. If opts.hardStop is supplied, the loop
+ * consults hardStop.shouldStop(now) BEFORE each generation and stops advancing once the deadline is reached
+ * (R23 blocker 4). Every completed generation's lineage record is persisted durably and atomically (R23
+ * blocker 8) under outDir/lineage.
+ */
 export function runGenerations(seed0: number, count: number, opts: RunOptions = {}): RunSummary {
   const bundleRoot = opts.bundleRoot ?? DEFAULT_BUNDLE_ROOT;
+  const outDir = opts.outDir ?? path.join(bundleRoot, '.g1-out');
+  const now = opts.now ?? (() => (typeof performance !== 'undefined' ? performance.now() : Date.now()));
   assertD6(bundleRoot);
+
+  const lineageDir = path.join(outDir, 'lineage');
+  fs.mkdirSync(lineageDir, { recursive: true });
+
   let parent: GenomeV0 = SEED_GENOME;
   const generations: GenerationResult[] = [];
+  let stoppedByDeadline = false;
+
   for (let g = 1; g <= count; g++) {
+    // Hard-stop wired into the controller loop: refuse to start another generation past the deadline.
+    if (opts.hardStop && opts.hardStop.shouldStop(now())) {
+      stoppedByDeadline = true;
+      break;
+    }
     const seed = (Math.imul(seed0 ^ g, 2654435761) ^ (g * 40503)) >>> 0;
-    const res = runGeneration(parent, g, seed, { bundleRoot, outDir: opts.outDir });
+    const res = runGeneration(parent, g, seed, { bundleRoot, outDir });
     generations.push(res);
+    // Durable, atomic lineage record for this completed generation.
+    persistGenerationRecord(lineageDir, res.record);
     parent = res.nextParent;
   }
-  return { finalParent: parent, generations };
+
+  return { finalParent: parent, generations, stoppedByDeadline, generationsRun: generations.length, lineageDir };
 }
