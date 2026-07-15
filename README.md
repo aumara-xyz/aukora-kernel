@@ -138,10 +138,16 @@ research/engineering artifact, **not a production system**. Honest fences:
 - The ML-DSA-65 **verification path** agrees with a pinned NIST ACVP FIPS 204 pass/refuse subset; this is corroboration, **not** an
   independent cryptographic audit, and **not** a blanket "quantum-secure system" claim.
 - Identity is **self-sovereign at birth**, with an operator-custodied lifecycle (no built-in recovery — by design).
+- **No execution proof**: nothing here proves the process actually running is the audited code. A compromised host can
+  hold a valid signing key and emit valid-looking receipts. Closing this needs reproducible builds + an external
+  witness + a trusted execution environment, none of which ship here.
+- Receipts are **self-reported**: the kernel signs and chains caller-supplied fields (grade, verdict, risk) — it proves
+  *what was reported*, not that the report is accurate.
 - No claims of consensus, global finality, public-transparency networks, trusted global time, anonymity, or
   metadata privacy.
 
-See [`CLAIMS.md`](CLAIMS.md) for the exact claim → evidence → tier table.
+See [`CLAIMS.md`](CLAIMS.md) for the claim → evidence → tier table, [`LIMITATIONS.md`](LIMITATIONS.md) for the full
+honest fence-line, and [`SECURITY.md`](SECURITY.md) for the trust model and honest residuals.
 
 ## Authority vs. containment — what this layer does and doesn't do
 
