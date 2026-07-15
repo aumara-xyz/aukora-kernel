@@ -87,7 +87,7 @@ the organism to it, and retires JSON-as-canonical.
   must exist before broad capture. `admin-key.txt` is NOT covered by
   `isSecretOrEnvBasename` today (flagged below).
 - **Conflict found (now softened):** the `convex-alpha` MCP tool targets a HOSTED
-  cloud deployment (`prod:quirky-robin-188`), deploy key in plaintext at
+  cloud deployment (`prod:<redacted-convex-deployment>`), deploy key in plaintext at
   `~/convex-mcp.sh`. The review panel TESTED the key: **it is
   revoked/invalid (401), and the deployment appears deleted** — so this is stale
   tooling, not a live exfiltration path. Still decision D4: delete/repoint the script
@@ -434,7 +434,7 @@ connectors ride the node, never the local door. No external ingress in this plan
 - **D3 — Fresh backend instance;** retire `~/aukora-convex-backend` (278 MB demo data)
   to archive; new keys under `~/.aukora-symbiote/convex/`. *Recommend: fresh — demo
   data never becomes her memories.*
-- **D4 — The convex-alpha MCP cloud deployment** (`prod:quirky-robin-188`, plaintext
+- **D4 — The convex-alpha MCP cloud deployment** (`prod:<redacted-convex-deployment>`, plaintext
   deploy key at `~/convex-mcp.sh`): repoint it at the local backend,
   or declare it a non-canonical dev tool — and either way **rotate that deploy key**.
   *Recommend: repoint + rotate. Zero-cloud should include the tooling.*

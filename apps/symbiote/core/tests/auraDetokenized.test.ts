@@ -169,8 +169,9 @@ describe('spatial organs stay detokenized (round 2)', () => {
 });
 
 describe('design-history docs carry the covenant', () => {
+  // AUKORA_SOVEREIGN_COMPUTE_MASTER_PLAN.md was removed from the public tip in the R25 public-safety
+  // sanitation pass (owner publication-boundary denylist); it no longer exists to carry a banner.
   const BANNERED = [
-    'docs/AUKORA_SOVEREIGN_COMPUTE_MASTER_PLAN.md',
     'docs/AURA_ECONOMY_AND_KNVS.md',
     'docs/RESONANCE_SPEC.md',
     'docs/THE_TUNING.md',
