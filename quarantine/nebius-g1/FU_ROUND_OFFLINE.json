@@ -1,0 +1,27 @@
+{
+  "schema": "FuRoundOfflineV0",
+  "round": "R24",
+  "lane": "OPUS NEBIUS — CODING LANE B (G1 quarantine repair)",
+  "advisoryOnly": true,
+  "grantsAuthority": false,
+  "providerContacted": false,
+  "paidCalls": 0,
+  "requestedRoster": [],
+  "servedRoster": [],
+  "liveEligible": false,
+  "estimatedCostUsd": 0,
+  "actualCostUsd": 0,
+  "spendCeilingHeld": true,
+  "verdict": "insufficient-quorum",
+  "reason": "No approved provider credential exists in this environment (OPENROUTER/OPENAI/ANTHROPIC/GROQ/NEBIUS/TOGETHER/FIREWORKS all absent). Live Fu quorum was NOT attempted and is NOT fabricated. Per the Round-24 FU GATE, this offline artifact is a NON-VOTE for live quorum; it may block merge but does not block coding or deterministic testing.",
+  "deterministicGate": {
+    "scope": "quarantine/nebius-g1 only (this lane)",
+    "tscNoEmit": "exit 0",
+    "quarantineTests": "all pass (negativeControls + r24Repairs + manifest)",
+    "failBeforePassAfter": "confirmed — base 11ed50a6 reproduces blockers 1-5; fixed sources close them; blockers 6-8 are new capabilities absent at base",
+    "d6SourceLock": "verifyD6 binds commit/tree/tracked-tree-ls/entry-count/exact-map; real vendored tree verifies",
+    "artifactValidation": "verifyArtifact is exact-key closed; a recomputed-digest extra-key artifact is refused",
+    "manifestSelfCovering": "MANIFEST.json covers every material input and itself (see src/manifest.ts verifyManifest)"
+  },
+  "note": "This bundle remains QUARANTINED and UNARMED. No deploy, no VM, no arming, no cloud resource, no push."
+}

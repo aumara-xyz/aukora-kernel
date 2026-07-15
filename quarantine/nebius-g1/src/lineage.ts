@@ -11,10 +11,12 @@
  * metrics and resource measurements from the immutable evaluator and re-runs the safety contract, so a
  * candidate can neither supply nor tamper with its own measurements: a mismatch is a refusal.
  */
+import * as fs from 'node:fs';
 import { packDigest } from '../d6/evidence/index';
 import { evaluate, EVALUATOR_DIGEST, type Metrics, type Resources } from './evaluator';
 import { safetyOf, SAFETY_DIGEST } from './safety';
 import { verifyArtifact, type SealedArtifact } from './evidence';
+import { writeContainedAtomic, resolveContained } from './containment';
 import type { GenomeV0 } from './genome';
 
 /** The D6 packDigest over the canonical genome (candidate identity). */
@@ -27,6 +29,88 @@ export interface Generation {
   readonly parentDigest: string;
   readonly candidateDigest: string;
   readonly artifactDigest: string;
+}
+
+const HEX64_RE = /^[0-9a-f]{64}$/;
+
+/** Structural validation of a persisted lineage record read back from disk (fail-closed). */
+function isGenerationRecord(x: unknown): x is Generation {
+  if (x === null || typeof x !== 'object' || Array.isArray(x)) return false;
+  const o = x as Record<string, unknown>;
+  if (Object.keys(o).length !== 4) return false; // exact-key closed
+  if (!Number.isSafeInteger(o.generation) || (o.generation as number) < 1) return false;
+  if (typeof o.candidateDigest !== 'string' || !HEX64_RE.test(o.candidateDigest)) return false;
+  if (typeof o.artifactDigest !== 'string' || !HEX64_RE.test(o.artifactDigest)) return false;
+  // parentDigest is a 64-hex digest, or '' for the genesis parent record.
+  if (typeof o.parentDigest !== 'string' || (o.parentDigest !== '' && !HEX64_RE.test(o.parentDigest))) return false;
+  return true;
+}
+
+/**
+ * DURABLE lineage (R23 blocker 8). Persist one generation record as its own file, written through the
+ * containment atomic writer: temp + fsync + rename. A crash therefore leaves EITHER no file OR a complete file
+ * (never a half record), and the write cannot follow a symlink out of the lineage directory. Returns the path.
+ */
+export function persistGenerationRecord(lineageDir: string, rec: Generation): string {
+  return writeContainedAtomic(lineageDir, `gen-${rec.generation}.json`, JSON.stringify(rec, null, 2) + '\n');
+}
+
+/**
+ * Read the durable lineage back, in generation order. Only fully-written `gen-<n>.json` records are read;
+ * the atomic writer's hidden `.gen-*.tmp-*` temporaries (a crash mid-write) are ignored, so a partial write is
+ * invisible. A structurally-invalid record file makes the whole read fail closed (returns null).
+ */
+export function readLineage(lineageDir: string): Generation[] | null {
+  let entries: string[];
+  try {
+    entries = fs.readdirSync(lineageDir);
+  } catch {
+    return [];
+  }
+  const files = entries.filter((f) => /^gen-\d+\.json$/.test(f));
+  const recs: Generation[] = [];
+  for (const f of files) {
+    let abs: string;
+    try {
+      abs = resolveContained(lineageDir, f); // never follow a symlink back out
+    } catch {
+      return null;
+    }
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(fs.readFileSync(abs, 'utf8'));
+    } catch {
+      return null;
+    }
+    if (!isGenerationRecord(parsed)) return null;
+    recs.push(parsed);
+  }
+  recs.sort((a, b) => a.generation - b.generation);
+  return recs;
+}
+
+/**
+ * Verify a durable lineage chain, encoding the ATOMIC-ADVANCEMENT invariant. A "generation" here is an
+ * evaluation attempt; the deployed parent changes ONLY when a child advances. Therefore, for each step after
+ * the first, the record's parentDigest must be EITHER the previous record's parentDigest (the parent was
+ * retained) OR the previous record's candidateDigest (the previous child advanced and became the parent) — it
+ * can never jump to any other value. Generations must also be sequential 1..N with no gap or repeat. The first
+ * record's parent is the genesis parent digest (a 64-hex digest, or '' if none). Empty chain ⇒ true.
+ */
+export function verifyLineageChain(records: readonly Generation[]): boolean {
+  for (let i = 0; i < records.length; i++) {
+    const r = records[i];
+    if (r.generation !== i + 1) return false; // sequential, no gap/repeat
+    if (i === 0) {
+      if (r.parentDigest !== '' && !HEX64_RE.test(r.parentDigest)) return false;
+    } else {
+      const prev = records[i - 1];
+      const retained = r.parentDigest === prev.parentDigest;
+      const advanced = r.parentDigest === prev.candidateDigest;
+      if (!retained && !advanced) return false; // parent neither held nor advanced-to-prev-candidate
+    }
+  }
+  return true;
 }
 
 /** A fully controller-evaluated candidate. Metrics/resources here always come from the immutable evaluator. */

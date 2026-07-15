@@ -51,21 +51,31 @@ say "[ok] deploy-allowlist.json present and denies all key-material shapes"
 # --- 2. REFUSE if any key-material path is actually staged in the bundle. ---
 #     Scans the WHOLE bundle tree; the presence of even one is fatal. Patterns are single-quoted so the
 #     shell never glob-expands them against the CWD before find sees them.
+# -iname (case-insensitive, R24 amendment P2): on case-insensitive filesystems authority.KEY == authority.key,
+# so a case-sensitive scan would miss a mis-cased key file. Match key-material shapes regardless of case.
 FOUND_KEYS="$(cd "$BUNDLE_ROOT" && find . -type f \( \
-  -name '*.key' -o \
-  -name 'id_rsa*' -o \
-  -name 'id_ed25519*' -o \
-  -name '*.pem' -o \
-  -name '.env*' -o \
-  -name '*secret*' -o \
-  -name 'authority-*.key' -o \
-  -path '*/.ssh/*' \
+  -iname '*.key' -o \
+  -iname 'id_rsa*' -o \
+  -iname 'id_ed25519*' -o \
+  -iname '*.pem' -o \
+  -iname '.env*' -o \
+  -iname '*secret*' -o \
+  -iname 'authority-*.key' -o \
+  -ipath '*/.ssh/*' \
 \) 2>/dev/null || true)"
 if [ -n "$FOUND_KEYS" ]; then
   say "$FOUND_KEYS"
   abort "key-material path(s) present in the staged bundle (listed above) — remove before sealing"
 fi
 say "[ok] no key-material paths present in the staged bundle"
+
+# --- 2.5 Enforce the runtime dependency closure (R23 blocker 5). The bundle must carry everything needed for a
+#     reproducible install; a missing lockfile means the on-VM install is not pinned. Fail-closed. ---
+CLOSURE="package.json package-lock.json tsconfig.json"
+for f in $CLOSURE; do
+  [ -f "$BUNDLE_ROOT/$f" ] || abort "runtime dependency closure incomplete: missing $f (refusing to seal)"
+done
+say "[ok] runtime dependency closure present ($CLOSURE)"
 
 # --- 3. Verify every immutable-core target exists BEFORE sealing anything (fail-closed on partial bundle). ---
 CORE_FILES=""

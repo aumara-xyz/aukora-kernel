@@ -18,10 +18,33 @@ export const ALLOW: readonly string[] = [
   'src/**',
   'test/**',
   'package.json',
+  'package-lock.json', // R23 blocker 5: the runtime dependency closure (reproducible `npm ci`)
+  'bun.lock',
   'tsconfig.json',
+  'vitest.config.ts',
   'deploy/**',
   'MANIFEST.json',
+  'README.md',
+  'G1_READY_FOR_CODEX_AUDIT.md',
+  'IMPORT_BLOCKERS_R23.md',
 ];
+
+/**
+ * REQUIRED runtime dependency closure (R23 blocker 5): the minimal file set that MUST be present for the bundle
+ * to install and run reproducibly on the sealed VM. seal.sh refuses to seal, and checkClosure refuses to pass,
+ * if any of these is missing.
+ */
+export const REQUIRED_CLOSURE: readonly string[] = [
+  'package.json',
+  'package-lock.json',
+  'tsconfig.json',
+];
+
+/** Which required-closure files are absent from a staged file list (empty ⇒ closure complete). */
+export function missingClosure(fileList: readonly string[]): string[] {
+  const present = new Set(fileList);
+  return REQUIRED_CLOSURE.filter((f) => !present.has(f));
+}
 
 /** Mirror of deploy/deploy-allowlist.json `deny`. Every private-key / secret-material shape. */
 export const DENY: readonly string[] = [
@@ -40,7 +63,7 @@ export const DENY: readonly string[] = [
  *   `**\/` → zero or more leading segments   `**` → any run incl. '/'   `*` → any run excl. '/'   `?` → one non-'/'.
  * Every other character is matched literally (regex metacharacters are escaped). Pure and total.
  */
-function globToRegExp(glob: string): RegExp {
+function globToRegExp(glob: string, flags = ''): RegExp {
   let re = '';
   for (let i = 0; i < glob.length; i++) {
     const c = glob[i];
@@ -60,11 +83,14 @@ function globToRegExp(glob: string): RegExp {
       re += c;
     }
   }
-  return new RegExp('^' + re + '$');
+  return new RegExp('^' + re + '$', flags);
 }
 
-const ALLOW_RE: readonly RegExp[] = ALLOW.map(globToRegExp);
-const DENY_RE: readonly RegExp[] = DENY.map(globToRegExp);
+const ALLOW_RE: readonly RegExp[] = ALLOW.map((g) => globToRegExp(g));
+// DENY is a security net for key/secret material. It is compiled CASE-INSENSITIVELY (R24 amendment, P2): on
+// case-insensitive filesystems (macOS APFS, Windows) `authority.KEY` IS `authority.key`, so a lowercase-only
+// deny glob would let a mis-cased key file ride into the bundle. Matching deny case-insensitively closes that.
+const DENY_RE: readonly RegExp[] = DENY.map((g) => globToRegExp(g, 'i'));
 
 /**
  * Normalize + defend a bundle-relative path. Rejects absolute paths, backslashes, empty segments, `.`/`..`
