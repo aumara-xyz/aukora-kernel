@@ -74,6 +74,12 @@ Neither profile is a fallback for the other. This package verifies public-key
 evidence only; it exports no key generation, signing, custody, transport, or
 live-apply capability.
 
+The portable staleness law is available from `@aukora/kernel/staleness` (and
+the root export). It flags expired or unknown-age artifacts and refuses stale
+challenge creation unless the caller records an explicit owner revive gesture.
+The caller supplies `nowMs`; the primitive has no ambient clock, I/O, signer,
+or authority-grant path.
+
 Frozen portable vectors are exported as
 `@aukora/kernel/conformance/v1.json` and
 `@aukora/kernel/conformance/hybrid-v1.json`. The complete package boundary

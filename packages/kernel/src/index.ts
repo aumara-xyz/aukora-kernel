@@ -12,3 +12,4 @@ export * from "./merkle.js";
 export * from "./reducer.js";
 export * from "./registry.js";
 export * from "./schema.js";
+export * from "./staleness.js";

@@ -5,6 +5,8 @@
     "": {
       "name": "aukora-edge-node",
       "dependencies": {
+        "@aukora/kernel": "file:../../../packages/kernel",
+        "@noble/curves": "^2.2.0",
         "@noble/hashes": "^2.2.0",
         "@noble/post-quantum": "^0.6.1",
       },
@@ -16,6 +18,8 @@
     },
   },
   "packages": {
+    "@aukora/kernel": ["@aukora/kernel@file:../../../packages/kernel", { "dependencies": { "@noble/curves": "2.2.0", "@noble/hashes": "2.2.0", "@noble/post-quantum": "0.6.1" } }],
+
     "@esbuild/aix-ppc64": ["@esbuild/aix-ppc64@0.21.5", "", { "os": "aix", "cpu": "ppc64" }, "sha512-1SDgH6ZSPTlggy1yI6+Dbkiz8xzpHJEVAlF/AM1tHPLsf5STom9rwtjE4hKAF20FfXXNTFqEYXyJNWh1GiZedQ=="],
 
     "@esbuild/android-arm": ["@esbuild/android-arm@0.21.5", "", { "os": "android", "cpu": "arm" }, "sha512-vCPvzSjpPHEi1siZdlvAlsPxXl7WbOVUBBAowWug4rJHb68Ox8KualB+1ocNvT5fjv6wpkX6o/iEpbDrf68zcg=="],

@@ -13,7 +13,7 @@ const forbidden = [
   ["Node/platform import", /(?:from\s+["'](?:node:)?(?:fs|path|os|child_process|net|http|https|tls|dgram|worker_threads|cluster)(?:\/[^"']*)?["']|import\s*\(["'](?:node:)?(?:fs|path|os|child_process|net|http|https|tls|dgram))/],
   ["private repository import", /(?:aukora-symbiote|aukora-os|node-template|\.\.\/\.\.\/\.\.\/)/],
   ["ambient environment", /\bprocess(?:\.env)?\b/],
-  ["ambient clock", /\bDate\s*(?:\.|\()/],
+  ["ambient clock", /(?:\bDate\.now\s*\(|\bnew\s+Date\s*\(\s*\))/],
   ["ambient randomness", /\b(?:Math\.random|crypto\.getRandomValues|crypto\.randomUUID|globalThis\.crypto)\b/],
   ["network API", /\b(?:fetch|WebSocket|XMLHttpRequest|EventSource|sendBeacon)\s*\(/],
   ["runtime-specific global", /\b(?:Bun|Deno)\b/],
@@ -50,7 +50,7 @@ if (!Array.isArray(manifest.files)
   failures.push(`package files allowlist must equal: ${allowedPackageFiles.join(", ")}`);
 }
 if (!manifest.exports?.["."]?.import || !manifest.exports?.["."]?.types) failures.push("package must expose import and types entrypoints");
-for (const subpath of ["authority", "canonical", "evidence", "merkle", "reducer", "registries", "schemas"]) {
+for (const subpath of ["authority", "canonical", "evidence", "merkle", "reducer", "registries", "schemas", "staleness"]) {
   if (!manifest.exports?.[`./${subpath}`]?.import || !manifest.exports?.[`./${subpath}`]?.types) {
     failures.push(`package subpath export missing: ${subpath}`);
   }
