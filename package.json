@@ -9,7 +9,10 @@
   "scripts": {
     "dev": "convex dev",
     "deploy": "convex deploy",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:evidence": "vitest run test/fu/evidencePackV1.test.ts",
+    "test:council": "vitest run test/fu/aukoraFuCouncil.test.ts",
+    "test:boundary": "vitest run test/fu/boundaryGuard.test.ts"
   },
   "dependencies": {
     "@noble/ciphers": "2.2.0",
