@@ -1,7 +1,7 @@
 # Graticube for Aukora Apps - Build Brief
 
 Generated: 2026-07-07
-Source workspace: `/Users/asd/Downloads/graticube/web`
+Source workspace: `<local-source-workspace>/graticube/web`
 Current implementation source: `apps/next/public`
 Primary data source: `apps/next/public/story-cards.js`, generated from `graticube_reclassified_full_spectrum.csv`
 

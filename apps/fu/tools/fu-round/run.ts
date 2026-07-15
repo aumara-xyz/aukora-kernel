@@ -13,11 +13,15 @@
  * (providerContacted:false, all seats no-provider non-votes) — it never fabricates a live review.
  */
 import * as fs from 'node:fs';
+import * as os from 'node:os';
 import * as path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { SpendMeter } from '../../src/aukoraFuCouncil';
+import { AukoraFuSpendLedger } from '../../src/aukoraFuSpendLedger';
 import { runFuRound, newMeter } from './controller';
 import { liveOpenRouterTransport, replayTransport, syntheticFixtureTransport } from './transport';
 import { fuRoundDigest } from './artifact';
+import { safeReadTargetFile } from './reader';
 import type { FuRoundMode } from './artifact';
 
 function arg(name: string): string | undefined {
@@ -38,8 +42,9 @@ async function main(): Promise<void> {
   if (!target) { console.error('usage: run.ts --target <path> --mode live|offline|replay|synthetic'); process.exit(2); return; }
   const mode = (arg('mode') ?? 'offline') as FuRoundMode;
   const abs = path.resolve(target);
-  if (!fs.existsSync(abs) || !fs.statSync(abs).isFile()) { console.error(`E_MISSING_EVIDENCE: not a file: ${target}`); process.exit(1); return; }
-  const content = fs.readFileSync(abs, 'utf8');
+  const read = safeReadTargetFile(abs); // V3: refuses symlink/dir/oversize; never follows a link
+  if (!read.ok) { console.error(`${read.code}: ${read.message}`); process.exit(1); return; }
+  const content = read.content;
   const repoRoot = process.cwd();
   const rel = path.relative(repoRoot, abs).split(path.sep).join('/');
   const reviewPath = rel && !rel.startsWith('..') ? rel : path.basename(abs);
@@ -59,15 +64,26 @@ async function main(): Promise<void> {
 
   if (mode === 'live' && !key) console.error('NOTE: --mode live but OPENROUTER_API_KEY is unset → honest OFFLINE run (no provider contacted, no live claim).');
 
+  // V8: persistent daily accounting. The per-pass spend meter is bounded by the DAILY remaining budget so
+  // repeated rounds cannot cumulatively exceed the day cap (fail-closed via the council's reserve()).
+  const ledgerDir = process.env.AUKORA_FU_LEDGER_DIR ?? path.join(os.homedir(), '.aukora-fu');
+  fs.mkdirSync(ledgerDir, { recursive: true });
+  const ledger = new AukoraFuSpendLedger(ledgerDir);
+  const dailyCapUsd = Number(process.env.AUKORA_FU_DAILY_CAP_USD ?? '5');
+  const remainingDailyUsd = Math.max(0, dailyCapUsd - ledger.todayTotalUsd());
+  const spend = new SpendMeter({ perPassUsd: remainingDailyUsd, perDayUsd: dailyCapUsd });
+
   const result = await runFuRound({
     targetRepoId: repoId, targetCommit: commit, targetTree: tree, reviewPath,
-    files: [{ path: reviewPath, content }], mode, problem, claims, transport, meter,
+    files: [{ path: reviewPath, content }], mode, problem, claims, transport, meter, spend,
     toolVersions: { 'fu-round': 'v1' },
   });
 
   if (!result.ok) { console.error(`REFUSED ${result.code}: ${result.message}`); process.exit(1); return; }
   const artifact = result.artifact;
   const digest = fuRoundDigest(artifact);
+  // V8: record ACTUAL spend to the persistent daily ledger (0 for offline / no-key runs).
+  ledger.append(artifact.actualCostMicroUsd / 1_000_000, `fu-round ${mode} ${digest}`);
   const out = { artifactDigest: digest, artifact };
   const outFile = arg('out');
   if (outFile) fs.writeFileSync(outFile, JSON.stringify(out, null, 2) + '\n');

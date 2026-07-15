@@ -12,7 +12,7 @@ set -euxo pipefail
 OUT=/work/out/bubble0-$TAG
 V4=/mnt/out/output/auma-vl-v4-1783072814
 B5=/mnt/out/output/auma-vl-v5-burn3-07080303
-# Frozen expected verdict — burn3 (aijob-e00m0abzevb0ttmtg2), byte-compared below.
+# Frozen expected verdict — burn3 (private job identifier withheld), byte-compared below.
 EXPECTED='{"base": {"menlo": 10, "serif": 11}, "v4": {"menlo": 24, "serif": 25}, "v5": {"menlo": 27, "serif": 27}}'
 
 mkdir -p /work/strips /work/menlo "$OUT"

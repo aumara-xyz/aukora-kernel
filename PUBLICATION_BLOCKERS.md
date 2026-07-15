@@ -1,10 +1,10 @@
 # Publication blockers
 
-This repository is intentionally private while the organism is consolidated and reviewed. Do not change it to public until all items below are closed with a new exact-head receipt.
+This repository is **public**. The items below are the remaining consolidation, hardening, and IP-review tasks; they are tracked openly, are not all closed, and mean the tree should be treated as work-in-progress rather than a fully hardened release. Because the repository is already public, closing an item cannot retroactively remove content that is already reachable in Git history — a tip-level removal reduces what a casual reader sees on the current tree but does not rewrite history. A public-safety sanitation pass (R25) has removed the named private-planning, handoff, inbox, and issue-snapshot families from the tip and genericized real infrastructure identifiers; prior commits remain reachable until history is separately rewritten.
 
-- [ ] Peter confirms the new provisional/addendum has been filed and records the filing timestamp outside this repository.
+- [ ] The owner confirms the new provisional/addendum has been filed and records the filing timestamp outside this repository.
 - [ ] The Symbiote release policy excludes semantic continuity and owner-IP documents that pass the current structural scanner, including private inboxes, handoffs, import notes, singularity plans, and sovereign-compute plans.
-- [ ] The private `apps/symbiote/` snapshot is regenerated from the hardened export policy and independently reviewed.
+- [ ] The `apps/symbiote/` snapshot is regenerated from the hardened export policy and independently reviewed.
 - [ ] Every unmerged material Symbiote branch is either rebased and reviewed, recorded as intentionally excluded, or promoted through a separate PR.
 - [ ] G1 remains excluded from release until every blocker in `quarantine/nebius-g1/IMPORT_BLOCKERS_R23.md` is repaired and re-audited.
 - [ ] Research language is reviewed so timestamp correlation is described as an incident-shape heuristic, not a proven topological isomorphism or causal inference.

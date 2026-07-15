@@ -159,6 +159,14 @@ export function validateFuRoundArtifact(a: unknown): FuRoundValidation {
     if (!Number.isSafeInteger(o[nk]) || (o[nk] as number) < 0) return bad('E_WRONG_TYPE', nk);
   }
   if (typeof o.providerContacted !== 'boolean') return bad('E_WRONG_TYPE', 'providerContacted');
+  // V1: modes are structurally exclusive — only 'live' may ever have contacted a provider or paid.
+  if ((o.mode === 'synthetic' || o.mode === 'replay' || o.mode === 'offline') && (o.providerContacted === true || (o.paidCalls as number) > 0)) {
+    return bad('E_MODE_EXCLUSIVE', `${String(o.mode)} mode cannot contact a provider or make paid calls`);
+  }
+  // A non-live-eligible artifact must not carry votes from a provider it never contacted claiming to be live.
+  if (o.liveEligible === true && (o.mode !== 'live' || o.providerContacted !== true || (o.paidCalls as number) <= 0 || (o.votes as number) <= 0)) {
+    return bad('E_LIVE_INELIGIBLE', 'liveEligible requires live mode + provider contact + paid calls + ≥1 vote');
+  }
   // Secret + authority scan over every free-text surface (answer, reasons, roster, paths).
   const texts: string[] = [String(t.path), String(t.repoId)];
   const syn = o.synthesis as Record<string, unknown> | undefined;
